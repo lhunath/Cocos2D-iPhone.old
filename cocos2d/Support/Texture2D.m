@@ -197,9 +197,9 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 	while((width > kMaxTextureSize) || (height > kMaxTextureSize)) {
 		width /= 2;
 		height /= 2;
-		transform = CGAffineTransformScale(transform, 0.5, 0.5);
-		imageSize.width *= 0.5;
-		imageSize.height *= 0.5;
+		transform = CGAffineTransformScale(transform, 0.5f, 0.5f);
+		imageSize.width *= 0.5f;
+		imageSize.height *= 0.5f;
 	}
 	
 	switch(pixelFormat) {		
@@ -287,9 +287,9 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 	CGColorSpaceRelease(colorSpace);
 	
 	
-	CGContextSetGrayFillColor(context, 1.0, 1.0);
-	CGContextTranslateCTM(context, 0.0, height);
-	CGContextScaleCTM(context, 1.0, -1.0); //NOTE: NSString draws in UIKit referential i.e. renders upside-down compared to CGBitmapContext referential
+	CGContextSetGrayFillColor(context, 1.0f, 1.0f);
+	CGContextTranslateCTM(context, 0.0f, height);
+	CGContextScaleCTM(context, 1.0f, -1.0f); //NOTE: NSString draws in UIKit referential i.e. renders upside-down compared to CGBitmapContext referential
 	UIGraphicsPushContext(context);
 		[string drawInRect:CGRectMake(0, 0, dimensions.width, dimensions.height) withFont:font lineBreakMode:UILineBreakModeWordWrap alignment:alignment];
 	UIGraphicsPopContext();
@@ -316,16 +316,16 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 				height = (GLfloat)_height * _maxT;
 
 #if 0
-	GLfloat		vertices[] = {	-width / 2 + point.x,	-height / 2 + point.y,	0.0,
-								width / 2 + point.x,	-height / 2 + point.y,	0.0,
-								-width / 2 + point.x,	height / 2 + point.y,	0.0,
-								width / 2 + point.x,	height / 2 + point.y,	0.0 };
+	GLfloat		vertices[] = {	-width / 2 + point.x,	-height / 2 + point.y,	0.0f,
+								width / 2 + point.x,	-height / 2 + point.y,	0.0f,
+								-width / 2 + point.x,	height / 2 + point.y,	0.0f,
+								width / 2 + point.x,	height / 2 + point.y,	0.0f };
 	
 #else // anchor is done by cocos2d automagically
-	GLfloat		vertices[] = {	point.x,			point.y,	0.0,
-								width + point.x,	point.y,	0.0,
-								point.x,			height  + point.y,	0.0,
-								width + point.x,	height  + point.y,	0.0 };
+	GLfloat		vertices[] = {	point.x,			point.y,	0.0f,
+								width + point.x,	point.y,	0.0f,
+								point.x,			height  + point.y,	0.0f,
+								width + point.x,	height  + point.y,	0.0f };
 #endif
 	
 	glBindTexture(GL_TEXTURE_2D, _name);
@@ -341,10 +341,10 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 								_maxS,	_maxT,
 								0,		0,
 								_maxS,	0  };
-	GLfloat	vertices[] = {	rect.origin.x,							rect.origin.y,							0.0,
-							rect.origin.x + rect.size.width,		rect.origin.y,							0.0,
-							rect.origin.x,							rect.origin.y + rect.size.height,		0.0,
-							rect.origin.x + rect.size.width,		rect.origin.y + rect.size.height,		0.0 };
+	GLfloat	vertices[] = {	rect.origin.x,							rect.origin.y,							0.0f,
+							rect.origin.x + rect.size.width,		rect.origin.y,							0.0f,
+							rect.origin.x,							rect.origin.y + rect.size.height,		0.0f,
+							rect.origin.x + rect.size.width,		rect.origin.y + rect.size.height,		0.0f };
 	
 	glBindTexture(GL_TEXTURE_2D, _name);
 	glVertexPointer(3, GL_FLOAT, 0, vertices);
@@ -386,8 +386,8 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 		_size = CGSizeMake(length, length);
 		_width = length;
 		_height = length;
-		_maxS = 1.0;
-		_maxT = 1.0;
+		_maxS = 1.0f;
+		_maxT = 1.0f;
 	}					
 	return self;
 }

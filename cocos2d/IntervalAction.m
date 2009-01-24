@@ -51,7 +51,7 @@
 		return nil;
 	
 	duration = d;
-	elapsed = 0.0;
+	elapsed = 0.0f;
 	return self;
 }
 
@@ -83,7 +83,7 @@
 		@throw myException;
 	}
 	
-	elapsed = 0.0;
+	elapsed = 0.0f;
 }
 
 - (IntervalAction*) reverse
@@ -165,7 +165,7 @@
 -(void) update: (ccTime) t
 {
 	int found = 0;
-	ccTime new_t = 0.0;
+	ccTime new_t = 0.0f;
 	
 	if( t >= split ) {
 		found = 1;
@@ -267,7 +267,7 @@
 		total++;
 		[other stop];
 		[other start];
-		[other update:0.0];
+		[other update:0.0f];
 	} else {
 		// fix last repeat position
 		// else it could be 0.
@@ -324,7 +324,7 @@
 	ccTime d1 = [one_ duration];
 	ccTime d2 = [two_ duration];	
 	
-	[super initWithDuration: fmax(d1,d2)];
+	[super initWithDuration: fmaxf(d1,d2)];
 
 	one = one_;
 	two = two_;
@@ -566,7 +566,7 @@
 
 -(void) update: (ccTime) t
 {
-	ccTime y = height * fabs( sinf(t * M_PI * jumps ) );
+	ccTime y = height * fabsf( sinf(t * (cpFloat)M_PI * jumps ) );
 	y += delta.y * t;
 	ccTime x = delta.x * t;
 	target.position = cpv( startPosition.x + x, startPosition.y + y );
@@ -668,7 +668,7 @@
 -(void) update: (ccTime) t
 {
 	ccTime slice = 1.0f / times;
-	ccTime m = fmod(t, slice);
+	ccTime m = fmodf(t, slice);
 	target.visible = (m > slice/2) ? YES : NO;
 }
 
@@ -785,7 +785,7 @@
 
 - (void) update: (ccTime) t
 {
-	[other update: pow(t,rate) ];
+	[other update: powf(t,rate) ];
 }
 
 - (IntervalAction*) reverse
@@ -837,7 +837,7 @@
 -(void) update: (ccTime) t
 {
 	ccTime ft = (t-0.5f) * 12;
-	ccTime nt = 1.0f/( 1.0f + exp(-ft) );
+	ccTime nt = 1.0f/( 1.0f + expf(-ft) );
 	[other update: nt];	
 }
 
@@ -1043,7 +1043,7 @@
 
 -(void) update: (ccTime) t
 {
-	int idx=0;
+	NSUInteger idx=0;
 	
 	ccTime slice = 1.0f / [[animation frames] count];
 	

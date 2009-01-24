@@ -207,7 +207,7 @@ enum {
 	IntervalAction *a = [self action];
 
 	[inScene do: [Sequence actions:
-		[Accelerate actionWithAction:a rate:0.5],
+		[Accelerate actionWithAction:a rate:0.5f],
 		[CallFunc actionWithTarget:self selector:@selector(finish)],
 		nil] ];
 	 		
@@ -270,9 +270,9 @@ enum {
 	IntervalAction *in = [self action];
 	IntervalAction *out = [in copy];
 
-	[inScene do: [Accelerate actionWithAction:in rate:0.5] ];
+	[inScene do: [Accelerate actionWithAction:in rate:0.5f]];
 	[outScene do: [Sequence actions:
-				   [Accelerate actionWithAction:out rate:0.5],
+				   [Accelerate actionWithAction:out rate:0.5f],
 				   [CallFunc actionWithTarget:self selector:@selector(finish)],
 				   nil] ];
 	
@@ -365,9 +365,9 @@ enum {
 	IntervalAction *scaleOut = [ScaleTo actionWithDuration:duration scale:0.01f];
 	IntervalAction *scaleIn = [ScaleTo actionWithDuration:duration scale:1.0f];
 
-	[inScene do: [Accelerate actionWithAction:scaleIn rate:0.5] ];
+	[inScene do: [Accelerate actionWithAction:scaleIn rate:0.5f]];
 	[outScene do: [Sequence actions:
-					[Accelerate actionWithAction:scaleOut rate:0.5],
+					[Accelerate actionWithAction:scaleOut rate:0.5f],
 					[CallFunc actionWithTarget:self selector:@selector(finish)],
 					nil] ];
 }
@@ -538,7 +538,7 @@ enum {
 	outA = [Sequence actions:
 			[Spawn actions:
 			 [OrbitCamera actionWithDuration: duration/2 radius: 1 deltaRadius:0 angleZ:outAngleZ deltaAngleZ:outDeltaZ angleX:0 deltaAngleX:0],
-			 [ScaleTo actionWithDuration:duration/2 scale:0.5],
+			 [ScaleTo actionWithDuration:duration/2 scale:0.5f],
 			 nil],
 			[Hide action],
 			[DelayTime actionWithDuration:duration/2],							
@@ -588,13 +588,13 @@ enum {
 	outA = [Sequence actions:
 				[Spawn actions:
 				 [OrbitCamera actionWithDuration: duration/2 radius: 1 deltaRadius:0 angleZ:outAngleZ deltaAngleZ:outDeltaZ angleX:90 deltaAngleX:0],
-				 [ScaleTo actionWithDuration:duration/2 scale:0.5],
+				 [ScaleTo actionWithDuration:duration/2 scale:0.5f],
 				 nil],							
 				[Hide action],
 				[DelayTime actionWithDuration:duration/2],							
 				nil ];
 
-	inScene.scale = 0.5;
+	inScene.scale = 0.5f;
 	[inScene do: inA];
 	[outScene do: outA];
 }
@@ -639,13 +639,13 @@ enum {
 	outA = [Sequence actions:
 			[Spawn actions:
 			 [OrbitCamera actionWithDuration: duration/2 radius: 1 deltaRadius:0 angleZ:outAngleZ deltaAngleZ:outDeltaZ angleX:45 deltaAngleX:0],
-			 [ScaleTo actionWithDuration:duration/2 scale:0.5],
+			 [ScaleTo actionWithDuration:duration/2 scale:0.5f],
 			 nil],							
 			[Hide action],
 			[DelayTime actionWithDuration:duration/2],							
 			nil ];
 	
-	inScene.scale = 0.5;
+	inScene.scale = 0.5f;
 	[inScene do: inA];
 	[outScene do: outA];
 }

@@ -214,7 +214,7 @@ enum {
 		[zoomAction release];
 		zoomAction = nil;
 
-		self.scale = 1.0;
+		self.scale = 1.0f;
 
 		[super activate];
 	}
@@ -226,7 +226,7 @@ enum {
 	if(isEnabled) {
 		[self stopAction: zoomAction];
 		[zoomAction release];
-		zoomAction = [[ScaleTo actionWithDuration:0.1 scale:1.2] retain];
+		zoomAction = [[ScaleTo actionWithDuration:0.1f scale:1.2f] retain];
 		[self do:zoomAction];
 	}
 }
@@ -237,7 +237,7 @@ enum {
 	if(isEnabled) {
 		[self stopAction: zoomAction];
 		[zoomAction release];
-		zoomAction = [[ScaleTo actionWithDuration:0.1 scale:1.0] retain];
+		zoomAction = [[ScaleTo actionWithDuration:0.1f scale:1.0f] retain];
 		[self do:zoomAction];
 	}
 }

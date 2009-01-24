@@ -61,7 +61,7 @@
 	position.y = 160;
 	
 	// life of particles
-	life = 3.5;
+	life = 3.5f;
 	lifeVar = 1;
 		
 	// emits per frame
@@ -72,10 +72,10 @@
 	startColor.g = 0.5f;
 	startColor.b = 0.5f;
 	startColor.a = 1.0f;
-	startColorVar.r = 0.5;
-	startColorVar.g = 0.5;
-	startColorVar.b = 0.5;
-	startColorVar.a = 0.1;
+	startColorVar.r = 0.5f;
+	startColorVar.g = 0.5f;
+	startColorVar.b = 0.5f;
+	startColorVar.a = 0.1f;
 	endColor.r = 0.1f;
 	endColor.g = 0.1f;
 	endColor.b = 0.1f;
@@ -136,7 +136,7 @@
 	
 	// life of particles
 	life = 3;
-	lifeVar = 0.25;
+	lifeVar = 0.25f;
 	
 	// speed of particles
 	speed = 60;
@@ -154,10 +154,10 @@
 	startColor.g = 0.25f;
 	startColor.b = 0.12f;
 	startColor.a = 1.0f;
-	startColorVar.r = 0.0;
-	startColorVar.g = 0.0;
-	startColorVar.b = 0.0;
-	startColorVar.a = 0.0;
+	startColorVar.r = 0.0f;
+	startColorVar.g = 0.0f;
+	startColorVar.b = 0.0f;
+	startColorVar.a = 0.0f;
 	endColor.r = 0.0f;
 	endColor.g = 0.0f;
 	endColor.b = 0.0f;
@@ -217,7 +217,7 @@
 	
 	// life of particles
 	life = 1;
-	lifeVar = 0.5;
+	lifeVar = 0.5f;
 	
 	// speed of particles
 	speed = 20;
@@ -235,10 +235,10 @@
 	startColor.g = 0.25f;
 	startColor.b = 0.12f;
 	startColor.a = 1.0f;
-	startColorVar.r = 0.0;
-	startColorVar.g = 0.0;
-	startColorVar.b = 0.0;
-	startColorVar.a = 0.0;
+	startColorVar.r = 0.0f;
+	startColorVar.g = 0.0f;
+	startColorVar.b = 0.0f;
+	startColorVar.a = 0.0f;
 	endColor.r = 0.0f;
 	endColor.g = 0.0f;
 	endColor.b = 0.0f;
@@ -314,10 +314,10 @@
 	startColor.g = 0.25f;
 	startColor.b = 0.76f;
 	startColor.a = 1.0f;
-	startColorVar.r = 0.0;
-	startColorVar.g = 0.0;
-	startColorVar.b = 0.0;
-	startColorVar.a = 0.0;
+	startColorVar.r = 0.0f;
+	startColorVar.g = 0.0f;
+	startColorVar.b = 0.0f;
+	startColorVar.a = 0.0f;
 	endColor.r = 0.0f;
 	endColor.g = 0.0f;
 	endColor.b = 0.0f;
@@ -598,7 +598,7 @@
 		return nil;
 	
 	// duration
-	duration = 0.1;
+	duration = 0.1f;
 	
 	// gravity
 	gravity.x = 0;
@@ -627,7 +627,7 @@
 	posVar.y = 00;
 	
 	// life of particles
-	life = 5.0;
+	life = 5.0f;
 	lifeVar = 2;
 	
 	// size, in pixels
@@ -720,10 +720,10 @@
 	startColor.g = 0.8f;
 	startColor.b = 0.8f;
 	startColor.a = 1.0f;
-	startColorVar.r = 0.02;
-	startColorVar.g = 0.02;
-	startColorVar.b = 0.02;
-	startColorVar.a = 0.0;
+	startColorVar.r = 0.02f;
+	startColorVar.g = 0.02f;
+	startColorVar.b = 0.02f;
+	startColorVar.a = 0.0f;
 	endColor.r = 0.0f;
 	endColor.g = 0.0f;
 	endColor.b = 0.0f;
