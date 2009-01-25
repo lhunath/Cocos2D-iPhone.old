@@ -159,6 +159,7 @@
 
 -(void) dealloc
 {
+	[name release];
 	[frames release];
 	[super dealloc];
 }

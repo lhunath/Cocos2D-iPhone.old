@@ -75,7 +75,7 @@
 	Action *zoomAction;
 }
 
-@property (assign, readwrite) Label* label;
+@property (readwrite, retain) Label* label;
 
 /** set font size */
 +(void) setFontSize: (int) s;

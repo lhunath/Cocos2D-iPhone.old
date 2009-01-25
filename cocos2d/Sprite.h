@@ -33,9 +33,9 @@
 	NSMutableArray *frames;
 }
 
-@property (readwrite,assign) NSString * name;
+@property (readwrite,copy) NSString * name;
 @property (readwrite,assign) float delay;
-@property (readwrite,assign) NSMutableArray *frames;
+@property (readwrite,retain) NSMutableArray *frames;
 
 /** creates an Animation with name, delay and frames */
 +(id) animationWithName: (NSString*) name delay:(float)delay images:image1,... NS_REQUIRES_NIL_TERMINATION;
