@@ -496,24 +496,22 @@
 
 -(void) onEnter
 {
-	isRunning = YES;
-	
-	
 	for( id child in children )
 		[child onEnter];
 	
 	[self activateTimers];
+
+	isRunning = YES;
 }
 
 -(void) onExit
 {
-	isRunning = NO;
-	
 	[self deactivateTimers];
-	
+    
+	isRunning = NO;
+
 	for( id child in children )
 		[child onExit];
-	
 }
 
 #pragma mark CocosNode Actions
