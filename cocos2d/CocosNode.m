@@ -592,6 +592,8 @@
 {
     timeScaleTarget = aTimeScale;
     timeScaleDuration = aTimeScaleDuration;
+    
+    [self schedule:@selector(step_:)];
 }
 
 -(void) step_: (ccTime) dt
@@ -609,7 +611,7 @@
 	// Unschedule if it is no longer necessary. Note that if step_ is still
 	// scheduled onExit (this happens if the node has actions when it's
 	// removed/removedAndStopped from its parent), it will get descheduled there.
-	if ( [actions count] == 0 ) {
+	if ( [actions count] == 0 && !timeScaleDuration) {
 		[self unschedule: @selector(step_:)];
 		return;
 	}
@@ -644,7 +646,8 @@
 	
 	// call all actions
 	for( Action *action in actions ) {
-		[action step: dt];
+        if(dt)
+            [action step: dt];
 		
 		// Note: There's no danger of our node being deallocated inside the loop (because
 		// the current action has retained it) so it's safe to access the actions ivar.
