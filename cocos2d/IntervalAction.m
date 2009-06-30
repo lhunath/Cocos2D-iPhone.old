@@ -1122,3 +1122,43 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	}
 }
 @end
+
+
+//
+// ScaleTime
+//
+#pragma mark -
+#pragma mark ScaleTime
+@implementation ScaleTime
+@synthesize timeScaleTarget;
+
++(id) actionWithTimeScaleTarget:(float)aTimeScaleTarget duration:(ccTime)aDuration
+{
+	return [[[self alloc] initWithTimeScaleTarget: aTimeScaleTarget duration:aDuration] autorelease];
+}
+
+-(id) initWithTimeScaleTarget:(float)aTimeScaleTarget duration:(ccTime)aDuration
+{
+	if( !(self=[super initWithDuration:aDuration]) )
+		return nil;
+	
+	self.timeScaleTarget = aTimeScaleTarget;
+    
+	return self;
+}
+
+-(id) copyWithZone: (NSZone*) zone
+{
+    return [[[self class] allocWithZone: zone] initWithTimeScaleTarget:self.timeScaleTarget duration:self.duration];
+}
+
+-(void) update:(ccTime) dt
+{
+	self.target.timeScale += (self.timeScaleTarget - self.target.timeScale) * dt / self.duration;
+}
+
+- (IntervalAction *) reverse
+{
+	return [[self class] actionWithTimeScaleTarget:1.0f / self.timeScaleTarget duration:self.duration];
+}
+@end

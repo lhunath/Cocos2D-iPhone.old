@@ -62,13 +62,16 @@ enum {
 @interface CocosNode : NSObject {
 	
 	// rotation angle
-	float rotation_;	
+	float rotation_;
 	
 	// scaling factors
 	float scaleX_, scaleY_;
 	
 	// position of the node
 	CGPoint position_;
+    
+    // scaling of time
+    float timeScale;
 	
 	// If YES the transformtions will be relative to (-transform.x, -transform.y).
 	// Sprites, Labels and any other "small" object uses it.
@@ -140,6 +143,8 @@ enum {
 @property(readwrite,assign) float scale, scaleX, scaleY;
 /** Position (x,y) of the node in OpenGL coordinates. (0,0) is the left-bottom corner */
 @property(readwrite,assign) CGPoint position;
+/** Scaling of time.  > 1 causes time for this node and its ancestry to progress faster than its parents and siblings. < 1 causes it progress to slower. */
+@property(readwrite,assign) float timeScale;
 /** A Camera object that lets you move the node using camera coordinates.
  * If you use the Camera then position, scale & rotation won't be used */
 @property(readonly) Camera* camera;
@@ -303,6 +308,9 @@ enum {
 /** check whether a selector is scheduled. */
 //-(BOOL) isScheduled: (SEL) selector;
 
+/** process action/scheduled methods time */
+-(void) tick:(ccTime)dt;
+
 /** schedules a selector.
  The scheduled selector will be ticked every frame
  */
@@ -313,14 +321,6 @@ enum {
 -(void) schedule: (SEL) s interval:(ccTime)seconds;
 /** unschedule a selector */
 -(void) unschedule: (SEL) s;
-/** activate all scheduled timers.
- Called internally by onEnter
- */
--(void) activateTimers;
-/** deactivate all scheduled timers.
- Called internally by onExit
- */
--(void) deactivateTimers;
 
 // transformation methods
 

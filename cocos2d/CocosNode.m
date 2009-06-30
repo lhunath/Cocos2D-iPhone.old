@@ -17,9 +17,9 @@
 #import "CocosNode.h"
 #import "Camera.h"
 #import "Grid.h"
-#import "Scheduler.h"
 #import "ccMacros.h"
 #import "Director.h"
+#import "Schedule.h"
 #import "Support/CGPointExtension.h"
 #import "Support/ccArray.h"
 #import "Support/TransformUtils.h"
@@ -36,7 +36,7 @@
 // lazy allocs
 -(void) actionAlloc;
 -(void) childrenAlloc;
--(void) timerAlloc;
+-(void) scheduleAlloc;
 // helper that reorder a child
 -(void) insertChild:(CocosNode*)child z:(int)z;
 // used internally to alter the zOrder variable. DON'T call this method manually
@@ -48,6 +48,7 @@
 
 @synthesize visible;
 @synthesize parent, children;
+@synthesize timeScale;
 @synthesize grid;
 @synthesize zOrder;
 @synthesize tag;
@@ -151,6 +152,7 @@
 		rotation_ = 0.0f;
 		scaleX_ = scaleY_ = 1.0f;
 		position_ = CGPointZero;
+        timeScale = 1.0f;
 		transformAnchor_ = CGPointZero;
 		anchorPoint_ = CGPointZero;
 		contentSize_ = CGSizeZero;
@@ -192,7 +194,7 @@
 	// actions
 	[self stopAllActions];
 	
-	// timers
+	// schedules
 	[scheduledSelectors release];
 	scheduledSelectors = nil;
 	
@@ -222,7 +224,7 @@
 	
 	[children release];
 	
-	// timers
+	// schedules
 	[scheduledSelectors release];
 	
 	// actions
@@ -340,7 +342,6 @@
 {
 	[child setParent: nil];
 	
-	// stop timers
 	if( isRunning )
 		[child onExit];
 	
@@ -494,8 +495,6 @@
 {
 	for( id child in children )
 		[child onEnter];
-	
-	[self activateTimers];
 
 	isRunning = YES;
 }
@@ -508,8 +507,6 @@
 
 -(void) onExit
 {
-	[self deactivateTimers];
-
 	isRunning = NO;	
 	
 	for( id child in children )
@@ -634,19 +631,6 @@
 
 -(void) step_: (ccTime) dt
 {
-	// !Running the actions may indirectly release the CocosNode, so we're
-	// !retaining self to prevent deallocation.
-	// ![self retain];
-	
-	// (!) UPDATE: Retaining isn't currently necessary because the Timer which runs 
-	// step_ retains the node, keeping it alive. Even if an action indirectly calls
-	// Scheduler#unscheduleTimer (i.e. CallFunc calls [parent removeChild:self] which
-	// calls [self onExit] which calls [self deactivateTimers]), the Timer won't be
-	// deallocated until the next Scheduler#tick.
-	// Bottom line: Node doesn't run the risk of deallocating itself in step_ as
-	// long as the implementation of Scheduler stays the same. We can ommit the
-	// expensive retain/release.
-		
 	// call all actions
 	
 	// The 'actions' ccArray may change while inside this loop.
@@ -675,16 +659,35 @@
 	
 	if( actions->num == 0 )
 		[self unschedule: @selector(step_:)];
-	
-	// !And releasing self when done.
-	// ![self release];
-	// !If the node had a retain count of 1 before getting released, it's now
-	// !deallocated. However, since we don't access any ivar, we're fine.
 }
 
-#pragma mark CocosNode Timers 
+-(void) tick:(ccTime)dt {
 
--(void) timerAlloc
+    if (!isRunning)
+        return;
+    
+    dt *= timeScale;
+    
+    for(Schedule *schedule in [scheduledSelectors allValues]) {
+        schedule.elapsed += dt;
+        
+        if (schedule.elapsed >= schedule.interval) {
+            TICK_IMP selectorImplementation = (TICK_IMP)[self methodForSelector:schedule.selector];
+            
+            [schedule retain];
+            selectorImplementation(self, schedule.selector, schedule.elapsed);
+            schedule.elapsed = 0;
+            [schedule release];
+        }
+    }
+    
+    for(CocosNode *child in children)
+        [child tick:dt];
+}
+
+#pragma mark CocosNode Time
+
+-(void) scheduleAlloc
 {
 	scheduledSelectors = [[NSMutableDictionary dictionaryWithCapacity: 2] retain];
 }
@@ -700,19 +703,14 @@
 	NSAssert( interval >=0, @"Arguemnt must be positive");
 	
 	if( !scheduledSelectors )
-		[self timerAlloc];
+		[self scheduleAlloc];
 	
 	// already scheduled ?
 	if( [scheduledSelectors objectForKey: NSStringFromSelector(selector) ] ) {
 		return;
 	}
-	
-	Timer *timer = [Timer timerWithTarget:self selector:selector interval:interval];
-	
-	if( isRunning )
-		[[Scheduler sharedScheduler] scheduleTimer:timer];
-	
-	[scheduledSelectors setObject:timer forKey:NSStringFromSelector(selector) ];
+
+	[scheduledSelectors setObject:[Schedule scheduleSelector:selector withInterval:interval] forKey:NSStringFromSelector(selector)];
 }
 
 -(void) unschedule: (SEL) selector
@@ -721,29 +719,7 @@
 	if (selector == nil)
 		return;
 	
-	Timer *timer = nil;
-	
-	if( ! (timer = [scheduledSelectors objectForKey: NSStringFromSelector(selector)] ) )
-	 {
-		 CCLOG(@"CocosNode.unschedule: Selector not scheduled: %@",NSStringFromSelector(selector) );
-		 return;
-	 }
-	
 	[scheduledSelectors removeObjectForKey: NSStringFromSelector(selector) ];
-	if( isRunning )
-		[[Scheduler sharedScheduler] unscheduleTimer:timer];
-}
-
-- (void) activateTimers
-{
-	for( id key in scheduledSelectors )
-		[[Scheduler sharedScheduler] scheduleTimer: [scheduledSelectors objectForKey:key]];
-}
-
-- (void) deactivateTimers
-{
-	for( id key in scheduledSelectors )
-		[[Scheduler sharedScheduler] unscheduleTimer: [scheduledSelectors objectForKey:key]];
 }
 
 

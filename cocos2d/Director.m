@@ -19,7 +19,6 @@
 #import "Director.h"
 #import "TouchDelegateProtocol.h"
 #import "Camera.h"
-#import "Scheduler.h"
 #import "LabelAtlas.h"
 #import "ccMacros.h"
 #import "ccExceptions.h"
@@ -173,16 +172,15 @@ static Director *_sharedDirector = nil;
 {    
 	/* clear window */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	/* calculate "global" dt */
-	[self calculateDeltaTime];
-	if( ! isPaused_ )
-		[[Scheduler sharedScheduler] tick: dt];
-	
-	
+
 	/* to avoid flickr, nextScene MUST be here: after tick and before draw */
 	if( nextScene )
 		[self setNextScene];
+	
+	/* recursively pass time to nodes */
+	[self calculateDeltaTime];
+	if( ! paused )
+        [runningScene_ tick:dt];
 	
 	glPushMatrix();
 	

@@ -334,33 +334,26 @@ Class restartAction()
 	id seq3_1 = [Sequence actions:jump2, jump1, nil];
 	id seq3_2 = [Sequence actions: rot1, rot2, nil];
 	id spawn = [Spawn actions:seq3_1, seq3_2, nil];
-	id action = [Speed actionWithAction: [RepeatForever actionWithAction:spawn] speed:1.0f];
-	[action setTag: kTagAction1];
-	
-	id action2 = [[action copy] autorelease];
-	id action3 = [[action copy] autorelease];
 
-	[action2 setTag:kTagAction1];
-	[action3 setTag:kTagAction1];
-	
-	[grossini runAction: action2 ];
-	[tamara runAction: action3];
-	[kathia runAction:action];
-	
+	action1 = [[ScaleTime actionWithTimeScaleTarget:1.0f duration:8.0f] retain];
+	action2 = [action1 copy];
+	action3 = [action1 copy];
+
+    [grossini runAction:spawn];
+	[grossini runAction:[EaseExponentialInOut actionWithAction:action1]];
+    [tamara runAction:[[spawn copy] autorelease]];
+	[tamara runAction:[EaseExponentialInOut actionWithAction:action2]];
+    [kathia runAction:[[spawn copy] autorelease]];
+	[kathia runAction:[EaseExponentialInOut actionWithAction:action3]];
 	
 	[self schedule:@selector(altertime:) interval:1.0f];
 }
 
 -(void) altertime:(ccTime)dt
 {	
-	id action1 = [grossini getActionByTag:kTagAction1];
-	id action2 = [tamara getActionByTag:kTagAction1];
-	id action3 = [kathia getActionByTag:kTagAction1];
-	
-	[action1 setSpeed: CCRANDOM_0_1() * 2];
-	[action2 setSpeed: CCRANDOM_0_1() * 2];
-	[action3 setSpeed: CCRANDOM_0_1() * 2];
-
+	[action1 setTimeScaleTarget: CCRANDOM_0_1() * 3];
+	[action2 setTimeScaleTarget: CCRANDOM_0_1() * 3];
+	[action3 setTimeScaleTarget: CCRANDOM_0_1() * 3];
 }
 
 -(NSString *) title

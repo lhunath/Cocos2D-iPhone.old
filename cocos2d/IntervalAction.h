@@ -24,7 +24,7 @@ duration plus the start time.
 These IntervalAction actions have some interesting properties, like:
  - They can run normally (default)
  - They can run reversed with the reverse method
- - They can run with the time altered with the Accelerate, AccelDeccel and Speed actions.
+ - They can run with the time altered with the Accelerate and AccelDeccel actions.
 
 For example, you can simulate a Ping Pong effect running the action normally and
 then running it again in Reverse mode.
@@ -354,3 +354,19 @@ typedef struct _ccBezierConfig {
 @end
 
 
+/** Changes the speed of an action, making it take longer (speed>1)
+ or less (speed<1) time.
+ Useful to simulate 'slow motion' or 'fast forward' effect.
+ @warning This action can't be Sequenceable because it is not an IntervalAction
+ */
+@interface ScaleTime : IntervalAction <NSCopying>
+{
+	float timeScaleTarget;
+}
+/** alter the speed of the inner function in runtime */
+@property (readwrite) float timeScaleTarget;
+/** creates the action */
++(id) actionWithTimeScaleTarget:(float)aTimeScaleTarget duration:(ccTime)aDuration;
+/** initializes the action */
+-(id) initWithTimeScaleTarget:(float)aTimeScaleTarget duration:(ccTime)aDuration;
+@end

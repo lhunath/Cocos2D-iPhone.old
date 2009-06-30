@@ -53,7 +53,6 @@
 #import "ParticleExamples.h"
 #import "Primitives.h"
 #import "Scene.h"
-#import "Scheduler.h"
 #import "Sprite.h"
 #import "TextureMgr.h"
 #import "TextureNode.h"

@@ -511,8 +511,6 @@
 		5064164C0F9C9B24007A7B24 /* bitmapFontTest.png in Resources */ = {isa = PBXBuildFile; fileRef = 5064164A0F9C9B24007A7B24 /* bitmapFontTest.png */; };
 		506417F00F9CBA72007A7B24 /* bitmapFontTest2.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 506417EE0F9CBA72007A7B24 /* bitmapFontTest2.fnt */; };
 		506417F10F9CBA72007A7B24 /* bitmapFontTest2.png in Resources */ = {isa = PBXBuildFile; fileRef = 506417EF0F9CBA72007A7B24 /* bitmapFontTest2.png */; };
-		506602110E38A70D000B500E /* Scheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5066020F0E38A70D000B500E /* Scheduler.h */; };
-		506602120E38A70D000B500E /* Scheduler.m in Sources */ = {isa = PBXBuildFile; fileRef = 506602100E38A70D000B500E /* Scheduler.m */; };
 		506881F80E95761200F943E5 /* b1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5001659D0E72DB470085673F /* b1.png */; };
 		506881F90E95761200F943E5 /* b2.png in Resources */ = {isa = PBXBuildFile; fileRef = 5001659E0E72DB470085673F /* b2.png */; };
 		506881FA0E95761200F943E5 /* f1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5001659F0E72DB470085673F /* f1.png */; };
@@ -1120,6 +1118,7 @@
 		8EDF3FDD0F6BE3FC00F54643 /* listener-marker.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EDF3FD90F6BE3F400F54643 /* listener-marker.png */; };
 		8EDF3FDE0F6BE3FC00F54643 /* source-marker.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EDF3FDA0F6BE3F400F54643 /* source-marker.png */; };
 		AAEA834B0FD5704400F08728 /* blocks.png in Resources */ = {isa = PBXBuildFile; fileRef = AAEA834A0FD5704400F08728 /* blocks.png */; };
+		DA2576BD0FFACE08004EDC3A /* Schedule.m in Sources */ = {isa = PBXBuildFile; fileRef = DA2576BC0FFACE08004EDC3A /* Schedule.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1724,8 +1723,6 @@
 		5064164A0F9C9B24007A7B24 /* bitmapFontTest.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bitmapFontTest.png; sourceTree = "<group>"; };
 		506417EE0F9CBA72007A7B24 /* bitmapFontTest2.fnt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bitmapFontTest2.fnt; sourceTree = "<group>"; };
 		506417EF0F9CBA72007A7B24 /* bitmapFontTest2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bitmapFontTest2.png; sourceTree = "<group>"; };
-		5066020F0E38A70D000B500E /* Scheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scheduler.h; sourceTree = "<group>"; };
-		506602100E38A70D000B500E /* Scheduler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Scheduler.m; sourceTree = "<group>"; };
 		506881E60E9575E100F943E5 /* AtlasTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AtlasTest.h; path = tests/AtlasTest.h; sourceTree = "<group>"; };
 		506881E70E9575E100F943E5 /* AtlasTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AtlasTest.m; path = tests/AtlasTest.m; sourceTree = "<group>"; };
 		506882110E95761200F943E5 /* AtlasTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AtlasTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2022,6 +2019,8 @@
 		8EDF3FD90F6BE3F400F54643 /* listener-marker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "listener-marker.png"; path = "experimental/sound-engine/sound-engine-sample/listener-marker.png"; sourceTree = SOURCE_ROOT; };
 		8EDF3FDA0F6BE3F400F54643 /* source-marker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "source-marker.png"; path = "experimental/sound-engine/sound-engine-sample/source-marker.png"; sourceTree = SOURCE_ROOT; };
 		AAEA834A0FD5704400F08728 /* blocks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blocks.png; sourceTree = "<group>"; };
+		DA2576BB0FFACE08004EDC3A /* Schedule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Schedule.h; sourceTree = "<group>"; };
+		DA2576BC0FFACE08004EDC3A /* Schedule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Schedule.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2782,14 +2781,14 @@
 				50A07B7A0E4CBCD300AAF0BB /* cocos2d.m */,
 				50637A150E95397A000C9182 /* TextureAtlas.h */,
 				50637A160E95397A000C9182 /* TextureAtlas.m */,
-				5066020F0E38A70D000B500E /* Scheduler.h */,
-				506602100E38A70D000B500E /* Scheduler.m */,
 				50B2CCC20E119B8E00AE9530 /* Primitives.h */,
 				50B2CCC30E119B8E00AE9530 /* Primitives.m */,
 				509E665C0E06CD940050992C /* Camera.h */,
 				509E665D0E06CD940050992C /* Camera.m */,
 				5018F2560DFDEAFF00C013A5 /* Director.h */,
 				5018F2570DFDEAFF00C013A5 /* Director.m */,
+				DA2576BB0FFACE08004EDC3A /* Schedule.h */,
+				DA2576BC0FFACE08004EDC3A /* Schedule.m */,
 				5018F2670DFDEAFF00C013A5 /* TextureMgr.h */,
 				5018F2680DFDEAFF00C013A5 /* TextureMgr.m */,
 				50F9E8160E1AA34E000E7616 /* ccTypes.h */,
@@ -3650,7 +3649,6 @@
 				50F9E8170E1AA34E000E7616 /* ccTypes.h in Headers */,
 				504055B00E3230BD00213FEF /* ParticleExamples.h in Headers */,
 				509E574C0E36234300BD7F09 /* TextureNode.h in Headers */,
-				506602110E38A70D000B500E /* Scheduler.h in Headers */,
 				50305AF40E40E33200F63373 /* cocos2d.h in Headers */,
 				501CCFAD0E99657C00B86F68 /* EAGLView.h in Headers */,
 				501CCFB00E99657C00B86F68 /* glu.h in Headers */,
@@ -5416,7 +5414,6 @@
 				5038B6B30E196CD8009A621E /* ParticleSystem.m in Sources */,
 				504055B10E3230BD00213FEF /* ParticleExamples.m in Sources */,
 				509E574D0E36234300BD7F09 /* TextureNode.m in Sources */,
-				506602120E38A70D000B500E /* Scheduler.m in Sources */,
 				50A07B7B0E4CBCD300AAF0BB /* cocos2d.m in Sources */,
 				501CCFAE0E99657C00B86F68 /* EAGLView.m in Sources */,
 				501CCFAF0E99657C00B86F68 /* glu.c in Sources */,
@@ -5573,6 +5570,7 @@
 			files = (
 				505B63980F2F4210001B4104 /* main.m in Sources */,
 				505B63A80F2F4295001B4104 /* EaseActionsTest.m in Sources */,
+				DA2576BD0FFACE08004EDC3A /* Schedule.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
