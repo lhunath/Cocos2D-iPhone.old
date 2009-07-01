@@ -140,9 +140,17 @@ enum {
 	[inScene onEnterTransitionDidFinish];
 }
 
--(void) onEnterTransitionDidFinish
-{
-	[super onEnterTransitionDidFinish];
+// inScene and outScene are not conventional children of this node; so default tick does not propagate to them.
+// custom tick
+-(void) tick:(ccTime)dt {
+    
+    if (!isRunning)
+        return;
+    
+    [super tick:dt];
+
+    [inScene tick:dt];
+    [outScene tick:dt];
 }
 
 -(void) dealloc

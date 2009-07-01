@@ -14,15 +14,18 @@ typedef void (*TICK_IMP)(id, SEL, ccTime);
 @interface Schedule : NSObject
 {
     ccTime  elapsed, interval;
+    BOOL    scaleTime;
+
     SEL     selector;
 }
 
-+ (Schedule *)scheduleSelector:(SEL)aSelector withInterval:(ccTime)anInterval;
++ (Schedule *)scheduleSelector:(SEL)aSelector withInterval:(ccTime)anInterval scaleTime:(BOOL)st;
 
-- (id)initWithSelector:(SEL)aSelector interval:(ccTime)anInterval;
+- (id)initWithSelector:(SEL)aSelector interval:(ccTime)anInterval scaleTime:(BOOL)st;
 
-@property (readwrite, assign) ccTime elapsed;
-@property (readwrite, assign) ccTime interval;
-@property (readwrite, assign) SEL selector;
+@property (readwrite, assign) ccTime    elapsed;
+@property (readwrite, assign) ccTime    interval;
+@property (readwrite, assign) BOOL      scaleTime;
+@property (readwrite, assign) SEL       selector;
 
 @end

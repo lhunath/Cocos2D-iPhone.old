@@ -361,10 +361,8 @@ typedef struct _ccBezierConfig {
  */
 @interface ScaleTime : IntervalAction <NSCopying>
 {
-	float timeScaleTarget;
+	float timeScaleTarget, delta;
 }
-/** alter the speed of the inner function in runtime */
-@property (readwrite) float timeScaleTarget;
 /** creates the action */
 +(id) actionWithTimeScaleTarget:(float)aTimeScaleTarget duration:(ccTime)aDuration;
 /** initializes the action */

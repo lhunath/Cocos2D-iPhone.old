@@ -38,7 +38,7 @@
 -(void) childrenAlloc;
 -(void) scheduleAlloc;
 // helper that reorder a child
--(void) insertChild:(CocosNode*)child z:(int)z;
+-(void) insertChild:(CocosNode*)child z:(int)z scaleTime:(NSNumber *)aScaleTime;
 // used internally to alter the zOrder variable. DON'T call this method manually
 -(void) _setZOrder:(int) z;
 -(void) detachChild:(CocosNode *)child cleanup:(BOOL)doCleanup;
@@ -181,6 +181,7 @@
 
 		// actions (lazy allocs)
 		actions = nil;
+        actionsScaled = nil;
 		
 		// scheduled selectors (lazy allocs)
 		scheduledSelectors = nil;
@@ -223,6 +224,7 @@
 	}
 	
 	[children release];
+    [childrenScaled release];
 	
 	// schedules
 	[scheduledSelectors release];
@@ -230,6 +232,7 @@
 	// actions
 	[self stopAllActions];
 	ccArrayFree(actions);
+	ccArrayFree(actionsScaled);
 	
 	[super dealloc];
 }
@@ -239,6 +242,7 @@
 -(void) childrenAlloc
 {
 	children = [[NSMutableArray arrayWithCapacity:4] retain];
+    childrenScaled = [[NSMutableArray arrayWithCapacity:4] retain];
 }
 
 // camera: lazy alloc
@@ -254,15 +258,15 @@
  * If a class want's to extend the 'addChild' behaviour it only needs
  * to override this selector
  */
--(id) addChild: (CocosNode*) child z:(int)z tag:(int) aTag
-{	
+-(id) addChild: (CocosNode*)child z:(int)z tag:(int)aTag scaleTime:(BOOL)aScaleTime
+{
 	NSAssert( child != nil, @"Argument must be non-nil");
 	NSAssert( child.parent == nil, @"child already added. It can't be added again");
 	
 	if( ! children )
 		[self childrenAlloc];
 	
-	[self insertChild:child z:z];
+	[self insertChild:child z:z scaleTime:[NSNumber numberWithBool:aScaleTime]];
 	
 	child.tag = aTag;
 	
@@ -271,6 +275,15 @@
 	if( isRunning )
 		[child onEnter];
 	return self;
+}
+
+/*
+ * Note: If you were overriding this method for extending the behaviour; you should change that
+ * to overriding addChild:z:tag:scaleTime: instead!
+ */
+-(id) addChild: (CocosNode*) child z:(int)z tag:(int) aTag
+{
+    return [self addChild:child z:z tag:aTag scaleTime:YES];
 }
 
 -(id) addChild: (CocosNode*) child z:(int)z
@@ -324,6 +337,7 @@
 	}
 	
 	[children removeAllObjects];
+    [childrenScaled removeAllObjects];
 }
 
 -(CocosNode*) getChildByTag:(int) aTag
@@ -350,7 +364,9 @@
 	if (doCleanup)
 		[child cleanup];
 	
-	[children removeObject: child];
+    NSUInteger c = [children indexOfObject:child];
+	[children removeObjectAtIndex:c];
+    [childrenScaled removeObjectAtIndex:c];
 }
 
 // used internally to alter the zOrder variable. DON'T call this method manually
@@ -360,21 +376,24 @@
 }
 
 // helper used by reorderChild & add
--(void) insertChild:(CocosNode*) child z:(int)z
+-(void) insertChild:(CocosNode*) child z:(int)z scaleTime:(NSNumber *)scaleTime
 {
 	int index=0;
 	BOOL added = NO;
 	for( CocosNode *a in children ) {
 		if ( a.zOrder > z ) {
 			added = YES;
-			[ children insertObject:child atIndex:index];
+			[children insertObject:child atIndex:index];
+            [childrenScaled insertObject:scaleTime atIndex:index];
 			break;
 		}
 		index++;
 	}
 	
-	if( ! added )
+	if( ! added ) {
 		[children addObject:child];
+        [childrenScaled addObject:scaleTime];
+    }
 	
 	[child _setZOrder:z];
 }
@@ -384,9 +403,13 @@
 	NSAssert( child != nil, @"Child must be non-nil");
 	
 	[child retain];
-	[children removeObject:child];
+    NSUInteger c = [children indexOfObject:child];
+    NSNumber *st = [childrenScaled objectAtIndex:c];
+    
+    [children removeObjectAtIndex:c];
+    [childrenScaled removeObjectAtIndex:c];
 	
-	[self insertChild:child z:z];
+	[self insertChild:child z:z scaleTime:st];
 	
 	[child release];
 }
@@ -517,13 +540,22 @@
 
 -(void) actionAlloc
 {
-	if( actions == nil )
+	if( actions == nil ) {
 		actions = ccArrayNew(4);
-	else if( actions->num == actions->max )
+		actionsScaled = ccArrayNew(4);
+    }
+	else if( actions->num == actions->max ) {
 		ccArrayDoubleCapacity(actions);
+		ccArrayDoubleCapacity(actionsScaled);
+    }
 }
 
 -(Action*) runAction:(Action*) action
+{
+    return [self runAction:action scaleTime:YES];
+}
+
+-(Action*) runAction:(Action*) action scaleTime:(BOOL)aScaleTime
 {
 	NSAssert( action != nil, @"Argument must be non-nil");
 	
@@ -533,11 +565,13 @@
 	NSAssert( !ccArrayContainsObject(actions, action), @"Action already running");
 	
 	ccArrayAppendObject(actions, action);
+	ccArrayAppendObject(actionsScaled, [NSNumber numberWithBool:aScaleTime]);
 	
 	action.target = self;
 	[action start];
 	
-	[self schedule: @selector(step_:)];
+    // Scheduled as unaffected by time scaling; it handles that itself.
+	[self schedule: @selector(step_:) interval:0 scaleTime:NO];
 	
 	return action;
 }
@@ -553,6 +587,7 @@
 	}
 	
 	ccArrayRemoveAllObjects(actions);
+    ccArrayRemoveAllObjects(actionsScaled);
 }
 
 -(void) stopAction: (Action*) action
@@ -570,6 +605,7 @@
 				currentActionSalvaged = YES;
 			}
 			ccArrayRemoveObjectAtIndex(actions, i);
+			ccArrayRemoveObjectAtIndex(actionsScaled, i);
 	
 			// update actionIndex in case we are in step_, looping over the actions
 			if( actionIndex >= (int) i )
@@ -594,6 +630,7 @@
 					currentActionSalvaged = YES;
 				}
 				ccArrayRemoveObjectAtIndex(actions, i);
+				ccArrayRemoveObjectAtIndex(actionsScaled, i);
 				
 				// update actionIndex in case we are in step_, looping over the actions
 				if (actionIndex >= (int) i)
@@ -629,16 +666,33 @@
 	return actions ? actions->num : 0;
 }
 
+-(void) setTimeScale:(float)ts {
+    
+    if(ts < 0.001f)
+        ts = 0;
+    
+    timeScale = ts;
+}
+
 -(void) step_: (ccTime) dt
 {
-	// call all actions
+    if(timeScale != 1.0f)
+        NSLog(@"");
+    // step_: is always scheduled so that its time is unaffected by our timescale.
+    // That way we can pass either the scaled or unscaled time to our actions depending on which they request.
+    ccTime dtScaled = dt * timeScale;
 	
 	// The 'actions' ccArray may change while inside this loop.
 	for( actionIndex = 0; actionIndex < (int) actions->num; actionIndex++) {
 		currentAction = actions->arr[actionIndex];
 		currentActionSalvaged = NO;
 		
-		[currentAction step: dt];
+		BOOL currentActionScaled = [(NSNumber *) actionsScaled->arr[actionIndex] boolValue];
+        if (currentActionScaled) {
+            if (dtScaled > 0)
+                [currentAction step: dtScaled];
+        } else
+            [currentAction step: dt];
 		
 		if( currentActionSalvaged ) {
 			// The currentAction told the node to stop it. To prevent the action from
@@ -661,15 +715,26 @@
 		[self unschedule: @selector(step_:)];
 }
 
--(void) tick:(ccTime)dt {
+-(void) tick:(ccTime)dt
+{
 
+    // Don't tick when this node is not in the scene graph.
     if (!isRunning)
         return;
+
+    // Prevent the node from being dealloced if it's no longer needed until we're done ticking.
+    [self retain];
     
-    dt *= timeScale;
+    // Apply our time scale to our time.
+    ccTime dtScaled = dt * timeScale;
     
+    // Let our actions/scheduled methods inherit our time.
     for(Schedule *schedule in [scheduledSelectors allValues]) {
-        schedule.elapsed += dt;
+        if (schedule.scaleTime) {
+            if (dtScaled > 0)
+                schedule.elapsed += dtScaled;
+        } else
+            schedule.elapsed += dt;
         
         if (schedule.elapsed >= schedule.interval) {
             TICK_IMP selectorImplementation = (TICK_IMP)[self methodForSelector:schedule.selector];
@@ -681,8 +746,16 @@
         }
     }
     
-    for(CocosNode *child in children)
-        [child tick:dt];
+    // Let our children inherit our time.
+    for(NSUInteger c = 0; c < children.count; ++c)
+        if ([childrenScaled objectAtIndex:c]) {
+            if (dtScaled > 0)
+                [[children objectAtIndex:c] tick:dtScaled];
+        } else
+            [[children objectAtIndex:c] tick:dt];
+
+    // Let the node be dealloced now if it's no longer needed.
+    [self release];
 }
 
 #pragma mark CocosNode Time
@@ -699,6 +772,11 @@
 
 -(void) schedule: (SEL) selector interval:(ccTime)interval
 {
+    [self schedule:selector interval:interval scaleTime:YES];
+}
+
+-(void) schedule: (SEL) selector interval:(ccTime)interval scaleTime:(BOOL)aScaleTime
+{
 	NSAssert( selector != nil, @"Argument must be non-nil");
 	NSAssert( interval >=0, @"Arguemnt must be positive");
 	
@@ -710,7 +788,7 @@
 		return;
 	}
 
-	[scheduledSelectors setObject:[Schedule scheduleSelector:selector withInterval:interval] forKey:NSStringFromSelector(selector)];
+	[scheduledSelectors setObject:[Schedule scheduleSelector:selector withInterval:interval scaleTime:aScaleTime] forKey:NSStringFromSelector(selector)];
 }
 
 -(void) unschedule: (SEL) selector

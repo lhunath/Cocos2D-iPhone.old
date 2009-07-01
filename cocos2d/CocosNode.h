@@ -105,7 +105,7 @@ enum {
 	int zOrder;
 	
 	// array of children
-	NSMutableArray *children;
+	NSMutableArray *children, *childrenScaled;
 	
 	// is running
 	BOOL isRunning;
@@ -117,7 +117,7 @@ enum {
 	int tag;
 	
 	// actions
-	struct ccArray *actions;
+	struct ccArray *actions, *actionsScaled;
 	int actionIndex;
 	Action *currentAction;
 	BOOL currentActionSalvaged;
@@ -224,6 +224,9 @@ enum {
  */
 -(id) addChild: (CocosNode*)node z:(int)z tag:(int)tag;
 
+/** Use this method to add children that should be unaffected by this node's time scale by setting scaleTime to NO */
+-(id) addChild: (CocosNode*)node z:(int)z tag:(int)tag scaleTime:(BOOL)aScaleTime;
+
 // composition: REMOVE
 
 /** Removes a child from the container. It will also cleanup all running actions depending on the cleanup parameter.
@@ -283,6 +286,8 @@ enum {
  @return An Action pointer
  */
 -(Action*) runAction: (Action*) action;
+/** Use this method to schedule actions that should be unaffected by this node's time scale by setting scaleTime to NO */
+-(Action*) runAction:(Action*) action scaleTime:(BOOL)aScaleTime;
 /** Removes all actions from the running action list */
 -(void) stopAllActions;
 /** Removes an action from the running action list */
@@ -319,6 +324,8 @@ enum {
  If time is 0 it will be ticked every frame.
  */
 -(void) schedule: (SEL) s interval:(ccTime)seconds;
+/** Use this method to schedule selectors that should be unaffected by this node's time scale by setting scaleTime to NO */
+-(void) schedule: (SEL) s interval:(ccTime)seconds scaleTime:(BOOL)st;
 /** unschedule a selector */
 -(void) unschedule: (SEL) s;
 

@@ -179,7 +179,7 @@ static Director *_sharedDirector = nil;
 	
 	/* recursively pass time to nodes */
 	[self calculateDeltaTime];
-	if( ! paused )
+	if( ! isPaused_ )
         [runningScene_ tick:dt];
 	
 	glPushMatrix();
