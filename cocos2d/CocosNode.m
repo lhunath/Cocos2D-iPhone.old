@@ -516,7 +516,7 @@
 
 -(void) onEnter
 {
-	for( id child in children )
+	for( id child in [[children copy] autorelease] )
 		[child onEnter];
 
 	isRunning = YES;
@@ -524,7 +524,7 @@
 
 -(void) onEnterTransitionDidFinish
 {
-	for( id child in children )
+	for( id child in [[children copy] autorelease] )
 		[child onEnterTransitionDidFinish];
 }
 
