@@ -34,9 +34,9 @@
 	return self;
 }
 
--(void)start
+-(void)startWithTarget:(CocosNode *)aTarget
 {
-	[super start];
+	[super startWithTarget:aTarget];
 
 	GridBase *newgrid = [self grid];
 	
@@ -177,11 +177,10 @@
 	[super dealloc];
 }
 
--(void)start
+-(void)startWithTarget:(CocosNode *)aTarget
 {
-	[super start];
-	other.target = self.target;
-	[other start];
+	[super startWithTarget:aTarget];
+	[other startWithTarget:target];
 }
 
 -(void) update: (ccTime) time;
@@ -233,11 +232,10 @@
 	[super dealloc];
 }
 
--(void)start
+-(void)startWithTarget:(CocosNode *)aTarget
 {
-	[super start];
-	other.target = self.target;
-	[other start];
+	[super startWithTarget:aTarget];
+	[other startWithTarget:target];
 }
 
 -(void) update: (ccTime) time;
@@ -281,11 +279,10 @@
 	[super dealloc];
 }
 
--(void)start
+-(void)startWithTarget:(CocosNode *)aTarget
 {
-	[super start];
-	other.target = self.target;
-	[other start];
+	[super startWithTarget:aTarget];
+	[other startWithTarget:target];
 }
 
 -(void) update: (ccTime) time;
@@ -305,9 +302,9 @@
 
 @implementation StopGrid
 
--(void)start
+-(void)startWithTarget:(CocosNode *)aTarget
 {
-	[super start];
+	[super startWithTarget:aTarget];
 
 	if ( self.target.grid && self.target.grid.active )
 		self.target.grid.active = NO;
@@ -334,9 +331,9 @@
 	return self;
 }
 
--(void)start
+-(void)startWithTarget:(CocosNode *)aTarget
 {
-	[super start];
+	[super startWithTarget:aTarget];
 
 	if ( self.target.grid && self.target.grid.active )
 		self.target.grid.reuseGrid += t;

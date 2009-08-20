@@ -43,6 +43,7 @@
 
 -(void) initGLDefaultValues;
 
+-(void) preMainLoop;
 -(void) mainLoop;
 -(void) setNextScene;
 // rotates the screen if Landscape mode is activated

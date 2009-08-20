@@ -135,7 +135,6 @@
 	isTransformDirty_ = isInverseDirty_ = YES;
 }
 
-
 #pragma mark CocosNode - Init & cleanup
 
 +(id) node
@@ -567,8 +566,7 @@
 	ccArrayAppendObject(actions, action);
 	ccArrayAppendObject(actionsScaled, [NSNumber numberWithBool:aScaleTime]);
 	
-	action.target = self;
-	[action start];
+	[action startWithTarget:self];
 	
     // Scheduled as unaffected by time scaling; it handles that itself.
 	[self schedule: @selector(step_:) interval:0 scaleTime:NO];
@@ -586,7 +584,12 @@
 		currentActionSalvaged = YES;
 	}
 	
-	ccArrayRemoveAllObjects(actions);
+    for( NSUInteger i = 0; i < actions->num; i++) {
+        Action *action = ((Action *)actions->arr[i]);
+        [action stop];
+    }
+        
+    ccArrayRemoveAllObjects(actions);
     ccArrayRemoveAllObjects(actionsScaled);
 }
 
@@ -604,6 +607,7 @@
 				[currentAction retain];
 				currentActionSalvaged = YES;
 			}
+            [action stop];
 			ccArrayRemoveObjectAtIndex(actions, i);
 			ccArrayRemoveObjectAtIndex(actionsScaled, i);
 	
@@ -629,6 +633,7 @@
 					[currentAction retain];
 					currentActionSalvaged = YES;
 				}
+                [a stop];
 				ccArrayRemoveObjectAtIndex(actions, i);
 				ccArrayRemoveObjectAtIndex(actionsScaled, i);
 				

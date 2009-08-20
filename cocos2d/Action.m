@@ -58,14 +58,14 @@
 	return copy;
 }
 
--(void) start
+-(void) startWithTarget:(CocosNode *)aTarget
 {
-	// override me
+    self.target = aTarget;
 }
 
 -(void) stop
 {
-	// override me
+	self.target = nil;
 }
 
 -(BOOL) isDone
@@ -132,18 +132,17 @@
 	[super dealloc];
 }
 
--(void) start
+-(void) startWithTarget:(CocosNode *)aTarget
 {
-	[super start];
-	other.target = target;
-	[other start];
+	[super startWithTarget:aTarget];
+	[other startWithTarget:target];
 }
 
 -(void) step:(ccTime) dt
 {
 	[other step: dt];
 	if( [other isDone] ) {
-		[other start];
+		[other startWithTarget:target];
 	}
 }
 

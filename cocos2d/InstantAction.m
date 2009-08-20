@@ -56,9 +56,9 @@
 // Show
 //
 @implementation Show
--(void) start
+-(void) startWithTarget:(CocosNode *)aTarget
 {
-	[super start];
+	[super startWithTarget:aTarget];
 	target.visible = YES;
 }
 -(FiniteTimeAction*) reverse
@@ -71,9 +71,9 @@
 // Hide
 //
 @implementation Hide
--(void) start
+-(void) startWithTarget:(CocosNode *)aTarget
 {
-	[super start];
+	[super startWithTarget:aTarget];
 	target.visible = NO;
 }
 -(FiniteTimeAction*) reverse
@@ -86,9 +86,9 @@
 // ToggleVisibility
 //
 @implementation ToggleVisibility
--(void) start
+-(void) startWithTarget:(CocosNode *)aTarget
 {
-	[super start];
+	[super startWithTarget:aTarget];
 	target.visible = ! target.visible;
 }
 @end
@@ -115,9 +115,9 @@
 	return copy;
 }
 
--(void) start
+-(void) startWithTarget:(CocosNode *)aTarget
 {
-	[super start];
+	[super startWithTarget:aTarget];
 	target.position = position;
 }
 @end
@@ -153,9 +153,9 @@
 }
 
 
--(void) start
+-(void) startWithTarget:(CocosNode *)aTarget
 {
-	[super start];
+	[super startWithTarget:aTarget];
 	[self execute];
 }
 

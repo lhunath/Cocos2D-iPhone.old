@@ -160,6 +160,9 @@
 {
 //	int blendSrc, blendDst;
 //	int colorMode;
+    
+    if (!particleIdx)
+        return;
 	
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texture_.name);

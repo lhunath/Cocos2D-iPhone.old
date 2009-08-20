@@ -96,11 +96,16 @@
 	//	colorModulate = YES;
 		
 		autoRemoveOnFinish_ = NO;
-
-		[self schedule:@selector(step:)];
 	}
 
 	return self;
+}
+
+-(void) onEnter {
+    
+    [self schedule:@selector(step:)];
+    
+    [super onEnter];
 }
 
 -(void) dealloc

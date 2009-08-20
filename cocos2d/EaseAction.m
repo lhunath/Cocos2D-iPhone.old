@@ -47,11 +47,10 @@
 	[super dealloc];
 }
 
--(void) start
+-(void) startWithTarget:(CocosNode *)aTarget
 {
-	[super start];
-	other.target = target;
-	[other start];
+	[super startWithTarget:aTarget];
+	[other startWithTarget:target];
 }
 
 -(void) update: (ccTime) t
