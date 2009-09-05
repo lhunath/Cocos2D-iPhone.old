@@ -362,6 +362,8 @@ enum {
  @since v0.7.1
  */
 - (CGPoint)convertToWorldSpaceAR:(CGPoint)nodePoint;
+/** converts local coordinate to window space */
+- (CGPoint)convertToWindowSpace:(CGPoint)nodePoint;
 // convenience methods which take a UITouch instead of CGPoint
 /// XXX: needs documentation
 /// @since v0.7.1

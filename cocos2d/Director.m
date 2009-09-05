@@ -487,29 +487,53 @@ static Director *_sharedDirector = nil;
 #pragma mark Director Scene Landscape
 
 // convert a coordinate from uikit to opengl
--(CGPoint)convertCoordinate:(CGPoint)p
+-(CGPoint)convertToGL:(CGPoint)uiPoint
 {
-	int newY = openGLView_.frame.size.height - p.y;
-	int newX = openGLView_.frame.size.width -p.x;
-	
-	CGPoint ret;
+	int oppositeX = openGLView_.frame.size.width - uiPoint.x;
+	int oppositeY = openGLView_.frame.size.height - uiPoint.y;
+
+	CGPoint glPoint;
 	switch ( deviceOrientation_) {
 		case CCDeviceOrientationPortrait:
-			 ret = ccp( p.x, newY );
+			 glPoint = ccp(uiPoint.x, oppositeY);
 			break;
 		case CCDeviceOrientationPortraitUpsideDown:
-			ret = ccp(newX, p.y);
+			glPoint = ccp(oppositeX, uiPoint.y);
 			break;
 		case CCDeviceOrientationLandscapeLeft:
-			ret.x = p.y;
-			ret.y = p.x;
+			glPoint = ccp(uiPoint.y, uiPoint.x);
 			break;
 		case CCDeviceOrientationLandscapeRight:
-			ret.x = newY;
-			ret.y = newX;
+			glPoint = ccp(oppositeY, oppositeX);
 			break;
-		}
-	return ret;
+    }
+    
+	return glPoint;
+}
+
+-(CGPoint)convertToUI:(CGPoint)glPoint
+{
+    CGSize winSize = [self winSize];
+	int oppositeX = winSize.width - glPoint.x;
+	int oppositeY = winSize.height - glPoint.y;
+
+	CGPoint uiPoint;
+	switch ( deviceOrientation_) {
+		case CCDeviceOrientationPortrait:
+            uiPoint = ccp(glPoint.x, glPoint.y);
+			break;
+		case CCDeviceOrientationPortraitUpsideDown:
+			uiPoint = ccp(oppositeX, oppositeY);
+			break;
+		case CCDeviceOrientationLandscapeLeft:
+			uiPoint = ccp(glPoint.y, oppositeX);
+			break;
+		case CCDeviceOrientationLandscapeRight:
+			uiPoint = ccp(oppositeY, glPoint.x);
+			break;
+    }
+	
+	return uiPoint;
 }
 
 // get the current size of the glview

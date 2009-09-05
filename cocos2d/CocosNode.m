@@ -681,8 +681,6 @@
 
 -(void) step_: (ccTime) dt
 {
-    if(timeScale != 1.0f)
-        NSLog(@"");
     // step_: is always scheduled so that its time is unaffected by our timescale.
     // That way we can pass either the scaled or unscaled time to our actions depending on which they request.
     ccTime dtScaled = dt * timeScale;
@@ -877,19 +875,25 @@
 	return [self convertToWorldSpace:nodePoint];
 }
 
+- (CGPoint)convertToWindowSpace:(CGPoint)nodePoint
+{
+    CGPoint worldPoint = [self convertToWorldSpace:nodePoint];
+	return [[Director sharedDirector] convertToUI:worldPoint];
+}
+
 // convenience methods which take a UITouch instead of CGPoint
 
 - (CGPoint)convertTouchToNodeSpace:(UITouch *)touch
 {
 	CGPoint point = [touch locationInView: [touch view]];
-	point = [[Director sharedDirector] convertCoordinate: point];
+	point = [[Director sharedDirector] convertToGL: point];
 	return [self convertToNodeSpace:point];
 }
 
 - (CGPoint)convertTouchToNodeSpaceAR:(UITouch *)touch
 {
 	CGPoint point = [touch locationInView: [touch view]];
-	point = [[Director sharedDirector] convertCoordinate: point];
+	point = [[Director sharedDirector] convertToGL: point];
 	return [self convertToNodeSpaceAR:point];
 }
 

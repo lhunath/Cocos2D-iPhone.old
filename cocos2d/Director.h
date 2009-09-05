@@ -174,7 +174,11 @@ and when to execute the Scenes
 /** converts a UIKit coordinate to an OpenGL coordinate
  Useful to convert (multi) touchs coordinates to the current layout (portrait or landscape)
  */
--(CGPoint) convertCoordinate: (CGPoint) p;
+-(CGPoint) convertToGL: (CGPoint) p;
+/** converts an OpenGL coordinate to a UIKit coordinate
+ Useful to convert node points to window points for calls such as glScissor
+ */
+-(CGPoint) convertToUI:(CGPoint)p;
 
 // Scene Management
 
