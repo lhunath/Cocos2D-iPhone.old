@@ -127,6 +127,31 @@ enum {
 }
 @end
 
+@interface Effect4 : TextLayer
+{}
+@end
+
+@implementation Effect4
+-(void) onEnter
+{
+	[super onEnter];
+		
+	id lens = [Lens3D actionWithPosition:ccp(100,180) radius:150 grid:ccg(32,24) duration:10];
+//	id move = [MoveBy actionWithDuration:5 position:ccp(400,0)];
+	id move = [JumpBy actionWithDuration:5 position:ccp(380,0) height:100 jumps:4];
+	id move_back = [move reverse];
+	id seq = [Sequence actions: move, move_back, nil];
+	[[ActionManager sharedManager] addAction:seq target:lens paused:NO];
+
+	[self runAction: lens];
+}
+-(NSString*) title
+{
+	return @"Jumpy Lens3D";
+}
+@end
+
+
 
 #pragma mark Demo - order
 
@@ -136,6 +161,7 @@ static NSString *actionList[] =
 	@"Effect3",
 	@"Effect1",
 	@"Effect2",
+	@"Effect4",
 };
 
 Class nextAction()
@@ -176,7 +202,7 @@ Class restartAction()
 		x = size.width;
 		y = size.height;
 		
-		Sprite *bg = [Sprite spriteWithFile:@"background.png"];
+		Sprite *bg = [Sprite spriteWithFile:@"background3.png"];
 		[self addChild: bg z:0 tag:kTagBackground];
 		bg.anchorPoint = CGPointZero;
 //		bg.position = ccp(x/2,y/2);
@@ -265,7 +291,7 @@ Class restartAction()
 	[window setMultipleTouchEnabled:NO];
 	
 	// must be called before any othe call to the director
-	[Director useFastDirector];
+//	[Director useFastDirector];
 	
 	// Use this pixel format to have transparent buffers
 	// BUG: glClearColor() in FBO needs to be converted to RGB565

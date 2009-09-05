@@ -66,10 +66,15 @@
 @interface MenuItemLabel : MenuItem  <CocosNodeRGBA>
 {
 	CocosNode<CocosNodeLabel, CocosNodeRGBA> *label_;
+	ccColor3B	colorBackup;
+	ccColor3B	disabledColor_;
 }
 
+/** the color that will be used to disable the item */
+@property (nonatomic,readwrite) ccColor3B disabledColor;
+
 /** Label that is rendered. It can be any CocosNode that implements the CocosNodeLabel */
-@property (readwrite,retain) CocosNode<CocosNodeLabel, CocosNodeRGBA>* label;
+@property (nonatomic,readwrite,retain) CocosNode<CocosNodeLabel, CocosNodeRGBA>* label;
 
 /** creates a MenuItemLabel with a Label, target and selector */
 +(id) itemWithLabel:(CocosNode<CocosNodeLabel,CocosNodeRGBA>*)label target:(id)target selector:(SEL)selector;
@@ -123,7 +128,7 @@
 /** get the font name */
 +(NSString*) fontName;
 
-/** creates a menu item from a string. Use it with MenuItemToggle */
+/** creates a menu item from a string without target/selector. To be used with MenuItemToggle */
 +(id) itemFromString: (NSString*) value;
 
 /** creates a menu item from a string with a target/selector */
@@ -148,11 +153,11 @@
 }
 
 /** the image used when the item is not selected */
-@property (readwrite,retain) CocosNode<CocosNodeRGBA> *normalImage;
+@property (nonatomic,readwrite,retain) CocosNode<CocosNodeRGBA> *normalImage;
 /** the image used when the item is selected */
-@property (readwrite,retain) CocosNode<CocosNodeRGBA> *selectedImage;
+@property (nonatomic,readwrite,retain) CocosNode<CocosNodeRGBA> *selectedImage;
 /** the image used when the item is disabled */
-@property (readwrite,retain) CocosNode<CocosNodeRGBA> *disabledImage;
+@property (nonatomic,readwrite,retain) CocosNode<CocosNodeRGBA> *disabledImage;
 
 /** creates a menu item with a normal and selected image*/
 +(id) itemFromNormalSprite:(CocosNode<CocosNodeRGBA>*)normalSprite selectedSprite:(CocosNode<CocosNodeRGBA>*)selectedSprite;
@@ -216,18 +221,21 @@
 {
 	NSUInteger selectedIndex_;
 	NSMutableArray* subItems_;
-	GLubyte opacity_, r_, g_, b_;
+	GLubyte		opacity_;
+	ccColor3B	color_;
 }
 
 /** conforms with CocosNodeRGBA protocol */
-@property (readonly) GLubyte opacity,r,g,b;
+@property (nonatomic,readonly) GLubyte opacity;
+/** conforms with CocosNodeRGBA protocol */
+@property (nonatomic,readonly) ccColor3B color;
 
 /** returns the selected item */
-@property (readwrite) NSUInteger selectedIndex;
+@property (nonatomic,readwrite) NSUInteger selectedIndex;
 /** NSMutableArray that contains the subitems. You can add/remove items in runtime, and you can replace the array with a new one.
  @since v0.7.2
  */
-@property (readwrite,retain) NSMutableArray *subItems;
+@property (nonatomic,readwrite,retain) NSMutableArray *subItems;
 
 /** creates a menu item from a list of items with a target/selector */
 +(id) itemWithTarget:(id)t selector:(SEL)s items:(MenuItem*) item, ... NS_REQUIRES_NIL_TERMINATION;

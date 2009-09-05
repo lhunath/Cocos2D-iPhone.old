@@ -67,6 +67,7 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
 #import <OpenGLES/ES1/glext.h>
 
+#import "ccMacros.h"
 #import "Texture2D.h"
 #import "PVRTexture.h"
 
@@ -89,10 +90,10 @@ static Texture2DPixelFormat defaultAlphaPixelFormat = kTexture2DPixelFormat_Defa
 @synthesize hasPremultipliedAlpha=_hasPremultipliedAlpha;
 - (id) initWithData:(const void*)data pixelFormat:(Texture2DPixelFormat)pixelFormat pixelsWide:(NSUInteger)width pixelsHigh:(NSUInteger)height contentSize:(CGSize)size
 {
-	GLint					saveName;
+//	GLint					saveName;
 	if((self = [super init])) {
 		glGenTextures(1, &_name);
-		glGetIntegerv(GL_TEXTURE_BINDING_2D, &saveName);
+//		glGetIntegerv(GL_TEXTURE_BINDING_2D, &saveName);
 		glBindTexture(GL_TEXTURE_2D, _name);
 
 		[self setAntiAliasTexParameters];
@@ -121,7 +122,7 @@ static Texture2DPixelFormat defaultAlphaPixelFormat = kTexture2DPixelFormat_Defa
 				
 		}
 				
-		glBindTexture(GL_TEXTURE_2D, saveName);
+//		glBindTexture(GL_TEXTURE_2D, saveName);
 	
 		_size = size;
 		_width = width;
@@ -137,9 +138,7 @@ static Texture2DPixelFormat defaultAlphaPixelFormat = kTexture2DPixelFormat_Defa
 
 - (void) dealloc
 {
-#if DEBUG
-	NSLog(@"deallocing %@", self);
-#endif
+	CCLOG(@"deallocing %@", self);
 	if(_name)
 		glDeleteTextures(1, &_name);
 	
@@ -215,6 +214,7 @@ static Texture2DPixelFormat defaultAlphaPixelFormat = kTexture2DPixelFormat_Defa
 		height = i;
 	}
 	
+	// iPhone 3GS supports 2048 textures, so the maxtexturesize should be a variable, not a hardcoded value
 	NSAssert2( (width <= kMaxTextureSize) && (height <= kMaxTextureSize), @"Image is bigger than the supported %d x %d", kMaxTextureSize, kMaxTextureSize);
 
 //	while((width > kMaxTextureSize) || (height > kMaxTextureSize)) {
@@ -341,14 +341,14 @@ static Texture2DPixelFormat defaultAlphaPixelFormat = kTexture2DPixelFormat_Defa
 	if((width != 1) && (width & (width - 1))) {
 		i = 1;
 		while(i < width)
-		i *= 2;
+			i *= 2;
 		width = i;
 	}
 	height = dimensions.height;
 	if((height != 1) && (height & (height - 1))) {
 		i = 1;
 		while(i < height)
-		i *= 2;
+			i *= 2;
 		height = i;
 	}
 	
@@ -362,7 +362,7 @@ static Texture2DPixelFormat defaultAlphaPixelFormat = kTexture2DPixelFormat_Defa
 	CGContextTranslateCTM(context, 0.0f, height);
 	CGContextScaleCTM(context, 1.0f, -1.0f); //NOTE: NSString draws in UIKit referential i.e. renders upside-down compared to CGBitmapContext referential
 	UIGraphicsPushContext(context);
-		[string drawInRect:CGRectMake(0, 0, dimensions.width, dimensions.height) withFont:font lineBreakMode:UILineBreakModeWordWrap alignment:alignment];
+	[string drawInRect:CGRectMake(0, 0, dimensions.width, dimensions.height) withFont:font lineBreakMode:UILineBreakModeWordWrap alignment:alignment];
 	UIGraphicsPopContext();
 	
 	self = [self initWithData:data pixelFormat:kTexture2DPixelFormat_A8 pixelsWide:width pixelsHigh:height contentSize:dimensions];
@@ -428,11 +428,11 @@ static Texture2DPixelFormat defaultAlphaPixelFormat = kTexture2DPixelFormat_Defa
 @implementation Texture2D (PVRTC)
 -(id) initWithPVRTCData: (const void*)data level:(int)level bpp:(int)bpp hasAlpha:(BOOL)hasAlpha length:(int)length
 {
-	GLint					saveName;
+//	GLint					saveName;
 
 	if((self = [super init])) {
 		glGenTextures(1, &_name);
-		glGetIntegerv(GL_TEXTURE_BINDING_2D, &saveName);
+//		glGetIntegerv(GL_TEXTURE_BINDING_2D, &saveName);
 		glBindTexture(GL_TEXTURE_2D, _name);
 
 		[self setAntiAliasTexParameters];
@@ -449,7 +449,7 @@ static Texture2DPixelFormat defaultAlphaPixelFormat = kTexture2DPixelFormat_Defa
 		}
 		glCompressedTexImage2D(GL_TEXTURE_2D, level, format, length, length, 0, size, data);
 		
-		glBindTexture(GL_TEXTURE_2D, saveName);
+//		glBindTexture(GL_TEXTURE_2D, saveName);
 		
 		_size = CGSizeMake(length, length);
 		_width = length;

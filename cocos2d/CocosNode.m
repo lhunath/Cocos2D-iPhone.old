@@ -17,9 +17,10 @@
 #import "CocosNode.h"
 #import "Camera.h"
 #import "Grid.h"
+#import "Scheduler.h"
 #import "ccMacros.h"
 #import "Director.h"
-#import "Schedule.h"
+#import "ActionManager.h"
 #import "Support/CGPointExtension.h"
 #import "Support/ccArray.h"
 #import "Support/TransformUtils.h"
@@ -32,13 +33,11 @@
 #endif
 
 @interface CocosNode (Private)
--(void) step_: (ccTime) dt;
 // lazy allocs
--(void) actionAlloc;
 -(void) childrenAlloc;
--(void) scheduleAlloc;
+-(void) timerAlloc;
 // helper that reorder a child
--(void) insertChild:(CocosNode*)child z:(int)z scaleTime:(NSNumber *)aScaleTime;
+-(void) insertChild:(CocosNode*)child z:(int)z;
 // used internally to alter the zOrder variable. DON'T call this method manually
 -(void) _setZOrder:(int) z;
 -(void) detachChild:(CocosNode *)child cleanup:(BOOL)doCleanup;
@@ -47,8 +46,7 @@
 @implementation CocosNode
 
 @synthesize visible;
-@synthesize parent, children;
-@synthesize timeScale;
+@synthesize parent;
 @synthesize grid;
 @synthesize zOrder;
 @synthesize tag;
@@ -57,7 +55,8 @@
 #pragma mark CocosNode - Transform related properties
 
 @synthesize rotation=rotation_, scaleX=scaleX_, scaleY=scaleY_, position=position_;
-@synthesize transformAnchor=transformAnchor_, relativeTransformAnchor=relativeTransformAnchor_;
+@synthesize transformAnchor=transformAnchor_, relativeAnchorPoint=relativeAnchorPoint_;
+@synthesize userData;
 
 // getters synthesized, setters explicit
 -(void) setRotation: (float)newRotation
@@ -90,9 +89,9 @@
 	isTransformDirty_ = isInverseDirty_ = YES;
 }
 
--(void) setRelativeTransformAnchor: (BOOL)newValue
+-(void) setRelativeAnchorPoint: (BOOL)newValue
 {
-	relativeTransformAnchor_ = newValue;
+	relativeAnchorPoint_ = newValue;
 	isTransformDirty_ = isInverseDirty_ = YES;
 }
 
@@ -135,6 +134,7 @@
 	isTransformDirty_ = isInverseDirty_ = YES;
 }
 
+
 #pragma mark CocosNode - Init & cleanup
 
 +(id) node
@@ -151,13 +151,12 @@
 		rotation_ = 0.0f;
 		scaleX_ = scaleY_ = 1.0f;
 		position_ = CGPointZero;
-        timeScale = 1.0f;
 		transformAnchor_ = CGPointZero;
 		anchorPoint_ = CGPointZero;
 		contentSize_ = CGSizeZero;
 
-		// "whole screen" objects. like Scenes and Layers, should set relativeTransformAnchor to NO
-		relativeTransformAnchor_ = YES; 
+		// "whole screen" objects. like Scenes and Layers, should set relativeAnchorPoint to NO
+		relativeAnchorPoint_ = YES; 
 		
 		isTransformDirty_ = isInverseDirty_ = YES;
 		
@@ -177,13 +176,12 @@
 
 		// children (lazy allocs)
 		children = nil;
-
-		// actions (lazy allocs)
-		actions = nil;
-        actionsScaled = nil;
 		
 		// scheduled selectors (lazy allocs)
 		scheduledSelectors = nil;
+		
+		// userData is always inited as nil
+		userData = nil;
 	}
 	
 	return self;
@@ -194,7 +192,7 @@
 	// actions
 	[self stopAllActions];
 	
-	// schedules
+	// timers
 	[scheduledSelectors release];
 	scheduledSelectors = nil;
 	
@@ -223,16 +221,10 @@
 	}
 	
 	[children release];
-    [childrenScaled release];
 	
-	// schedules
+	// timers
 	[scheduledSelectors release];
-	
-	// actions
-	[self stopAllActions];
-	ccArrayFree(actions);
-	ccArrayFree(actionsScaled);
-	
+		
 	[super dealloc];
 }
 
@@ -241,7 +233,6 @@
 -(void) childrenAlloc
 {
 	children = [[NSMutableArray arrayWithCapacity:4] retain];
-    childrenScaled = [[NSMutableArray arrayWithCapacity:4] retain];
 }
 
 // camera: lazy alloc
@@ -253,19 +244,36 @@
 	return camera;
 }
 
+-(CocosNode*) getChildByTag:(int) aTag
+{
+	NSAssert( aTag != kCocosNodeTagInvalid, @"Invalid tag");
+	
+	for( CocosNode *node in children ) {
+		if( node.tag == aTag )
+			return node;
+	}
+	// not found
+	return nil;
+}
+
+- (NSArray *)children
+{
+	return (NSArray *) children;
+}
+
 /* "add" logic MUST only be on this selector
  * If a class want's to extend the 'addChild' behaviour it only needs
  * to override this selector
  */
--(id) addChild: (CocosNode*)child z:(int)z tag:(int)aTag scaleTime:(BOOL)aScaleTime
-{
+-(id) addChild: (CocosNode*) child z:(int)z tag:(int) aTag
+{	
 	NSAssert( child != nil, @"Argument must be non-nil");
 	NSAssert( child.parent == nil, @"child already added. It can't be added again");
 	
 	if( ! children )
 		[self childrenAlloc];
 	
-	[self insertChild:child z:z scaleTime:[NSNumber numberWithBool:aScaleTime]];
+	[self insertChild:child z:z];
 	
 	child.tag = aTag;
 	
@@ -274,15 +282,6 @@
 	if( isRunning )
 		[child onEnter];
 	return self;
-}
-
-/*
- * Note: If you were overriding this method for extending the behaviour; you should change that
- * to overriding addChild:z:tag:scaleTime: instead!
- */
--(id) addChild: (CocosNode*) child z:(int)z tag:(int) aTag
-{
-    return [self addChild:child z:z tag:aTag scaleTime:YES];
 }
 
 -(id) addChild: (CocosNode*) child z:(int)z
@@ -326,46 +325,41 @@
 -(void) removeAllChildrenWithCleanup:(BOOL)cleanup
 {
 	// not using detachChild improves speed here
-	for( CocosNode * c in children) {
-		if( cleanup) {
-			[c cleanup];
-		}
-		[c setParent: nil];
-		if( isRunning )
+	for (CocosNode *c in children)
+	{
+		// IMPORTANT:
+		//  -1st do onExit
+		//  -2nd cleanup
+		if (isRunning)
 			[c onExit];
+
+		if (cleanup)
+			[c cleanup];
+
+		// set parent nil at the end (issue #476)
+		[c setParent:nil];
 	}
-	
+
 	[children removeAllObjects];
-    [childrenScaled removeAllObjects];
 }
 
--(CocosNode*) getChildByTag:(int) aTag
+-(void) detachChild:(CocosNode *)child cleanup:(BOOL)doCleanup
 {
-	NSAssert( aTag != kCocosNodeTagInvalid, @"Invalid tag");
-	
-	for( CocosNode *node in children ) {
-		if( node.tag == aTag )
-			return node;
-	}
-	// not found
-	return nil;
-}
-
--(void) detachChild:(CocosNode *) child cleanup:(BOOL) doCleanup
-{
-	[child setParent: nil];
-	
-	if( isRunning )
+	// IMPORTANT:
+	//  -1st do onExit
+	//  -2nd cleanup
+	if (isRunning)
 		[child onExit];
-	
+
 	// If you don't do cleanup, the child's actions will not get removed and the
 	// its scheduledSelectors dict will not get released!
 	if (doCleanup)
 		[child cleanup];
-	
-    NSUInteger c = [children indexOfObject:child];
-	[children removeObjectAtIndex:c];
-    [childrenScaled removeObjectAtIndex:c];
+
+	// set parent nil at the end (issue #476)
+	[child setParent:nil];
+
+	[children removeObject:child];
 }
 
 // used internally to alter the zOrder variable. DON'T call this method manually
@@ -375,24 +369,21 @@
 }
 
 // helper used by reorderChild & add
--(void) insertChild:(CocosNode*) child z:(int)z scaleTime:(NSNumber *)scaleTime
+-(void) insertChild:(CocosNode*) child z:(int)z
 {
 	int index=0;
 	BOOL added = NO;
 	for( CocosNode *a in children ) {
 		if ( a.zOrder > z ) {
 			added = YES;
-			[children insertObject:child atIndex:index];
-            [childrenScaled insertObject:scaleTime atIndex:index];
+			[ children insertObject:child atIndex:index];
 			break;
 		}
 		index++;
 	}
 	
-	if( ! added ) {
+	if( ! added )
 		[children addObject:child];
-        [childrenScaled addObject:scaleTime];
-    }
 	
 	[child _setZOrder:z];
 }
@@ -402,13 +393,9 @@
 	NSAssert( child != nil, @"Child must be non-nil");
 	
 	[child retain];
-    NSUInteger c = [children indexOfObject:child];
-    NSNumber *st = [childrenScaled objectAtIndex:c];
-    
-    [children removeObjectAtIndex:c];
-    [childrenScaled removeObjectAtIndex:c];
+	[children removeObject:child];
 	
-	[self insertChild:child z:z scaleTime:st];
+	[self insertChild:child z:z];
 	
 	[child release];
 }
@@ -476,7 +463,7 @@
 	// BEGIN original implementation
 	// 
 	// translate
-	if ( relativeTransformAnchor_ && (transformAnchor_.x != 0 || transformAnchor_.y != 0 ) )
+	if ( relativeAnchorPoint_ && (transformAnchor_.x != 0 || transformAnchor_.y != 0 ) )
 		glTranslatef( RENDER_IN_SUBPIXEL(-transformAnchor_.x), RENDER_IN_SUBPIXEL(-transformAnchor_.y), vertexZ_);
 	
 	if (transformAnchor_.x != 0 || transformAnchor_.y != 0 )
@@ -515,20 +502,24 @@
 
 -(void) onEnter
 {
-	for( id child in [[children copy] autorelease] )
+	for( id child in children )
 		[child onEnter];
+	
+	[self activateTimers];
 
 	isRunning = YES;
 }
 
 -(void) onEnterTransitionDidFinish
 {
-	for( id child in [[children copy] autorelease] )
+	for( id child in children )
 		[child onEnterTransitionDidFinish];
 }
 
 -(void) onExit
 {
+	[self deactivateTimers];
+
 	isRunning = NO;	
 	
 	for( id child in children )
@@ -537,233 +528,45 @@
 
 #pragma mark CocosNode Actions
 
--(void) actionAlloc
-{
-	if( actions == nil ) {
-		actions = ccArrayNew(4);
-		actionsScaled = ccArrayNew(4);
-    }
-	else if( actions->num == actions->max ) {
-		ccArrayDoubleCapacity(actions);
-		ccArrayDoubleCapacity(actionsScaled);
-    }
-}
-
 -(Action*) runAction:(Action*) action
-{
-    return [self runAction:action scaleTime:YES];
-}
-
--(Action*) runAction:(Action*) action scaleTime:(BOOL)aScaleTime
 {
 	NSAssert( action != nil, @"Argument must be non-nil");
 	
-	// lazy alloc
-	[self actionAlloc];
-	
-	NSAssert( !ccArrayContainsObject(actions, action), @"Action already running");
-	
-	ccArrayAppendObject(actions, action);
-	ccArrayAppendObject(actionsScaled, [NSNumber numberWithBool:aScaleTime]);
-	
-	[action startWithTarget:self];
-	
-    // Scheduled as unaffected by time scaling; it handles that itself.
-	[self schedule: @selector(step_:) interval:0 scaleTime:NO];
-	
+	[[ActionManager sharedManager] addAction:action target:self paused:!isRunning];
 	return action;
 }
 
 -(void) stopAllActions
 {
-	if( actions == nil )
-		return;
-	
-	if( ccArrayContainsObject(actions, currentAction) && !currentActionSalvaged ) {
-		[currentAction retain];
-		currentActionSalvaged = YES;
-	}
-	
-    for( NSUInteger i = 0; i < actions->num; i++) {
-        Action *action = ((Action *)actions->arr[i]);
-        [action stop];
-    }
-        
-    ccArrayRemoveAllObjects(actions);
-    ccArrayRemoveAllObjects(actionsScaled);
+	[[ActionManager sharedManager] removeAllActionsFromTarget:self];
 }
 
 -(void) stopAction: (Action*) action
 {
-	// explicit nil handling
-	if (action == nil)
-		return;
-	
-	if( actions != nil ) {
-		NSUInteger i = ccArrayGetIndexOfObject(actions, action);
-	
-		if( i != NSNotFound ) {
-			if( action == currentAction && !currentActionSalvaged ) {
-				[currentAction retain];
-				currentActionSalvaged = YES;
-			}
-            [action stop];
-			ccArrayRemoveObjectAtIndex(actions, i);
-			ccArrayRemoveObjectAtIndex(actionsScaled, i);
-	
-			// update actionIndex in case we are in step_, looping over the actions
-			if( actionIndex >= (int) i )
-				actionIndex--;
-		}
-	} else
-		CCLOG(@"stopAction: Action not found!");
+	[[ActionManager sharedManager] removeAction:action];
 }
 
--(void) stopActionByTag:(int) aTag
+-(void) stopActionByTag:(int)aTag
 {
 	NSAssert( aTag != kActionTagInvalid, @"Invalid tag");
-	
-	if( actions != nil ) {
-		NSUInteger limit = actions->num;
-		for( NSUInteger i = 0; i < limit; i++) {
-			Action *a = actions->arr[i];
-			
-			if( a.tag == aTag ) {
-				if( a == currentAction && !currentActionSalvaged ) {
-					[currentAction retain];
-					currentActionSalvaged = YES;
-				}
-                [a stop];
-				ccArrayRemoveObjectAtIndex(actions, i);
-				ccArrayRemoveObjectAtIndex(actionsScaled, i);
-				
-				// update actionIndex in case we are in step_, looping over the actions
-				if (actionIndex >= (int) i)
-					actionIndex--;
-				return; 
-			}
-		}
-	}
-	
-	CCLOG(@"stopActionByTag: Action not found!");
+	[[ActionManager sharedManager] removeActionByTag:aTag target:self];
 }
 
 -(Action*) getActionByTag:(int) aTag
 {
 	NSAssert( aTag != kActionTagInvalid, @"Invalid tag");
-	
-	if( actions != nil ) {
-		NSUInteger limit = actions->num;
-		for( NSUInteger i = 0; i < limit; i++) {
-			Action *a = actions->arr[i];
-		
-			if( a.tag == aTag )
-				return a; 
-		}
-	}
 
-	CCLOG(@"getActionByTag: Action not found");
-	return nil;
+	return [[ActionManager sharedManager] getActionByTag:aTag target:self];
 }
 
 -(int) numberOfRunningActions
 {
-	return actions ? actions->num : 0;
+	return [[ActionManager sharedManager] numberOfRunningActionsInTarget:self];
 }
 
--(void) setTimeScale:(float)ts {
-    
-    if(ts < 0.001f)
-        ts = 0;
-    
-    timeScale = ts;
-}
+#pragma mark CocosNode Timers 
 
--(void) step_: (ccTime) dt
-{
-    // step_: is always scheduled so that its time is unaffected by our timescale.
-    // That way we can pass either the scaled or unscaled time to our actions depending on which they request.
-    ccTime dtScaled = dt * timeScale;
-	
-	// The 'actions' ccArray may change while inside this loop.
-	for( actionIndex = 0; actionIndex < (int) actions->num; actionIndex++) {
-		currentAction = actions->arr[actionIndex];
-		currentActionSalvaged = NO;
-		
-		BOOL currentActionScaled = [(NSNumber *) actionsScaled->arr[actionIndex] boolValue];
-        if (currentActionScaled) {
-            if (dtScaled > 0)
-                [currentAction step: dtScaled];
-        } else
-            [currentAction step: dt];
-		
-		if( currentActionSalvaged ) {
-			// The currentAction told the node to stop it. To prevent the action from
-			// accidentally deallocating itself before finishing its step, we retained
-			// it. Now that step is done, it's safe to release it.
-			[currentAction release];
-		}
-		else if( [currentAction isDone] ) {
-			[currentAction stop];
-			
-			Action *a = currentAction;
-			// Make currentAction nil to prevent stopAction from salvaging it.
-			currentAction = nil;
-			[self stopAction:a];
-		}
-	}
-	currentAction = nil;
-	
-	if( actions->num == 0 )
-		[self unschedule: @selector(step_:)];
-}
-
--(void) tick:(ccTime)dt
-{
-
-    // Don't tick when this node is not in the scene graph.
-    if (!isRunning)
-        return;
-
-    // Prevent the node from being dealloced if it's no longer needed until we're done ticking.
-    [self retain];
-    
-    // Apply our time scale to our time.
-    ccTime dtScaled = dt * timeScale;
-    
-    // Let our actions/scheduled methods inherit our time.
-    for(Schedule *schedule in [scheduledSelectors allValues]) {
-        if (schedule.scaleTime) {
-            if (dtScaled > 0)
-                schedule.elapsed += dtScaled;
-        } else
-            schedule.elapsed += dt;
-        
-        if (schedule.elapsed >= schedule.interval) {
-            TICK_IMP selectorImplementation = (TICK_IMP)[self methodForSelector:schedule.selector];
-            
-            [schedule retain];
-            selectorImplementation(self, schedule.selector, schedule.elapsed);
-            schedule.elapsed = 0;
-            [schedule release];
-        }
-    }
-    
-    // Let our children inherit our time.
-    for(NSUInteger c = 0; c < children.count; ++c)
-        if ([childrenScaled objectAtIndex:c]) {
-            if (dtScaled > 0)
-                [[children objectAtIndex:c] tick:dtScaled];
-        } else
-            [[children objectAtIndex:c] tick:dt];
-
-    // Let the node be dealloced now if it's no longer needed.
-    [self release];
-}
-
-#pragma mark CocosNode Time
-
--(void) scheduleAlloc
+-(void) timerAlloc
 {
 	scheduledSelectors = [[NSMutableDictionary dictionaryWithCapacity: 2] retain];
 }
@@ -775,23 +578,24 @@
 
 -(void) schedule: (SEL) selector interval:(ccTime)interval
 {
-    [self schedule:selector interval:interval scaleTime:YES];
-}
-
--(void) schedule: (SEL) selector interval:(ccTime)interval scaleTime:(BOOL)aScaleTime
-{
 	NSAssert( selector != nil, @"Argument must be non-nil");
 	NSAssert( interval >=0, @"Arguemnt must be positive");
 	
 	if( !scheduledSelectors )
-		[self scheduleAlloc];
+		[self timerAlloc];
 	
+	NSString *key = NSStringFromSelector(selector);
 	// already scheduled ?
-	if( [scheduledSelectors objectForKey: NSStringFromSelector(selector) ] ) {
+	if( [scheduledSelectors objectForKey:key  ] ) {
 		return;
 	}
-
-	[scheduledSelectors setObject:[Schedule scheduleSelector:selector withInterval:interval scaleTime:aScaleTime] forKey:NSStringFromSelector(selector)];
+	
+	Timer *timer = [Timer timerWithTarget:self selector:selector interval:interval];
+	
+	if( isRunning )
+		[[Scheduler sharedScheduler] scheduleTimer:timer];
+	
+	[scheduledSelectors setObject:timer forKey:key ];
 }
 
 -(void) unschedule: (SEL) selector
@@ -800,7 +604,35 @@
 	if (selector == nil)
 		return;
 	
-	[scheduledSelectors removeObjectForKey: NSStringFromSelector(selector) ];
+	Timer *timer = nil;
+	NSString *key = NSStringFromSelector(selector);
+
+	if( ! (timer = [scheduledSelectors objectForKey:key] ) )
+	 {
+		 CCLOG(@"CocosNode.unschedule: Selector not scheduled: %@",key );
+		 return;
+	 }
+	
+	[scheduledSelectors removeObjectForKey: key];
+
+	if( isRunning )
+		[[Scheduler sharedScheduler] unscheduleTimer:timer];
+}
+
+- (void) activateTimers
+{
+	for( id key in scheduledSelectors )
+		[[Scheduler sharedScheduler] scheduleTimer: [scheduledSelectors objectForKey:key]];
+	
+	[[ActionManager sharedManager] resumeAllActionsForTarget:self];
+}
+
+- (void) deactivateTimers
+{
+	for( id key in scheduledSelectors )
+		[[Scheduler sharedScheduler] unscheduleTimer: [scheduledSelectors objectForKey:key]];
+
+	[[ActionManager sharedManager] pauseAllActionsForTarget:self];
 }
 
 
@@ -812,7 +644,7 @@
 		
 		transform_ = CGAffineTransformIdentity;
 		
-		if ( !relativeTransformAnchor_ ) {
+		if ( !relativeAnchorPoint_ ) {
 			transform_ = CGAffineTransformTranslate(transform_, (int)transformAnchor_.x, (int)transformAnchor_.y);
 		}
 		

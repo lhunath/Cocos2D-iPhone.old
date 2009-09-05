@@ -31,17 +31,23 @@
 + (TouchDispatcher*)sharedDispatcher;
 
 /** Whether or not the events are going to be dispatched. Default: YES */
-@property (readwrite, assign) BOOL dispatchEvents;
+@property (nonatomic,readwrite, assign) BOOL dispatchEvents;
 
 /** Adds a standard touch delegate to the dispatcher's list.
- See StandardTouchDelegate description. */
+ See StandardTouchDelegate description.
+ IMPORTANT: The delegate will be retained.
+ */
 -(void) addStandardDelegate:(id<StandardTouchDelegate>) delegate priority:(int)priority;
 /** Adds a targeted touch delegate to the dispatcher's list.
- See TargetedTouchDelegate description. */
+ See TargetedTouchDelegate description.
+ IMPORTANT: The delegate will be retained.
+ */
 -(void) addTargetedDelegate:(id<TargetedTouchDelegate>) delegate priority:(int)priority swallowsTouches:(BOOL)swallowsTouches;
-/** Removes a touch delegate. */
+/** Removes a touch delegate.
+ The delegate will be released
+ */
 -(void) removeDelegate:(id) delegate;
-/** Removes all touch delegates. */
+/** Removes all touch delegates, releasing all the delegates */
 -(void) removeAllDelegates;
 /** Changes the priority of a previously added delegate. The lower the number,
  the higher the priority */

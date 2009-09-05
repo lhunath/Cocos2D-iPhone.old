@@ -15,10 +15,12 @@
 
 /** @mainpage cocos2d for iPhone API reference
  *
- * @image html cocos2d-Icon.png
+ * @image html Icon.png
  *
  * @section intro Introduction
- * cocos2d API reference
+ * This is cocos2d API reference
+ *
+ * The programming guide is hosted here: http://www.cocos2d-iphone.org/wiki/doku.php/prog_guide:index
  *
  * <hr>
  *
@@ -27,8 +29,8 @@
  */
 
 // 0x00 HI ME LO
-// 00   00 08 00
-#define COCOS2D_VERSION 0x00000800
+// 00   00 08 01
+#define COCOS2D_VERSION 0x00000801
 
 //
 // all cocos2d include files
@@ -51,8 +53,9 @@
 #import "PointParticleSystem.h"
 #import "QuadParticleSystem.h"
 #import "ParticleExamples.h"
-#import "Primitives.h"
+#import "DrawingPrimitives.h"
 #import "Scene.h"
+#import "Scheduler.h"
 #import "Sprite.h"
 #import "TextureMgr.h"
 #import "TextureNode.h"
@@ -71,6 +74,10 @@
 #import "AtlasSpriteManager.h"
 #import "BitmapFontAtlas.h"
 #import "ParallaxNode.h"
+#import "ActionManager.h"
+#import "TMXTiledMap.h"
+#import "RenderTexture.h"
+#import "MotionStreak.h"
 
 //
 // cocos2d macros

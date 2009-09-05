@@ -24,7 +24,7 @@ duration plus the start time.
 These IntervalAction actions have some interesting properties, like:
  - They can run normally (default)
  - They can run reversed with the reverse method
- - They can run with the time altered with the Accelerate and AccelDeccel actions.
+ - They can run with the time altered with the Accelerate, AccelDeccel and Speed actions.
 
 For example, you can simulate a Ping Pong effect running the action normally and
 then running it again in Reverse mode.
@@ -35,11 +35,11 @@ Example:
 */
 @interface IntervalAction: FiniteTimeAction <NSCopying>
 {
-	struct timeval lastUpdate;
 	ccTime elapsed;
+	BOOL	firstTick;
 }
 
-@property (readonly) ccTime elapsed;
+@property (nonatomic,readonly) ccTime elapsed;
 
 /** creates the action */
 +(id) actionWithDuration: (ccTime) d;
@@ -248,7 +248,7 @@ typedef struct _ccBezierConfig {
 -(id) initWithDuration: (ccTime)duration blinks:(unsigned int)blinks;
 @end
 
-/** Fades in a CocosNode that implements the CocosNodeOpacity protocol, from opacity 0 to 255.
+/** Fades In an object that implements the CocosNodeRGBA protocol. It modifies the opacity from 0 to 255.
  The "reverse" of this action is FadeOut
  */
 @interface FadeIn : IntervalAction <NSCopying>
@@ -256,7 +256,7 @@ typedef struct _ccBezierConfig {
 }
 @end
 
-/** Fades out a CocosNode that implements the CocosNodeOpacity protocol, from opacity 255 to 0.
+/** Fades Out an object that implements the CocosNodeRGBA protocol. It modifies the opacity from 255 to 0.
  The "reverse" of this action is FadeIn
 */
 @interface FadeOut : IntervalAction <NSCopying>
@@ -264,7 +264,7 @@ typedef struct _ccBezierConfig {
 }
 @end
 
-/** Fades a CocosNode that implements the CocosNodeOpacity protocol from current opacity to a custom one.
+/** Fades an object that implements the CocosNodeRGBA protocol. It modifies the opacity from the current value to a custom one.
  @warning This action doesn't support "reverse"
  */
 @interface FadeTo : IntervalAction <NSCopying>
@@ -284,12 +284,12 @@ typedef struct _ccBezierConfig {
 */
 @interface TintTo : IntervalAction <NSCopying>
 {
-	GLubyte toR, toG, toB;
-	GLubyte fromR, fromG, fromB;
+	ccColor3B to;
+	ccColor3B from;
 }
-/** creates an action with duration and opactiy */
+/** creates an action with duration and color */
 +(id) actionWithDuration:(ccTime)duration red:(GLubyte)red green:(GLubyte)green blue:(GLubyte)blue;
-/** initializes the action with duration and opacity */
+/** initializes the action with duration and color */
 -(id) initWithDuration:(ccTime)duration red:(GLubyte)red green:(GLubyte)green blue:(GLubyte)blue;
 @end
 
@@ -301,9 +301,9 @@ typedef struct _ccBezierConfig {
 	GLshort deltaR, deltaG, deltaB;
 	GLshort fromR, fromG, fromB;
 }
-/** creates an action with duration and opactiy */
+/** creates an action with duration and color */
 +(id) actionWithDuration:(ccTime)duration red:(GLshort)deltaRed green:(GLshort)deltaGreen blue:(GLshort)deltaBlue;
-/** initializes the action with duration and opacity */
+/** initializes the action with duration and color */
 -(id) initWithDuration:(ccTime)duration red:(GLshort)deltaRed green:(GLshort)deltaGreen blue:(GLshort)deltaBlue;
 @end
 
@@ -349,20 +349,4 @@ typedef struct _ccBezierConfig {
 +(id) actionWithAnimation:(id<CocosAnimation>) a restoreOriginalFrame:(BOOL)b;
 /** initializes the action with an Animation */
 -(id) initWithAnimation:(id<CocosAnimation>) a restoreOriginalFrame:(BOOL)b;
-@end
-
-
-/** Changes the speed of an action, making it take longer (speed>1)
- or less (speed<1) time.
- Useful to simulate 'slow motion' or 'fast forward' effect.
- @warning This action can't be Sequenceable because it is not an IntervalAction
- */
-@interface ScaleTime : IntervalAction <NSCopying>
-{
-	float timeScaleTarget, delta;
-}
-/** creates the action */
-+(id) actionWithTimeScaleTarget:(float)aTimeScaleTarget duration:(ccTime)aDuration;
-/** initializes the action */
--(id) initWithTimeScaleTarget:(float)aTimeScaleTarget duration:(ccTime)aDuration;
 @end

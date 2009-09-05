@@ -25,6 +25,11 @@
  http://blog.sapusmedia.com/2008/12/how-to-use-tilemap-editor-for-cocos2d.html
  
  All features from AtlasNode are valid in TileMapAtlas
+ 
+ IMPORTANT:
+ This class is deprecated. It is maintained for compatibility reasons only.
+ You SHOULD not use this class.
+ Instead, use the newer TMX file format: TMXTiledMap
  */
 @interface TileMapAtlas : AtlasNode {
 	
@@ -39,12 +44,16 @@
 }
 
 /** TileMap info */
-@property (readonly) tImageTGA *tgaInfo;
+@property (nonatomic,readonly) tImageTGA *tgaInfo;
 
-/** creates the TileMap with a tile file (atlas) with a map file and the width and height of each tile */
+/** creates the TileMap with a tile file (atlas) with a map file and the width and height of each tile.
+ The tile file will be loaded using the TextureMgr.
+ */
 +(id) tileMapAtlasWithTileFile:(NSString*)tile mapFile:(NSString*)map tileWidth:(int)w tileHeight:(int)h;
 
-/** initializes the TileMap with a tile file (atlas) with a map file and the width and height of each tile */
+/** initializes the TileMap with a tile file (atlas) with a map file and the width and height of each tile.
+ The file will be loaded using the TextureMgr.
+ */
 -(id) initWithTileFile:(NSString*)tile mapFile:(NSString*)map tileWidth:(int)w tileHeight:(int)h;
 
 /** returns a tile from position x,y.

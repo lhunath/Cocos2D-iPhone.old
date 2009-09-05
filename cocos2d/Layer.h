@@ -36,6 +36,11 @@
 /** If isTouchEnabled, this method is called onEnter. Override it to change the
  way Layer receives touch events.
  ( Default: [[TouchDispatcher sharedDispatcher] addStandardDelegate:self priority:0] )
+ Example:
+     -(void) registerWithTouchDispatcher
+     {
+        [[TouchDispatcher sharedDispatcher] addTargetedDelegate:self priority:INT_MIN+1 swallowsTouches:YES];
+     }
  */
 -(void) registerWithTouchDispatcher;
 
@@ -49,64 +54,67 @@
 //
 // ColorLayer
 //
-/** ColorLayer is a subclass of Layer that implements the CocosNodeSize, CocosNodeOpacity and CocosNodeRGB protocol.
+/** ColorLayer is a subclass of Layer that implements the CocosNodeRGBA protocol.
  
  All features from Layer are valid, plus the following new features:
  - opacity
  - RGB colors
- - contentSize
  */
 @interface ColorLayer : Layer <CocosNodeRGBA>
 {
-	GLubyte r,g,b,opacity;
+	GLubyte		opacity_;
+	ccColor3B	color_;	
 	GLfloat squareVertices[4 * 2];
 	GLubyte squareColors[4 * 4];
 }
 
 /** creates the Layer with color, width and height */
-+ (id) layerWithColor: (GLuint) aColor width:(GLfloat)w height:(GLfloat)h;
++ (id) layerWithColor: (ccColor4B)color width:(GLfloat)w height:(GLfloat)h;
 /** creates the layer with color. Width and height are the window size. */
-+ (id) layerWithColor: (GLuint) aColor;
++ (id) layerWithColor: (ccColor4B)color;
 
 /** initializes a Layer with color, width and height */
-- (id) initWithColor: (GLuint) aColor width:(GLint)w height:(GLint)h;
+- (id) initWithColor:(ccColor4B)color width:(GLfloat)w height:(GLfloat)h;
 /** initializes a Layer with color. Width and height are the window size. */
-- (id) initWithColor: (GLuint) aColor;
-
-/** initializes the witdh and height of the layer */
-- (void) initWidth: (GLfloat)w height:(GLfloat)h;
-
-/** changes the color of the layer
- @deprecated Use CocosNodeRGB protocol instead
- */
-- (void) changeColor: (GLuint) aColor __attribute__ ((deprecated));
+- (id) initWithColor:(ccColor4B)color;
 
 /** change width */
 -(void) changeWidth: (GLfloat)w;
 /** change height */
 -(void) changeHeight: (GLfloat)h;
+/** change width and height
+ @since v0.8
+ */
+-(void) changeWidth:(GLfloat)w height:(GLfloat)h;
 
-/* deprecated */
-@property (readonly) GLuint color __attribute__ ((deprecated));
-
-/** conforms to CocosNodeRGB and CocosNodeOpacity protocol */
-@property (readonly) GLubyte r,g,b,opacity;
+/** Opacity: conforms to CocosNodeRGBA protocol */
+@property (nonatomic,readonly) GLubyte opacity;
+/** Opacity: conforms to CocosNodeRGBA protocol */
+@property (nonatomic,readonly) ccColor3B color;
 
 @end
 
-/** A Layer with the ability to multiplex it's children */
+/** A Layer with the ability to multiplex it's children.
+ Features:
+   - It supports one or more children
+   - Only one children will be active a time
+ */
 @interface MultiplexLayer : Layer
 {
 	unsigned int enabledLayer;
 	NSMutableArray *layers;
 }
 
-/** creates a MultiplexLayer with one or more layers */
+/** creates a MultiplexLayer with one or more layers using a variable argument list. */
 +(id) layerWithLayers: (Layer*) layer, ... NS_REQUIRES_NIL_TERMINATION;
-/** initializes a MultiplexLayer with one or more layers */
+/** initializes a MultiplexLayer with one or more layers using a variable argument list. */
 -(id) initWithLayers: (Layer*) layer vaList:(va_list) params;
-/** switches to a certain layer indexed by n*/
+/** switches to a certain layer indexed by n. 
+ The current (old) layer will be removed from it's parent with 'cleanup:YES'.
+ */
 -(void) switchTo: (unsigned int) n;
-/** release the current layer and switches to another layer indexed by n */
+/** release the current layer and switches to another layer indexed by n.
+ The current (old) layer will be removed from it's parent with 'cleanup:YES'.
+ */
 -(void) switchToAndReleaseMe: (unsigned int) n;
 @end

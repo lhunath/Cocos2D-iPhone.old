@@ -14,7 +14,6 @@
 
 
 #import "Action.h"
-#import "CocosNode.h"
 #import "ccMacros.h"
 
 #import "IntervalAction.h"
@@ -50,10 +49,15 @@
 	[super dealloc];
 }
 
+-(NSString*) description
+{
+	return [NSString stringWithFormat:@"<%@ = %08X | Tag = %i>", [self class], self, tag];
+}
+
 -(id) copyWithZone: (NSZone*) zone
 {
 	Action *copy = [[[self class] allocWithZone: zone] init];
-	copy.target = target;
+	[copy setTarget: target];
 	copy.tag = tag;
 	return copy;
 }
@@ -158,3 +162,70 @@
 }
 
 @end
+
+//
+// Speed
+//
+#pragma mark -
+#pragma mark Speed
+@implementation Speed
+@synthesize speed;
+
++(id) actionWithAction: (IntervalAction*) action speed:(float)r
+{
+	return [[[self alloc] initWithAction: action speed:r] autorelease];
+}
+
+-(id) initWithAction: (IntervalAction*) action speed:(float)r
+{
+	if( !(self=[super init]) )
+		return nil;
+	
+	other = [action retain];
+	speed = r;
+	return self;
+}
+
+-(id) copyWithZone: (NSZone*) zone
+{
+	Action *copy = [[[self class] allocWithZone: zone] initWithAction:[[other copy] autorelease] speed:speed];
+    return copy;
+}
+
+-(void) dealloc
+{
+	[other release];
+	[super dealloc];
+}
+
+-(void) start
+{
+	[super start];
+	[other setTarget: target];
+	[other start];
+}
+
+-(void) stop
+{
+	[other stop];
+	[super stop];
+}
+
+-(void) step:(ccTime) dt
+{
+	[other step: dt * speed];
+}
+
+-(BOOL) isDone
+{
+	return [other isDone];
+}
+
+- (IntervalAction *) reverse
+{
+	return [Speed actionWithAction:[other reverse] speed:speed];
+}
+@end
+
+
+

@@ -55,7 +55,7 @@
 @end
 @implementation FadeWhiteTransition
 +(id) transitionWithDuration:(ccTime) t scene:(Scene*)s {
-	return [self transitionWithDuration:t scene:s withColorRGB:0xffffff];
+	return [self transitionWithDuration:t scene:s withColor:ccWHITE];
 }
 @end
 
@@ -204,8 +204,13 @@ Class restartTransition()
 		bg1.anchorPoint = CGPointZero;
 		[self addChild:bg1 z:-1];
 
+		Label* title = [Label labelWithString:transitions[sceneIdx] fontName:@"Thonburi" fontSize:40];
+		[self addChild:title];
+		[title setColor:ccc3(255,32,32)];
+		[title setPosition: ccp(x/2, y-100)];
+
 		Label* label = [Label labelWithString:@"SCENE 1" fontName:@"Marker Felt" fontSize:64];
-		[label setRGB:16 :16 :255];
+		[label setColor:ccc3(16,16,255)];
 		[label setPosition: ccp(x/2,y/2)];	
 		[self addChild: label];
 		
@@ -232,24 +237,27 @@ Class restartTransition()
 }
 -(void) nextCallback:(id) sender
 {
+	Class transition = nextTransition();
 	Scene *s2 = [Scene node];
 	[s2 addChild: [TextLayer2 node]];
-	[[Director sharedDirector] replaceScene: [nextTransition() transitionWithDuration:1.2f scene:s2]];
+	[[Director sharedDirector] replaceScene: [transition transitionWithDuration:1.2f scene:s2]];
 
 }	
 
 -(void) backCallback:(id) sender
 {
+	Class transition = backTransition();
 	Scene *s2 = [Scene node];
 	[s2 addChild: [TextLayer2 node]];
-	[[Director sharedDirector] replaceScene: [backTransition() transitionWithDuration:1.2f scene:s2]];
+	[[Director sharedDirector] replaceScene: [transition transitionWithDuration:1.2f scene:s2]];
 }	
 
 -(void) restartCallback:(id) sender
 {
+	Class transition = restartTransition();
 	Scene *s2 = [Scene node];
 	[s2 addChild: [TextLayer2 node]];
-	[[Director sharedDirector] replaceScene: [restartTransition() transitionWithDuration:1.2f scene:s2]];
+	[[Director sharedDirector] replaceScene: [transition transitionWithDuration:1.2f scene:s2]];
 }	
 -(void) onEnter
 {
@@ -275,8 +283,6 @@ Class restartTransition()
 {
 	if( (self=[super init]) ) {
 			
-		isTouchEnabled = YES;
-		
 		float x,y;
 		
 		CGSize size = [[Director sharedDirector] winSize];
@@ -287,8 +293,13 @@ Class restartTransition()
 		bg2.anchorPoint = CGPointZero;
 		[self addChild:bg2 z:-1];
 		
+		Label* title = [Label labelWithString:transitions[sceneIdx] fontName:@"Thonburi" fontSize:40];
+		[self addChild:title];
+		[title setColor:ccc3(255,32,32)];
+		[title setPosition: ccp(x/2, y-100)];		
+		
 		Label* label = [Label labelWithString:@"SCENE 2" fontName:@"Marker Felt" fontSize:64];
-		[label setRGB:16 :16 :255];
+		[label setColor:ccc3(16,16,255)];
 		[label setPosition: ccp(x/2,y/2)];
 		[self addChild: label];
 		
@@ -311,23 +322,26 @@ Class restartTransition()
 
 -(void) nextCallback:(id) sender
 {
+	Class transition = nextTransition();
 	Scene *s2 = [Scene node];
 	[s2 addChild: [TextLayer node]];
-	[[Director sharedDirector] replaceScene: [nextTransition() transitionWithDuration:1.2f scene:s2]];
+	[[Director sharedDirector] replaceScene: [transition transitionWithDuration:1.2f scene:s2]];
 }	
 
 -(void) backCallback:(id) sender
 {
+	Class transition = backTransition();
 	Scene *s2 = [Scene node];
 	[s2 addChild: [TextLayer node]];
-	[[Director sharedDirector] replaceScene: [backTransition() transitionWithDuration:1.2f scene:s2]];
+	[[Director sharedDirector] replaceScene: [transition transitionWithDuration:1.2f scene:s2]];
 }	
 
 -(void) restartCallback:(id) sender
 {
+	Class transition = restartTransition();
 	Scene *s2 = [Scene node];
 	[s2 addChild: [TextLayer node]];
-	[[Director sharedDirector] replaceScene: [restartTransition() transitionWithDuration:1.2f scene:s2]];
+	[[Director sharedDirector] replaceScene: [transition transitionWithDuration:1.2f scene:s2]];
 }
 -(void) step:(ccTime)dt
 {
@@ -366,7 +380,7 @@ Class restartTransition()
 	[window setMultipleTouchEnabled:NO];
 	
 	// must be called before any othe call to the director
-	[Director useFastDirector];
+//	[Director useFastDirector];
 	
 	// before creating any layer, set the landscape mode
 	[[Director sharedDirector] setDeviceOrientation:CCDeviceOrientationLandscapeLeft];

@@ -33,6 +33,34 @@ typedef struct _bitmapFontDef {
 	int xAdvance;
 } ccBitmapFontDef;
 
+enum {
+	kBitmapFontAtlasMaxChars = 256,
+};
+
+/** BitmapFontConfiguration has parsed configuration of the the .fnt file
+ @since v0.8
+ */
+@interface BitmapFontConfiguration : NSObject
+{
+// XXX: Creating a public interface so that the bitmapFontArray[] is accesible
+@public
+	// The characters building up the font
+	ccBitmapFontDef	bitmapFontArray[kBitmapFontAtlasMaxChars];
+	
+	// FNTConfig: Common Height
+	NSUInteger		commonHeight;
+
+	// values for kerning
+	NSMutableDictionary	*kerningDictionary;
+}
+
+/** allocates a BitmapFontConfiguration with a FNT file */
++(id) configurationWithFNTFile:(NSString*)FNTfile;
+/** initializes a BitmapFontConfiguration with a FNT file */
+-(id) initWithFNTfile:(NSString*)FNTfile;
+@end
+
+
 /** BitmapFontAtlas is a subclass of AtlasSpriteManger.
   
  Features:
@@ -57,31 +85,24 @@ typedef struct _bitmapFontDef {
  @since v0.8
  */
 
-enum {
-	kBitmapFontAtlasMaxChars = 256,
-};
-
 @interface BitmapFontAtlas : AtlasSpriteManager <CocosNodeLabel, CocosNodeRGBA>
 {
 	// string to render
 	NSString		*string_;
 	
-	// values for kerning
-	NSMutableDictionary	*kerningDictionary;
+	BitmapFontConfiguration	*configuration;
 
-	// FNTConfig: Common Height
-	NSUInteger		commonHeight;
-
-	// The characters building up the font
-	ccBitmapFontDef	bitmapFontArray[kBitmapFontAtlasMaxChars];
-	
 	// texture RGBA
-	GLubyte	r_,g_,b_, opacity_;	
+	GLubyte		opacity_;
+	ccColor3B	color_;
 	BOOL opacityModifyRGB_;
 }
 
 /** conforms to CocosNodeRGBA protocol */
-@property (readonly) GLubyte r, g, b, opacity;
+@property (nonatomic,readonly) GLubyte opacity;
+/** conforms to CocosNodeRGBA protocol */
+@property (nonatomic,readonly) ccColor3B color;
+
 
 /** creates a bitmap font altas with an initial string and the FNT file */
 +(id) bitmapFontAtlasWithString:(NSString*)string fntFile:(NSString*)fntFile;
@@ -92,3 +113,13 @@ enum {
 /** updates the font chars based on the string to render */
 -(void) createFontChars;
 @end
+
+/** Free function that parses a FNT file a place it on the cache
+*/
+BitmapFontConfiguration * FNTConfigLoadFile( NSString *file );
+/** Purges the FNT config cache
+ */
+void FNTConfigRemoveCache( void );
+
+
+

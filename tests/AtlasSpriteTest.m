@@ -138,7 +138,7 @@ Class restartAction()
 {
 	if( (self=[super init]) ) {
 		
-		isTouchEnabled = YES;
+		self.isTouchEnabled = YES;
 
 		AtlasSpriteManager *mgr = [AtlasSpriteManager spriteManagerWithFile:@"grossini_dance_atlas.png" capacity:50];
 		[self addChild:mgr z:0 tag:kTagSpriteManager];
@@ -381,7 +381,7 @@ Class restartAction()
 		[mgr addChild:sprite z:-1 tag:kTagSprite1];
 		sprite.position = ccp(s.width/2, s.height/2 - 20);
 		sprite.scaleX = 6;
-		[sprite setRGB:255:0:0];
+		[sprite setColor:ccRED];
 		
 		[self schedule:@selector(reorderSprite:) interval:1];		
 	}	
@@ -454,7 +454,7 @@ Class restartAction()
 			[mgr addChild:sprite z:0];
 		}
 
-		[self runAction:[OrbitCamera actionWithDuration:10 radius: 1 deltaRadius:0 angleZ:0 deltaAngleZ:360 angleX:0 deltaAngleX:0]];
+		[mgr runAction:[OrbitCamera actionWithDuration:10 radius: 1 deltaRadius:0 angleZ:0 deltaAngleZ:360 angleX:0 deltaAngleX:0]];
 	}	
 	return self;
 }
@@ -536,7 +536,7 @@ Class restartAction()
 
 		CGSize s = [[Director sharedDirector] winSize];
 
-		mgr.relativeTransformAnchor = NO;
+		mgr.relativeAnchorPoint = NO;
 		mgr.anchorPoint = ccp(0.5f, 0.5f);
 		mgr.contentSize = CGSizeMake(s.width, s.height);
 		

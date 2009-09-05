@@ -38,17 +38,20 @@
 	ccBlendFunc	blendFunc_;
 	
 	// texture RGBA
-	GLubyte	r_,g_,b_,opacity_;
+	GLubyte	opacity_;
+	ccColor3B color_;
 	BOOL opacityModifyRGB_;
 	
 }
 
 /** conforms to CocosNodeTexture protocol */
-@property (readwrite,retain) Texture2D *texture;
+@property (nonatomic,readwrite,retain) Texture2D *texture;
 
 /** conforms to CocosNodeTexture protocol */
-@property (readwrite) ccBlendFunc blendFunc;
+@property (nonatomic,readwrite) ccBlendFunc blendFunc;
 
 /** conforms to CocosNodeRGBA protocol */
-@property (readonly) GLubyte r, g, b, opacity;
+@property (nonatomic,readonly) GLubyte opacity;
+/** conforms to CocosNodeRGBA protocol */
+@property (nonatomic,readwrite) ccColor3B color;
 @end

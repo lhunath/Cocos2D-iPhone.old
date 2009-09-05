@@ -75,3 +75,35 @@
 }
 @end
 
+@interface TextureLibPNG : TextureDemo
+{
+}
+-(void) transformSprite:(Sprite*)sprite;
+@end
+
+@interface TextureLibPNGTest1 : TextureLibPNG
+{
+}
+@end
+
+@interface TextureLibPNGTest2 : TextureLibPNG
+{
+}
+@end
+
+@interface TextureLibPNGTest3 : TextureLibPNG
+{
+}
+@end
+
+@interface TextureGlRepeat : TextureDemo
+{
+}
+@end
+
+@interface TextureGlClamp : TextureDemo
+{
+}
+@end
+
+

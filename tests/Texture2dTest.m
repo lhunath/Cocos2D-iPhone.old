@@ -8,8 +8,12 @@
 #import "cocos2d.h"
 #import "Texture2dTest.h"
 
+#import "png.h"
+
 enum {
 	kTagLabel = 1,
+	kTagSprite1 = 2,
+	kTagSprite2 = 3,
 };
 
 static int sceneIdx=-1;
@@ -28,6 +32,11 @@ static NSString *transitions[] = {
 						@"TexturePixelFormat",
 						@"TextureBlend",
 						@"TextureAsync",
+						@"TextureLibPNGTest1",
+						@"TextureLibPNGTest2",
+						@"TextureLibPNGTest3",
+						@"TextureGlClamp",
+						@"TextureGlRepeat",
 };
 
 #pragma mark Callbacks
@@ -401,7 +410,7 @@ Class restartAction()
 	[super onEnter];
 	
 	Label *label = (Label*) [self getChildByTag:kTagLabel];
-	[label setRGB:16 :16 :255];
+	[label setColor:ccc3(16,16,255)];
 	
 	CGSize s = [[Director sharedDirector] winSize];
 	
@@ -584,6 +593,325 @@ Class restartAction()
 @end
 
 
+#pragma mark TextureGlClamp
+@implementation TextureGlClamp
+-(id) init
+{
+	if( (self=[super init]) ) {
+		
+		CGSize size =[[Director sharedDirector] winSize];
+
+		// The .png image MUST be power of 2 in order to create a continue effect.
+		// eg: 32x64, 512x128, 256x1024, 64x64, etc..
+		AtlasSpriteManager *mgr = [AtlasSpriteManager spriteManagerWithFile:@"pattern1.png"];
+		AtlasSprite *sprite = [AtlasSprite spriteWithRect:CGRectMake(0, 0, 512, 256) spriteManager:mgr];
+		[mgr addChild:sprite z:0 tag:kTagSprite1];
+		[sprite setPosition:ccp(size.width/2,size.height/2)];
+		ccTexParams params = {GL_LINEAR,GL_LINEAR,GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE};
+		[mgr.texture setTexParameters:&params];
+		
+		id rotate = [RotateBy actionWithDuration:4 angle:360];
+		[sprite runAction:rotate];
+		id scale = [ScaleBy actionWithDuration:2 scale:0.04f];
+		id scaleBack = [scale reverse];
+		id seq = [Sequence actions:scale, scaleBack, nil];
+		[sprite runAction:seq];
+		
+		[self addChild:mgr z:-1];
+	}
+	return self;
+}
+
+-(NSString*) title
+{
+	return @"Texture GL_CLAMP";
+}
+- (void) dealloc
+{
+	[[TextureMgr sharedTextureMgr] removeUnusedTextures];
+	[super dealloc];
+}
+@end
+
+#pragma mark TextureGlRepeat
+@implementation TextureGlRepeat
+-(id) init
+{
+	if( (self=[super init]) ) {
+		
+		CGSize size =[[Director sharedDirector] winSize];
+		
+		// The .png image MUST be power of 2 in order to create a continue effect.
+		// eg: 32x64, 512x128, 256x1024, 64x64, etc..
+		AtlasSpriteManager *mgr = [AtlasSpriteManager spriteManagerWithFile:@"pattern1.png"];
+		AtlasSprite *sprite = [AtlasSprite spriteWithRect:CGRectMake(0, 0, 4096, 4096) spriteManager:mgr];
+		[mgr addChild:sprite z:0 tag:kTagSprite1];
+		[sprite setPosition:ccp(size.width/2,size.height/2)];
+		ccTexParams params = {GL_LINEAR,GL_LINEAR,GL_REPEAT,GL_REPEAT};
+		[mgr.texture setTexParameters:&params];
+		
+		id rotate = [RotateBy actionWithDuration:4 angle:360];
+		[sprite runAction:rotate];
+		id scale = [ScaleBy actionWithDuration:2 scale:0.04f];
+		id scaleBack = [scale reverse];
+		id seq = [Sequence actions:scale, scaleBack, nil];
+		[sprite runAction:seq];
+		
+		[self addChild:mgr z:-1];
+	}
+	return self;
+}
+
+-(NSString*) title
+{
+	return @"Texture GL_REPEAT";
+}
+- (void) dealloc
+{
+	[[TextureMgr sharedTextureMgr] removeUnusedTextures];
+	[super dealloc];
+}
+@end
+
+#pragma mark TextureLibPNG
+@implementation TextureLibPNG
+
+#define PNG_SIG_BYTES 8
+-(Texture2D*) loadPNG:(NSString*)name
+{	
+	png_uint_32 width, height, width2, height2;
+	int bits;
+	NSString *newName = [FileUtils fullPathFromRelativePath:name];
+	
+	FILE *png_file = fopen([newName UTF8String], "rb");
+	NSAssert(png_file, @"PNG doesn't exists");
+
+	uint8_t header[PNG_SIG_BYTES];	
+	fread(header, 1, PNG_SIG_BYTES, png_file);
+	NSAssert(!png_sig_cmp(header, 0, PNG_SIG_BYTES), @"Unkonw file format");
+	
+	png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	NSAssert(png_ptr, @"No mem");
+	
+	png_infop info_ptr = png_create_info_struct(png_ptr);
+	NSAssert(info_ptr, @"No mem");
+	
+	png_infop end_info = png_create_info_struct(png_ptr);
+	NSAssert(end_info, @"No mem");
+	
+	NSAssert(!setjmp(png_jmpbuf(png_ptr)), @"setjmp error");
+	png_init_io(png_ptr, png_file);
+	png_set_sig_bytes(png_ptr, PNG_SIG_BYTES);
+	png_read_info(png_ptr, info_ptr);
+	
+	width = png_get_image_width(png_ptr, info_ptr);
+	height = png_get_image_height(png_ptr, info_ptr);
+	
+	int bit_depth, color_type;
+	bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+	color_type = png_get_color_type(png_ptr, info_ptr);
+
+	if( color_type == PNG_COLOR_TYPE_PALETTE )
+		png_set_palette_to_rgb( png_ptr );
+	
+	if( color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8 )
+		png_set_gray_1_2_4_to_8( png_ptr );
+	
+	if( png_get_valid( png_ptr, info_ptr, PNG_INFO_tRNS ) )
+		png_set_tRNS_to_alpha (png_ptr);
+	
+	if( bit_depth == 16 )
+		png_set_strip_16( png_ptr );
+	
+	else if( bit_depth < 8 )
+		png_set_packing( png_ptr );
+	
+	png_read_update_info(png_ptr, info_ptr);
+	
+	png_get_IHDR( png_ptr, info_ptr,
+				&width, &height, &bit_depth, &color_type,
+				 NULL, NULL, NULL );
+	
+	switch( color_type )
+	{
+		case PNG_COLOR_TYPE_GRAY:
+			bits = 1;
+			break;
+			
+		case PNG_COLOR_TYPE_GRAY_ALPHA:
+			bits = 2;
+			break;
+			
+		case PNG_COLOR_TYPE_RGB:
+			bits = 3;
+			break;
+			
+		case PNG_COLOR_TYPE_RGB_ALPHA:
+			bits = 4;
+			break;
+	}
+
+	// wdith2 and height2 are the power of 2 versions of width and height
+	height2 = height;
+	width2 = width;
+
+	unsigned int i = 0;
+	if((width2 != 1) && (width2 & (width2 - 1))) {
+		i = 1;
+		while( i < width2)
+			i *= 2;
+		width2 = i;
+	}
+	if((height2 != 1) && (height2 & (height2 - 1))) {
+		i = 1;
+		while(i < height2)
+			i *= 2;
+		height2 = i;
+	}	
+
+	png_byte* pixels = calloc( width2 * height2 * bits, sizeof(png_byte) );
+	png_byte** row_ptrs = malloc(height * sizeof(png_bytep));
+	
+	// since Texture2D loads the image "upside-down", there's no need
+	// to flip the image here
+	for (i=0; i<height; i++)
+		row_ptrs[i] = pixels + i*width2*bits;
+
+	png_read_image(png_ptr, row_ptrs);	
+	png_read_end( png_ptr, NULL );
+	png_destroy_read_struct( &png_ptr, &info_ptr, &end_info );
+	free( row_ptrs );
+	
+	fclose(png_file);
+	
+	CGSize size = CGSizeMake(width,height);
+	
+	Texture2D *tex2d = [[Texture2D alloc] initWithData:pixels
+										 pixelFormat:kTexture2DPixelFormat_RGBA8888
+										  pixelsWide:width2
+										  pixelsHigh:height2
+										 contentSize:size];
+	free(pixels);
+	return [tex2d autorelease];
+}
+
+-(id) init
+{
+	if( (self=[super init]) ) {
+				
+		CGSize size =[[Director sharedDirector] winSize];
+	
+		Sprite *background = [Sprite spriteWithFile:@"background3.jpg"];
+		background.anchorPoint = CGPointZero;
+		[self addChild:background z:-1];
+		
+		
+		// PNG compressed sprite has pre multiplied alpha channel
+		//   you CAN have opacity + tint at the same time
+		//   but opacity SHOULD be before COLOR
+		Sprite *png1 = [Sprite spriteWithFile:@"grossinis_sister1-testalpha.png"];
+		[self addChild:png1 z:0];
+		png1.position = ccp(size.width/5, size.height/2);
+		[self transformSprite:png1];
+		
+		// PNG uncompressed sprite has pre multiplied alpha
+		//   Same rule as compressed sprites. why ???
+		Sprite *uncPNG = [Sprite spriteWithFile:@"grossinis_sister1-testalpha.ppng"];
+		[self addChild:uncPNG z:0];
+		uncPNG.position = ccp(size.width/5*2, size.height/2);
+		[self transformSprite:uncPNG];
+
+		
+		// PNG compressed sprite has pre multiplied alpha channel
+		//  - with opacity doesn't modify color
+		//  - blend func: GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
+		Sprite *png3 = [Sprite spriteWithFile:@"grossinis_sister1-testalpha.png"];
+		[self addChild:png3 z:0];
+		png3.position = ccp(size.width/5*3, size.height/2);
+		[png3 setBlendFunc:(ccBlendFunc){GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA}];
+		[png3 setOpacityModifyRGB:NO];
+		[self transformSprite:png3];
+		
+		// PNG 32-bit RGBA
+		Texture2D *tex2d = [self loadPNG:@"grossinis_sister1-testalpha.ppng"];
+		Sprite *rgba =[Sprite spriteWithTexture:tex2d];
+		[self addChild:rgba z:0];
+		rgba.position = ccp(size.width/5*4, size.height/2);
+		[self transformSprite:rgba];
+	}
+	return self;
+}
+
+-(void) transformSprite:(Sprite*)sprite
+{
+	CCLOG(@"override me");
+}
+- (void) dealloc
+{
+	[super dealloc];
+}
+
+-(NSString *) title
+{
+	return @"N/A";
+}
+@end
+
+@implementation TextureLibPNGTest1
+-(void) transformSprite:(Sprite*)sprite
+{
+	id fade = [FadeOut actionWithDuration:2];
+	id dl = [DelayTime actionWithDuration:2];
+	id fadein = [fade reverse];
+	id seq = [Sequence actions: fade, fadein, dl, nil];
+	id repeat = [RepeatForever actionWithAction:seq];
+	[sprite runAction:repeat];	
+}
+-(NSString*) title
+{
+	return @"iPhone PNG vs libpng #1";
+}
+@end
+
+@implementation TextureLibPNGTest2
+-(void) transformSprite:(Sprite*)sprite
+{
+	id tint = [TintBy actionWithDuration:2 red:-128 green:-128 blue:-255];
+	id dl = [DelayTime actionWithDuration:2];
+	id tintback = [tint reverse];
+	id seq = [Sequence actions: tint, dl, tintback, nil];
+	id repeat = [RepeatForever actionWithAction:seq];
+	[sprite runAction:repeat];
+}
+-(NSString*) title
+{
+	return @"iPhone PNG vs libpng #2";
+}
+@end
+
+@implementation TextureLibPNGTest3
+-(void) transformSprite:(Sprite*)sprite
+{	
+	id fade = [FadeOut actionWithDuration:2];
+	id dl = [DelayTime actionWithDuration:2];
+	id fadein = [fade reverse];
+	id seq = [Sequence actions: fade, fadein, dl, nil];
+	id repeat = [RepeatForever actionWithAction:seq];
+	[sprite runAction:repeat];
+	
+	id tint = [TintBy actionWithDuration:2 red:-128 green:-128 blue:-255];
+	id dl2 = [DelayTime actionWithDuration:2];
+	id tintback = [tint reverse];
+	id seq2 = [Sequence actions: tint, dl2, tintback, nil];
+	id repeat2 = [RepeatForever actionWithAction:seq2];
+	[sprite runAction:repeat2];
+	
+}
+-(NSString*) title
+{
+	return @"iPhone PNG vs libpng #3";
+}
+@end
 
 
 #pragma mark -
@@ -603,10 +931,10 @@ Class restartAction()
 	[window setMultipleTouchEnabled:NO];
 	
 	// must be called before any othe call to the director
-	[Director useFastDirector];
+//	[Director useFastDirector];
 
 	//
-//	[[Director sharedDirector] setPixelFormat:kRGBA8];
+	[[Director sharedDirector] setPixelFormat:kRGB565];
 
 	// before creating any layer, set the landscape mode
 	[[Director sharedDirector] setDeviceOrientation:CCDeviceOrientationLandscapeLeft];
@@ -619,16 +947,18 @@ Class restartAction()
 	
 	// Default texture format for PNG/BMP/TIFF/JPEG/GIF images
 	// It can be RGBA8888, RGBA4444, RGB5_A1, RGB565
-	// You can change anytime.
+	// You can change it at anytime.
 	[Texture2D setDefaultAlphaPixelFormat:kTexture2DPixelFormat_RGBA8888];	
 	
 	Scene *scene = [Scene node];
 	[scene addChild: [nextAction() node]];
 	
+//	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
 	[[Director sharedDirector] runWithScene: scene];
 }
 
-// getting a call, pause the game
+// geting a call, pause the game
 -(void) applicationWillResignActive:(UIApplication *)application
 {
 	[[Director sharedDirector] pause];

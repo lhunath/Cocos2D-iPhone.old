@@ -62,21 +62,18 @@ enum {
 @interface CocosNode : NSObject {
 	
 	// rotation angle
-	float rotation_;
+	float rotation_;	
 	
 	// scaling factors
 	float scaleX_, scaleY_;
 	
 	// position of the node
 	CGPoint position_;
-    
-    // scaling of time
-    float timeScale;
 	
 	// If YES the transformtions will be relative to (-transform.x, -transform.y).
 	// Sprites, Labels and any other "small" object uses it.
 	// Scenes, Layers and other "whole screen" object don't use it.
-	BOOL relativeTransformAnchor_;
+	BOOL relativeAnchorPoint_;
 	
 	// transformation anchor point
 	CGPoint transformAnchor_;
@@ -105,7 +102,7 @@ enum {
 	int zOrder;
 	
 	// array of children
-	NSMutableArray *children, *childrenScaled;
+	NSMutableArray *children;
 	
 	// is running
 	BOOL isRunning;
@@ -115,19 +112,16 @@ enum {
 	
 	// a tag. any number you want to assign to the node
 	int tag;
-	
-	// actions
-	struct ccArray *actions, *actionsScaled;
-	int actionIndex;
-	Action *currentAction;
-	BOOL currentActionSalvaged;
-	
+
 	// scheduled selectors
-	NSMutableDictionary *scheduledSelectors;    
+	NSMutableDictionary *scheduledSelectors;
+    
+	// user data field
+	void *userData;
 }
 
 /** The z order of the node relative to it's "brothers": children of the same parent */
-@property(readonly) int zOrder;
+@property(nonatomic,readonly) int zOrder;
 /** The real openGL Z vertex.
  Differences between openGL Z vertex and cocos2d Z order:
    - OpenGL Z modifies the Z vertex, and not the Z order in the relation between parent-children
@@ -136,54 +130,54 @@ enum {
  @warning: Use it at your own risk since it might break the cocos2d parent-children z order
  @since v0.8
  */
-@property (readwrite) float vertexZ;
+@property (nonatomic,readwrite) float vertexZ;
 /** The rotation (angle) of the node in degrees. 0 is the default rotation angle */
-@property(readwrite,assign) float rotation;
+@property(nonatomic,readwrite,assign) float rotation;
 /** The scale factor of the node. 1.0 is the default scale factor */
-@property(readwrite,assign) float scale, scaleX, scaleY;
+@property(nonatomic,readwrite,assign) float scale, scaleX, scaleY;
 /** Position (x,y) of the node in OpenGL coordinates. (0,0) is the left-bottom corner */
-@property(readwrite,assign) CGPoint position;
-/** Scaling of time.  > 1 causes time for this node and its ancestry to progress faster than its parents and siblings. < 1 causes it progress to slower. */
-@property(readwrite,assign) float timeScale;
+@property(nonatomic,readwrite,assign) CGPoint position;
 /** A Camera object that lets you move the node using camera coordinates.
  * If you use the Camera then position, scale & rotation won't be used */
-@property(readonly) Camera* camera;
+@property(nonatomic,readonly) Camera* camera;
 /** A Grid object that is used when applying Effects */
-@property(readwrite,retain) GridBase* grid;
+@property(nonatomic,readwrite,retain) GridBase* grid;
 /** Whether of not the node is visible. Default is YES */
-@property(readwrite,assign) BOOL visible;
+@property(nonatomic,readwrite,assign) BOOL visible;
 /** The transformation anchor point in absolute pixels.
  since v0.8 you can only read it. If you wish to modify it, use anchorPoint instead
  */
-@property(readonly) CGPoint transformAnchor;
+@property(nonatomic,readonly) CGPoint transformAnchor;
 /** The normalized coordinates of the anchor point.
  Anchor point. (0,0) means bottom-left corner, (1,1) means top-right corner, (0.5, 0.5) means the center.
  Sprites and other "textured" Nodes have a default anchorPoint of (0.5f, 0.5f)
  @since v0.8
  */
-@property(readwrite) CGPoint anchorPoint;
+@property(nonatomic,readwrite) CGPoint anchorPoint;
 /** The untransformed size of the node.
  The contentSize remains the same no matter the node is scaled or rotated.
  All nodes has a size. Layer and Scene has the same size of the screen.
  @since v0.8
  */
-@property (readwrite) CGSize contentSize;
+@property (nonatomic,readwrite) CGSize contentSize;
 /** A weak reference to the parent */
-@property(readwrite,assign) CocosNode* parent;
-/** If YES the transformtions will be relative to (-transform.x, -transform.y).
- * Sprites, Labels and any other sizeble object use it.
- * Scenes, Layers and other "whole screen" object don't use it.
+@property(nonatomic,readwrite,assign) CocosNode* parent;
+/** If YES the transformtions will be relative to it's anchor point.
+ * Sprites, Labels and any other sizeble object use it have it enabled by default.
+ * Scenes, Layers and other "whole screen" object don't use it, have it disabled by default.
  */
-@property(readwrite,assign) BOOL relativeTransformAnchor;
+@property(nonatomic,readwrite,assign) BOOL relativeAnchorPoint;
 /** A tag used to identify the node easily */
-@property(readwrite,assign) int tag;
-/** An array with the children */
-@property (readonly) NSArray *children;
+@property(nonatomic,readwrite,assign) int tag;
+/** A custom user data pointer */
+@property(nonatomic,readwrite,assign) void *userData;
 
 // initializators
-//! creates a node
+/** allocates and initializes a node.
+ The node will be created as "autorelease".
+ */
 +(id) node;
-//! initializes the node
+/** initializes the node */
 -(id) init;
 
 
@@ -224,9 +218,6 @@ enum {
  */
 -(id) addChild: (CocosNode*)node z:(int)z tag:(int)tag;
 
-/** Use this method to add children that should be unaffected by this node's time scale by setting scaleTime to NO */
--(id) addChild: (CocosNode*)node z:(int)z tag:(int)tag scaleTime:(BOOL)aScaleTime;
-
 // composition: REMOVE
 
 /** Removes a child from the container. It will also cleanup all running actions depending on the cleanup parameter.
@@ -251,10 +242,18 @@ enum {
  */
 -(CocosNode*) getChildByTag:(int) tag;
 
+/** Returns the array that contains all the children */
+- (NSArray *)children;
+
 /** Reorders a child according to a new z value.
  * The child MUST be already added.
  */
 -(void) reorderChild:(CocosNode*)child z:(int)zOrder;
+
+/** Stops all running actions and schedulers
+ @since v0.8
+ */
+-(void) cleanup;
 
 // draw
 
@@ -286,8 +285,6 @@ enum {
  @return An Action pointer
  */
 -(Action*) runAction: (Action*) action;
-/** Use this method to schedule actions that should be unaffected by this node's time scale by setting scaleTime to NO */
--(Action*) runAction:(Action*) action scaleTime:(BOOL)aScaleTime;
 /** Removes all actions from the running action list */
 -(void) stopAllActions;
 /** Removes an action from the running action list */
@@ -313,9 +310,6 @@ enum {
 /** check whether a selector is scheduled. */
 //-(BOOL) isScheduled: (SEL) selector;
 
-/** process action/scheduled methods time */
--(void) tick:(ccTime)dt;
-
 /** schedules a selector.
  The scheduled selector will be ticked every frame
  */
@@ -324,25 +318,35 @@ enum {
  If time is 0 it will be ticked every frame.
  */
 -(void) schedule: (SEL) s interval:(ccTime)seconds;
-/** Use this method to schedule selectors that should be unaffected by this node's time scale by setting scaleTime to NO */
--(void) schedule: (SEL) s interval:(ccTime)seconds scaleTime:(BOOL)st;
 /** unschedule a selector */
 -(void) unschedule: (SEL) s;
+/** activate all scheduled timers.
+ Called internally by onEnter
+ */
+-(void) activateTimers;
+/** deactivate all scheduled timers.
+ Called internally by onExit
+ */
+-(void) deactivateTimers;
 
 // transformation methods
 
-/// actual affine transforms used
-/// XXX: needs documentation
-/// @since v0.7.1
+/** actual affine transforms used
+ @todo nodeToParentTransform needs documentation
+ @since v0.7.1
+ */
 - (CGAffineTransform)nodeToParentTransform;
-/// XXX: needs documentation
-/// @since v0.7.1
+/** @todo parentToNodeTransform needs documentation
+ @since v0.7.1
+ */
 - (CGAffineTransform)parentToNodeTransform;
-/// XXX: needs documentation
-/// @since v0.7.1
+/** @todo nodeToWorldTransform needs documentation
+ @since v0.7.1
+ */
 - (CGAffineTransform)nodeToWorldTransform;
-/// XXX: needs documentation
-/// @since v0.7.1
+/** @todo worldToNodeTransform needs documentation
+ @since v0.7.1
+ */
 - (CGAffineTransform)worldToNodeTransform;
 /** converts a world coordinate to local coordinate
  @since v0.7.1
@@ -364,12 +368,14 @@ enum {
 - (CGPoint)convertToWorldSpaceAR:(CGPoint)nodePoint;
 /** converts local coordinate to window space */
 - (CGPoint)convertToWindowSpace:(CGPoint)nodePoint;
-// convenience methods which take a UITouch instead of CGPoint
-/// XXX: needs documentation
-/// @since v0.7.1
+/** convenience methods which take a UITouch instead of CGPoint
+ @todo convertTouchToNodeSpace needs documentation
+ @since v0.7.1
+ */
 - (CGPoint)convertTouchToNodeSpace:(UITouch *)touch;
-/// XXX: needs documentation
-/// @since v0.7.1
+/** @todo convertTouchToNodeSpaceAR needs documentation
+ @since v0.7.1
+ */
 - (CGPoint)convertTouchToNodeSpaceAR:(UITouch *)touch;
 @end
 
@@ -379,17 +385,15 @@ enum {
 
 /// CocosNode RGBA protocol
 @protocol CocosNodeRGBA <NSObject>
-/** set the color of the node
- * example:  [node setRGB: 255:128:24];  or  [node setRGB:0xff:0x88:0x22];
- @since v0.7.1
+/** sets Color
+ @since v0.8
  */
--(void) setRGB: (GLubyte)r :(GLubyte)g :(GLubyte)b;
-/// The red component of the node's color.
--(GLubyte) r;
-/// The green component of the node's color.
--(GLubyte) g;
-/// The blue component of the node's color.
--(GLubyte) b;
+-(void) setColor:(ccColor3B)color;
+/** returns the color
+ @since v0.8
+ */
+-(ccColor3B) color;
+
 /// returns the opacity
 -(GLubyte) opacity;
 /** sets the opacity.
@@ -408,7 +412,24 @@ enum {
  @since v0.8
  */
  -(BOOL) doesOpacityModifyRGB;
-
+/** set the color of the node
+ * example:  [node setRGB: 255:128:24];  or  [node setRGB:0xff:0x88:0x22];
+ @since v0.7.1
+ @deprecated Will be removed in v0.9. Use setColor instead.
+ */
+-(void) setRGB: (GLubyte)r :(GLubyte)g :(GLubyte)b __attribute__((deprecated));
+/** The red component of the node's color
+ @deprecated Will be removed in v0.9. Use color instead
+ */
+-(GLubyte) r __attribute__((deprecated));
+/** The green component of the node's color.
+ @deprecated Will be removed in v0.9. Use color instead
+ */
+-(GLubyte) g __attribute__((deprecated));
+/** The blue component of the node's color.
+ @deprecated Will be removed in v0.9. Use color instead
+ */
+-(GLubyte) b __attribute__((deprecated));
 @end
 
 

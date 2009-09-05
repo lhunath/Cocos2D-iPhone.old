@@ -15,8 +15,7 @@ static NSString *transitions[] = {
 			@"Atlas2",
 			@"Atlas3",
 			@"Atlas4",
-			@"Atlas5",
-			@"Atlas6",
+			@"AtlasFastBitmap",
 };
 
 enum {
@@ -221,10 +220,12 @@ Class restartAction()
 	LabelAtlas *label1 = [LabelAtlas labelAtlasWithString:@"123 Test" charMapFile:@"tuffy_bold_italic-charmap.png" itemWidth:48 itemHeight:64 startCharMap:' '];
 	[self addChild:label1 z:0 tag:kTagSprite1];
 	label1.position = ccp(10,100);
+	label1.opacity = 200;
 
 	LabelAtlas *label2 = [LabelAtlas labelAtlasWithString:@"0123456789" charMapFile:@"tuffy_bold_italic-charmap.png" itemWidth:48 itemHeight:64 startCharMap:' '];
 	[self addChild:label2 z:0 tag:kTagSprite2];
 	label2.position = ccp(10,200);
+	label2.opacity = 32;
 
 	[self schedule:@selector(step:)];
 	return self;
@@ -265,16 +266,31 @@ Class restartAction()
 {
 	if( (self=[super init]) ) {
 		
+		ColorLayer *col = [ColorLayer layerWithColor:ccc4(128,128,128,255)];
+		[self addChild:col z:-10];
+		
 		BitmapFontAtlas *label1 = [BitmapFontAtlas bitmapFontAtlasWithString:@"Test" fntFile:@"bitmapFontTest2.fnt"];
 		
 		// testing anchors
 		label1.anchorPoint = ccp(0,0);
 		[self addChild:label1 z:0 tag:kTagBitmapAtlas1];
+		id fade = [FadeOut actionWithDuration:1.0f];
+		id fade_in = [fade reverse];
+		id seq = [Sequence actions:fade, fade_in, nil];
+		id repeat = [RepeatForever actionWithAction:seq];
+		[label1 runAction:repeat];
 		
+
+		// VERY IMPORTANT
+		// color and opacity work OK because bitmapFontAltas2 loads a BMP image (not a PNG image)
+		// If you want to use both opacity and color, it is recommended to use NON premultiplied images like BMP images
+		// Of course, you can also tell XCode not to compress PNG images, but I think it doesn't work as expected
 		BitmapFontAtlas *label2 = [BitmapFontAtlas bitmapFontAtlasWithString:@"Test" fntFile:@"bitmapFontTest2.fnt"];
 		// testing anchors
 		label2.anchorPoint = ccp(0.5f, 0.5f);
+		label2.color = ccRED;
 		[self addChild:label2 z:0 tag:kTagBitmapAtlas2];
+		[label2 runAction: [[repeat copy] autorelease]];
 		
 		BitmapFontAtlas *label3 = [BitmapFontAtlas bitmapFontAtlasWithString:@"Test" fntFile:@"bitmapFontTest2.fnt"];
 		// testing anchors
@@ -399,112 +415,37 @@ Class restartAction()
 
 @end
 
-#pragma mark Example Atlas 5
+#pragma mark Example AtlasFastBitmap
 
-@implementation Atlas5
+/*
+ * Use this editor to generate bitmap font atlas:
+ *  http://slick.cokeandcode.com/demos/hiero.jnlp
+ */
+
+@implementation AtlasFastBitmap
 -(id) init
 {
 	if( (self=[super init]) ) {
-	
 		
-		TileMapAtlas *tilemap = [TileMapAtlas tileMapAtlasWithTileFile:@"tiles.png" mapFile:@"levelmap.tga" tileWidth:16 tileHeight:16];
-		// Convert it to "alias" (GL_LINEAR filtering)
-		[tilemap.texture setAliasTexParameters];
-		
-		// If you are not going to use the Map, you can free it now
-		// NEW since v0.7
-		[tilemap releaseMap];
-		
-		[self addChild:tilemap z:0 tag:kTagTileMap];
-		
-		tilemap.anchorPoint = ccp(0, 0.5f);
-		
-		id s = [ScaleBy actionWithDuration:4 scale:0.8f];
-		id scaleBack = [s reverse];
-		id go = [MoveBy actionWithDuration:8 position:ccp(-1650,0)];
-		id goBack = [go reverse];
-		
-		id seq = [Sequence actions: s,
-								go,
-								goBack,
-								scaleBack,
-								nil];
-		
-		[tilemap runAction:seq];
+		// Upper Label
+		for( int i=0 ; i < 100;i ++ ) {
+			BitmapFontAtlas *label = [BitmapFontAtlas bitmapFontAtlasWithString:[NSString stringWithFormat:@"-%d-",i] fntFile:@"bitmapFontTest.fnt"];
+			[self addChild:label];
+			
+			CGSize s = [[Director sharedDirector] winSize];
+
+			CGPoint p = ccp( CCRANDOM_0_1() * s.width, CCRANDOM_0_1() * s.height);
+			label.position = p;
+			label.anchorPoint = ccp(0.5f, 0.5f);
+		}
 	}
 	
 	return self;
 }
 
--(NSString *) title
+-(NSString*) title
 {
-	return @"Atlas: TileMapAtlas";
-}
-
-@end
-
-#pragma mark Example Atlas 6
-
-@implementation Atlas6
--(id) init
-{
-	if( (self=[super init]) ) {
-		
-		
-		TileMapAtlas *tilemap = [TileMapAtlas tileMapAtlasWithTileFile:@"tiles.png" mapFile:@"levelmap.tga" tileWidth:16 tileHeight:16];
-
-		// Create an Aliased Atlas
-		[tilemap.texture setAliasTexParameters];
-		
-		// If you are not going to use the Map, you can free it now
-		// [tilemap releaseMap];
-		// And if you are going to use, it you can access the data with:
-		[self schedule:@selector(updateMap:) interval:0.2f];
-		
-		[self addChild:tilemap z:0 tag:kTagTileMap];
-		
-		tilemap.anchorPoint = ccp(0, 0);
-		tilemap.position = ccp(-20,-200);
-	}	
-	return self;
-}
-
--(void) updateMap:(ccTime) dt
-{
-	// IMPORTANT
-	//   The only limitation is that you cannot change an empty, or assign an empty tile to a tile
-	//   The value 0 not rendered so don't assign or change a tile with value 0
-
-	TileMapAtlas *tilemap = (TileMapAtlas*) [self getChildByTag:kTagTileMap];
-	
-	//
-	// For example you can iterate over all the tiles
-	// using this code, but try to avoid the iteration
-	// over all your tiles in every frame. It's very expensive
-	//	for(int x=0; x < tilemap.tgaInfo->width; x++) {
-	//		for(int y=0; y < tilemap.tgaInfo->height; y++) {
-	//			ccColor3B c =[tilemap tileAt:ccg(x,y)];
-	//			if( c.r != 0 ) {
-	//				NSLog(@"%d,%d = %d", x,y,c.r);
-	//			}
-	//		}
-	//	}
-	
-	// NEW since v0.7
-	ccColor3B c =[tilemap tileAt:ccg(13,21)];		
-	c.r++;
-	c.r %= 50;
-	if( c.r==0)
-		c.r=1;
-	
-	// NEW since v0.7
-	[tilemap setTile:c at:ccg(13,21)];			
-	
-}
-
--(NSString *) title
-{
-	return @"Atlas: Editable TileMapAtlas";
+	return @"BitmapFontAtlas FastCache";
 }
 @end
 
@@ -524,7 +465,7 @@ Class restartAction()
 	[window setMultipleTouchEnabled:NO];
 	
 	// must be called before any othe call to the director
-	[Director useFastDirector];
+//	[Director useFastDirector];
 	
 	// before creating any layer, set the landscape mode
 	[[Director sharedDirector] setDeviceOrientation:CCDeviceOrientationLandscapeLeft];

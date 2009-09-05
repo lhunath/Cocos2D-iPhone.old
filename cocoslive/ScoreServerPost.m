@@ -2,7 +2,7 @@
  *
  * http://www.cocos2d-iphone.org
  *
- * Copyright (C) 2008 Ricardo Quesada
+ * Copyright (C) 2008,2009 Ricardo Quesada
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the 'cocos2d for iPhone' license.
@@ -92,6 +92,7 @@ NSInteger alphabeticSort(id string1, id string2, void *reverse)
 -(BOOL) submitScore: (NSDictionary*)dict forUpdate:(BOOL)isUpdate
 {	
     [receivedData setLength:0];
+	[bodyValues removeAllObjects];
 	
 	// reset status
 	postStatus_ = kPostStatusOK;
@@ -257,8 +258,8 @@ NSInteger alphabeticSort(id string1, id string2, void *reverse)
 {	
     [connection release];
 	
-//	NSString *dataString = [NSString stringWithCString:[receivedData bytes] length: [receivedData length]];
-	NSString *dataString = [NSString stringWithCString:[receivedData bytes] encoding: NSUTF8StringEncoding];
+	NSString *dataString = [NSString stringWithCString:[receivedData bytes] length: [receivedData length]];
+//	NSString *dataString = [NSString stringWithCString:[receivedData bytes] encoding: NSUTF8StringEncoding];
 	if( [dataString isEqual: @"OK"] ) {
 		
 		// Ok

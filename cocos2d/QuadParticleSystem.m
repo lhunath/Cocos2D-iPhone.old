@@ -162,6 +162,7 @@
 			p->color.a += (p->deltaColor.a * dt);
 			
 			p->size += (p->deltaSize * dt);
+			p->size = MAX( 0, p->size );
 
 			p->life -= dt;
 			
@@ -253,7 +254,7 @@
 		}
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, quadsID);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quads[0])*totalParticles, quads,GL_DYNAMIC_DRAW);	
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quads[0])*particleCount, quads,GL_DYNAMIC_DRAW);	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

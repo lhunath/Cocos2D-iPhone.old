@@ -18,17 +18,44 @@
 */
 
 #import <CoreGraphics/CGGeometry.h>	// CGPoint
-#import <OpenGLES/ES1/gl.h>			// GLenum
+#import <OpenGLES/ES1/gl.h>			// GLenum, GLubyte
 
 /** RGB color composed of bytes 3 bytes
 @since v0.8
  */
 typedef struct _ccColor3B
 {
-	unsigned char	r;
-	unsigned char	g;
-	unsigned char	b;
+	GLubyte	r;
+	GLubyte	g;
+	GLubyte b;
 } ccColor3B;
+
+//! helper macro that creates an ccColor3B type
+static inline ccColor3B
+ccc3(const GLubyte r, const GLubyte g, const GLubyte b)
+{
+	ccColor3B c = {r, g, b};
+	return c;
+}
+//ccColor3B predefined colors
+//! White color (255,255,255)
+static const ccColor3B ccWHITE={255,255,255};
+//! Yellow color (255,255,0)
+static const ccColor3B ccYELLOW={255,255,0};
+//! Blue color (0,0,255)
+static const ccColor3B ccBLUE={0,0,255};
+//! Green Color (0,255,0)
+static const ccColor3B ccGREEN={0,255,0};
+//! Red Color (255,0,0,)
+static const ccColor3B ccRED={255,0,0};
+//! Magenta Color (255,0,255)
+static const ccColor3B ccMAGENTA={255,0,255};
+//! Black Color (0,0,0)
+static const ccColor3B ccBLACK={0,0,0};
+//! Orange Color (255,127,0)
+static const ccColor3B ccORANGE={255,127,0};
+//! Gray Color (166,166,166)
+static const ccColor3B ccGRAY={166,166,166};
 
 /** RGBA color composed of 4 bytes
 @since v0.8
@@ -40,6 +67,14 @@ typedef struct _ccColor4B
 	unsigned char b;
 	unsigned char a;
 } ccColor4B;
+//! helper macro that creates an ccColor4B type
+static inline ccColor4B
+ccc4(const GLubyte r, const GLubyte g, const GLubyte b, const GLubyte o)
+{
+	ccColor4B c = {r, g, b, o};
+	return c;
+}
+
 
 /** RGBA color composed of 4 floats
 @since v0.8

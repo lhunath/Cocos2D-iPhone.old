@@ -48,10 +48,8 @@
 {}
 @end
 
-@interface Speed1 : SpriteDemo
-{
-    ScaleTime *action1, *action2, *action3;
-}
+@interface SpeedTest : SpriteDemo
+{}
 @end
 
 @interface SchedulerTest : SpriteDemo

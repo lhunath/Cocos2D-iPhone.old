@@ -119,6 +119,7 @@
 			p->color.a += (p->deltaColor.a * dt);
 			
 			p->size += (p->deltaSize * dt);
+			p->size = MAX( 0, p->size );
 			
 			p->life -= dt;
 			
@@ -152,7 +153,7 @@
 		}
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, verticesID);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(ccPointSprite)*totalParticles, vertices,GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(ccPointSprite)*particleCount, vertices,GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

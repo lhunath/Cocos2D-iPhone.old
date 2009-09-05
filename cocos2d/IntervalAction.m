@@ -44,11 +44,17 @@
 
 -(id) initWithDuration: (ccTime) d
 {
-	if( !(self=[super init]) )
-		return nil;
-	
-	duration = d;
-	elapsed = 0.0f;
+	if( (self=[super init]) ) {
+		duration = d;
+		
+		// prevent division by 0
+		// This comparison could be in step:, but it might decrease the performance
+		// by 3% in heavy based action games.
+		if( duration == 0 )
+			duration = 0.00000001f;
+		elapsed = 0;
+		firstTick = YES;
+	}
 	return self;
 }
 
@@ -66,7 +72,12 @@
 
 -(void) step: (ccTime) dt
 {
-	elapsed += dt;
+	if( firstTick ) {
+		firstTick = NO;
+		elapsed = 0;
+	} else
+		elapsed += dt;
+
 	[self update: MIN(1, elapsed/duration)];
 }
 
@@ -74,15 +85,8 @@
 {
     [super startWithTarget:aTarget];
     
-	if( gettimeofday( &lastUpdate, NULL) != 0 ) {
-		NSException* myException = [NSException
-									exceptionWithName:@"GetTimeOfDay"
-									reason:@"GetTimeOfDay abnormal error"
-									userInfo:nil];
-		@throw myException;
-	}
-	
 	elapsed = 0.0f;
+	firstTick = YES;
 }
 
 - (IntervalAction*) reverse
@@ -225,13 +229,12 @@
 {
 	ccTime d = [action duration] * t;
 
-	if( !(self=[super initWithDuration: d ]) )
-		return nil;
+	if( (self=[super initWithDuration: d ]) ) {
+		times = t;
+		other = [action retain];
 
-	times = t;
-	other = [action retain];
-
-	total = 0;
+		total = 0;
+	}
 	return self;
 }
 
@@ -284,8 +287,10 @@
 	} else {
 		// fix last repeat position
 		// else it could be 0.
-		if( dt== 1.0f)
+		if( dt== 1.0f) {
 			r=1.0f;
+			total++; // this is the added line
+		}
 		[other update: MIN(r,1)];
 	}
 }
@@ -408,10 +413,9 @@
 
 -(id) initWithDuration: (ccTime) t angle:(float) a
 {
-	if( !(self=[super initWithDuration: t]) )
-		return nil;
-	
-	angle = a;
+	if( (self=[super initWithDuration: t]) ) {	
+		angle = a;
+	}
 	return self;
 }
 
@@ -424,7 +428,14 @@
 -(void) startWithTarget:(CocosNode *)aTarget
 {
 	[super startWithTarget:aTarget];
-	startAngle = target.rotation;
+	
+	// 
+	if (startAngle > 0)
+		startAngle = fmodf(startAngle, 360.0f);
+	else
+		startAngle = fmodf(startAngle, -360.0f);
+	
+	startAngle = [target rotation];
 	angle -= startAngle;
 	if (angle > 180)
 		angle = -360 + angle;
@@ -433,7 +444,7 @@
 }
 -(void) update: (ccTime) t
 {
-	target.rotation = startAngle + angle * t;
+	[target setRotation: startAngle + angle * t];
 }
 @end
 
@@ -474,7 +485,7 @@
 -(void) update: (ccTime) t
 {	
 	// XXX: shall I add % 360
-	target.rotation = (startAngle + angle * t );
+	[target setRotation: (startAngle + angle * t )];
 }
 
 -(IntervalAction*) reverse
@@ -514,13 +525,13 @@
 -(void) startWithTarget:(CocosNode *)aTarget
 {
 	[super startWithTarget:aTarget];
-	startPosition = [target position];
+	startPosition = [(CocosNode*)target position];
 	delta = ccpSub( endPosition, startPosition );
 }
 
 -(void) update: (ccTime) t
 {	
-	target.position = ccp( (startPosition.x + delta.x * t ), (startPosition.y + delta.y * t ) );
+	[target setPosition: ccp( (startPosition.x + delta.x * t ), (startPosition.y + delta.y * t ) )];
 }
 @end
 
@@ -596,7 +607,7 @@
 -(void) startWithTarget:(CocosNode *)aTarget
 {
 	[super startWithTarget:aTarget];
-	startPosition = target.position;
+	startPosition = [(CocosNode*)target position];
 }
 
 -(void) update: (ccTime) t
@@ -604,7 +615,7 @@
 	ccTime y = height * fabsf( sinf(t * (CGFloat)M_PI * jumps ) );
 	y += delta.y * t;
 	ccTime x = delta.x * t;
-	target.position = ccp( startPosition.x + x, startPosition.y + y );
+	[target setPosition: ccp( startPosition.x + x, startPosition.y + y )];
 }
 
 -(IntervalAction*) reverse
@@ -669,7 +680,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 -(void) startWithTarget:(CocosNode *)aTarget
 {
 	[super startWithTarget:aTarget];
-	startPosition = target.position;
+	startPosition = [(CocosNode*)target position];
 }
 
 -(void) update: (ccTime) t
@@ -686,7 +697,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	
 	float x = bezierat(xa, xb, xc, xd, t);
 	float y = bezierat(ya, yb, yc, yd, t);
-	target.position = ccpAdd( startPosition, ccp(x,y));
+	[target setPosition:  ccpAdd( startPosition, ccp(x,y))];
 }
 
 - (IntervalAction*) reverse
@@ -809,7 +820,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 {
 	ccTime slice = 1.0f / times;
 	ccTime m = fmodf(t, slice);
-	target.visible = (m > slice/2) ? YES : NO;
+	[target setVisible: (m > slice/2) ? YES : NO];
 }
 
 -(IntervalAction*) reverse
@@ -901,16 +912,14 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 -(id) initWithDuration: (ccTime) t red:(GLubyte)r green:(GLubyte)g blue:(GLubyte)b
 {
 	if( (self=[super initWithDuration: t] ) ) {
-		toR = r;
-		toG = g;
-		toB = b;
+		to = ccc3(r,g,b);
 	}
 	return self;
 }
 
 -(id) copyWithZone: (NSZone*) zone
 {
-	Action *copy = [(TintTo*)[[self class] allocWithZone: zone] initWithDuration: [self duration] red:toR green:toG blue:toB];
+	Action *copy = [(TintTo*)[[self class] allocWithZone: zone] initWithDuration: [self duration] red:to.r green:to.g blue:to.b];
 	return copy;
 }
 
@@ -919,16 +928,13 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	[super startWithTarget:aTarget];
 	
 	id<CocosNodeRGBA> tn = (id<CocosNodeRGBA>) target;
-	
-	fromR = [tn r];
-	fromG = [tn g];
-	fromB = [tn b];
+	from = [tn color];
 }
 
 -(void) update: (ccTime) t
 {
 	id<CocosNodeRGBA> tn = (id<CocosNodeRGBA>) target;
-	[tn setRGB:fromR + (toR - fromR) * t :fromG + (toG - fromG) * t :fromB + (toB - fromB) * t];
+	[tn setColor:ccc3(from.r + (to.r - from.r) * t, from.g + (to.g - from.g) * t, from.b + (to.b - from.b) * t)];
 }
 @end
 
@@ -963,15 +969,16 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	[super startWithTarget:aTarget];
 	
 	id<CocosNodeRGBA> tn = (id<CocosNodeRGBA>) target;
-	fromR = [tn r];
-	fromG = [tn g];
-	fromB = [tn b];
+	ccColor3B color = [tn color];
+	fromR = color.r;
+	fromG = color.g;
+	fromB = color.b;
 }
 
 -(void) update: (ccTime) t
 {
 	id<CocosNodeRGBA> tn = (id<CocosNodeRGBA>) target;
-	[tn setRGB:fromR + deltaR * t :fromG + deltaG * t :fromB + deltaB * t];
+	[tn setColor:ccc3( fromR + deltaR * t, fromG + deltaG * t, fromB + deltaB * t)];
 }
 - (IntervalAction*) reverse
 {
@@ -1136,52 +1143,5 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	if (! [sprite isFrameDisplayed: [[animation frames] objectAtIndex: idx]] ) {
 		[sprite setDisplayFrame: [[animation frames] objectAtIndex:idx]];
 	}
-}
-@end
-
-
-//
-// ScaleTime
-//
-#pragma mark -
-#pragma mark ScaleTime
-@implementation ScaleTime
-
-+(id) actionWithTimeScaleTarget:(float)aTimeScaleTarget duration:(ccTime)aDuration
-{
-	return [[[self alloc] initWithTimeScaleTarget: aTimeScaleTarget duration:aDuration] autorelease];
-}
-
--(id) initWithTimeScaleTarget:(float)aTimeScaleTarget duration:(ccTime)aDuration
-{
-	if( !(self=[super initWithDuration:aDuration]) )
-		return nil;
-	
-	timeScaleTarget = aTimeScaleTarget;
-    
-	return self;
-}
-
--(id) copyWithZone: (NSZone*) zone
-{
-    return [[[self class] allocWithZone: zone] initWithTimeScaleTarget:timeScaleTarget duration:self.duration];
-}
-
--(void) startWithTarget:(CocosNode *)aTarget
-{
-    
-    [super startWithTarget:aTarget];
-    
-    delta = timeScaleTarget - self.target.timeScale;
-}
-
--(void) update:(ccTime) dt
-{
-    self.target.timeScale = timeScaleTarget - delta * (1 - dt);
-}
-
-- (IntervalAction *) reverse
-{
-	return [[self class] actionWithTimeScaleTarget:1.0f / timeScaleTarget duration:self.duration];
 }
 @end

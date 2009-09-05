@@ -22,18 +22,17 @@ enum {
 	kActionTagInvalid = -1,
 };
 
-@class CocosNode;
 /** Base class for actions
  */
 @interface Action : NSObject <NSCopying> {
-	CocosNode *target;
-	int tag;
+	id	target;
+	int	tag;
 }
 
 /** The "target". The action will modify the target properties */
-@property (readwrite,assign) CocosNode *target;
+@property (nonatomic,readwrite,assign) id target;
 /** The action tag. An identifier of the action */
-@property (readwrite,assign) int tag;
+@property (nonatomic,readwrite,assign) int tag;
 
 +(id) action;
 -(id) init;
@@ -69,7 +68,7 @@ enum {
 	ccTime duration;
 }
 //! duration in seconds of the action
-@property (readwrite) ccTime duration;
+@property (nonatomic,readwrite) ccTime duration;
 
 /** returns a reversed action */
 - (FiniteTimeAction*) reverse;
@@ -89,4 +88,22 @@ enum {
 +(id) actionWithAction: (IntervalAction*) action;
 /** initializes the action */
 -(id) initWithAction: (IntervalAction*) action;
+@end
+
+/** Changes the speed of an action, making it take longer (speed>1)
+ or less (speed<1) time.
+ Useful to simulate 'slow motion' or 'fast forward' effect.
+ @warning This action can't be Sequenceable because it is not an IntervalAction
+ */
+@interface Speed : Action <NSCopying>
+{
+       IntervalAction  *other;
+       float speed;
+}
+/** alter the speed of the inner function in runtime */
+@property (nonatomic,readwrite) float speed;
+/** creates the action */
++(id) actionWithAction: (IntervalAction*) action speed:(float)rate;
+/** initializes the action */
+-(id) initWithAction: (IntervalAction*) action speed:(float)rate;
 @end

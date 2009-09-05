@@ -1,7 +1,12 @@
 cocos2d for iPhone authors
 --------------------------
 
-Main developer: Ricardo Quesada
+Main developers:
+	Ricardo Quesada (cocos2d, cocos Live)
+	Valentin Milea (cocos2d)
+	Steve Oldmeadow (Cocos Denshion)
+
+cocos2d logos by Michael Heald ( http://www.fullyillustrated.com )
 
 Special thanks to: Lucio Torre, Alejandro Cura, Daniel Moisset & Rayentray Tappa.
 
@@ -19,11 +24,20 @@ Poeple/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 		added sanity in scheduler
 		TileMapAtlas supports fullpath
 	* Andy Fitter: patches for Texture2D
+	* Andreas Löw (thesk): FileUtils doesn't convert full paths
 	* Anton Zemlyanov: patches for MenuItemToggle that supports selectedIndex
+	* Aymeric Bard: Repeat action works OK
 	* Brian Hammond: patches for Demos
+	* Bryan/Acceleroto: patch for CocosDenshion
+	* CJ Hanson: RenderTexture generates UIImages patch
+	* cjlesh: RotateTo action rotates to shortest angle patch
 	* Clinth Harris: patches for Doc generator script
 	* Codemattic: patches for CocosNode
 		patches fro MenuItemFont
+	* Corey.B.Painter: Speed action calls other#stop patch
+	* magicyu (crmagicxxx): CocosLive client supports ranking request patch
+	* Dominique Bongard: patches for CocosDenshion
+		Scheduler fires Timer the 1st time with dt=0
 	* effervens: patches for Director
 	* Ernesto Corvi: author of TGA RLE support
 		patches for TextureMgr
@@ -44,12 +58,16 @@ Poeple/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 	* Fradj Johann: patches for CocosNode
 		patches for Layer
 		patches for MultiplexLayer
-	* Gamebit: added support for auto-remove-on-finish in particles
+	* Rolandas Razma (gamebit): added support for auto-remove-on-finish in particles
+		TMX maps support visibility and opacity patch
+		TMX maps possibility to access the layers patch
 	* Graham Perks: Atlas works with GL_CULL_FACE
 		FastDirector doesn't leak autorelease pool patch
 	* Mark Cooke: Added TintTo action
+	* Matthias Hoechsmann: author of tools/mkatlas.pl script
 	* Hans Larsen: Possibility to create empty menus
 	* Ishaq Malik: patches for CocosNode
+	* Joao Caxaria: author of SimpleAudioEngine
 	* Jacob Eiting: patches for Primitives
 	* Jason Booth (slipster216): author of the EaseAction actions
 		author of EaseAction demos
@@ -57,7 +75,10 @@ Poeple/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 		patch for ScaleTo/By action to support X and Y.
 		added endSize to ParticleSystem
 		added WorldSpace coordinates to ParticleSystem
+		author of RenderTexture class
 	* Jason Cecil: Fixed memory leak in Director#FPSLabel
+		patches for CocosDenshion
+		CocosNode: parent set to nil after onExit patch
 	* Joe Vennix: patches for CocosNode
 	* jkrippy: patch for menu align. takes scale into account
 	* kasatani: AtlasSprite index 0 is not overwritten
@@ -83,7 +104,10 @@ Poeple/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 		Added RGB protocol in CocosNode, Atlas, Texture
 		Particle reset system works as expected
 		CocosNode: fixed "already scheduled exception" bug
-	* Manu Valladolid: added isPaused property to Director	
+	* Manu Valladolid: added isPaused property to Director
+		patches for the setColor API for the RGBA protocol
+		MenuItemLabel: color is saved when item is disabled
+		Update status in CocosDenshion patch
 	* mark at abitofthought: author of the single threaded Fast Director
 	* Michal Szymerski: Added support for AtlasSprite as MenuItems
 	* Mitch: patches for Menu
@@ -93,11 +117,16 @@ Poeple/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 	* Matt Oswald: fix to set depthbuffer size on Director
 		TextureAtlas supports Texture2D objects
 		author of the original AtlasSprite and AtlasSpriteManager
+	* myBuddyCJ: correct channel in SimpleAudioEngine patch
 	* Nerezus: Fixed compile error when keyboard registry is enabled
+	* psionic81: ActionManager doesn't purge running actions patch
 	* rac5372: compiler warning in MenuItem
 	* ratman: patch for TileMapAtlas: it works with 255 tiles
 		patch for TextureMgr: supports directory within image names
+	* Rolando Abarca: XCode only displays the libz dependency just once
+		added userData property in CocosNode
 	* Serge Kolgan: patches for CocosNode
+	* sflory: new way to added CGImageRef to TextureMgr
 	* Steve Israelson: patches for Scheduler
 		pactches for Actions
 		patches for Transitions
@@ -105,6 +134,10 @@ Poeple/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 	* Steve Oldmeadow: patches for Texture2D
 		Author of CocosDenshion Sound Engine
 		Integrated Box2d physics engine
+		Created Box2d + cocos2d demo example
+	* thoechsm: update the VBO buffer with only the needed particles
+	* Thomas Visser: MenuItem#rect works with anchorPoint
+	* Stanislav Skuratov (trump-card): Author of ParticleView, the particle editor
 	* Valentin Milea: clean up CocosNode, added better comments to CocosNode
 		Set transformAnchor point in Sprite
 		Actions can have tags
@@ -124,7 +157,8 @@ Poeple/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 		CocosNode actions: patches that makes the actions run MUCH faster
 		Author of the transformations caches. world2local, local2world runs faster.
 		fixes for Repeat action. It doesn't skip integer values
+		CocosNode#children is an explicit property
 	* yarrington: patches for Director
 
 
-Am I missing someone ? Oops, sorry. Send me an email.
+Is someone missing ? Please, send an email to ricardoquesada@gmail.com

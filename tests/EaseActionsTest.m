@@ -58,43 +58,44 @@ Class restartAction()
 @implementation SpriteDemo
 -(id) init
 {
-	[super init];
+	if( (self=[super init])) {
 
-	// Example:
-	// You can create a sprite using a Texture2D
-	Texture2D *tex = [ [Texture2D alloc] initWithImage: [UIImage imageWithContentsOfFile: [[NSBundle mainBundle] pathForResource:@"grossini.png" ofType:nil] ] ];
-	grossini = [[Sprite spriteWithTexture:tex] retain];
-	[tex release];
-	
-	// Example:
-	// Or you can create an sprite using a filename. PNG and BMP files are supported. Probably TIFF too
-	tamara = [[Sprite spriteWithFile:@"grossinis_sister1.png"] retain];
-	kathia = [[Sprite spriteWithFile:@"grossinis_sister2.png"] retain];
-	
-	[self addChild: grossini z:3];
-	[self addChild: kathia z:2];
-	[self addChild: tamara z:1];
+		// Example:
+		// You can create a sprite using a Texture2D
+		Texture2D *tex = [ [Texture2D alloc] initWithImage: [UIImage imageWithContentsOfFile: [[NSBundle mainBundle] pathForResource:@"grossini.png" ofType:nil] ] ];
+		grossini = [[Sprite spriteWithTexture:tex] retain];
+		[tex release];
+		
+		// Example:
+		// Or you can create an sprite using a filename. PNG and BMP files are supported. Probably TIFF too
+		tamara = [[Sprite spriteWithFile:@"grossinis_sister1.png"] retain];
+		kathia = [[Sprite spriteWithFile:@"grossinis_sister2.png"] retain];
+		
+		[self addChild: grossini z:3];
+		[self addChild: kathia z:2];
+		[self addChild: tamara z:1];
 
-	CGSize s = [[Director sharedDirector] winSize];
-	
-	[grossini setPosition: ccp(60, 50)];
-	[kathia setPosition: ccp(60, 150)];
-	[tamara setPosition: ccp(60, 250)];
-	
-	Label* label = [Label labelWithString:[self title] fontName:@"Arial" fontSize:32];
-	[self addChild: label];
-	[label setPosition: ccp(s.width/2, s.height-50)];
+		CGSize s = [[Director sharedDirector] winSize];
+		
+		[grossini setPosition: ccp(60, 50)];
+		[kathia setPosition: ccp(60, 150)];
+		[tamara setPosition: ccp(60, 250)];
+		
+		Label* label = [Label labelWithString:[self title] fontName:@"Arial" fontSize:32];
+		[self addChild: label];
+		[label setPosition: ccp(s.width/2, s.height-50)];
 
-	MenuItemImage *item1 = [MenuItemImage itemFromNormalImage:@"b1.png" selectedImage:@"b2.png" target:self selector:@selector(backCallback:)];
-	MenuItemImage *item2 = [MenuItemImage itemFromNormalImage:@"r1.png" selectedImage:@"r2.png" target:self selector:@selector(restartCallback:)];
-	MenuItemImage *item3 = [MenuItemImage itemFromNormalImage:@"f1.png" selectedImage:@"f2.png" target:self selector:@selector(nextCallback:)];
-	
-	Menu *menu = [Menu menuWithItems:item1, item2, item3, nil];
-	menu.position = CGPointZero;
-	item1.position = ccp(480/2-100,30);
-	item2.position = ccp(480/2, 30);
-	item3.position = ccp(480/2+100,30);
-	[self addChild: menu z:1];
+		MenuItemImage *item1 = [MenuItemImage itemFromNormalImage:@"b1.png" selectedImage:@"b2.png" target:self selector:@selector(backCallback:)];
+		MenuItemImage *item2 = [MenuItemImage itemFromNormalImage:@"r1.png" selectedImage:@"r2.png" target:self selector:@selector(restartCallback:)];
+		MenuItemImage *item3 = [MenuItemImage itemFromNormalImage:@"f1.png" selectedImage:@"f2.png" target:self selector:@selector(nextCallback:)];
+		
+		Menu *menu = [Menu menuWithItems:item1, item2, item3, nil];
+		menu.position = CGPointZero;
+		item1.position = ccp(480/2-100,30);
+		item2.position = ccp(480/2, 30);
+		item3.position = ccp(480/2+100,30);
+		[self addChild: menu z:1];
+	}
 
 	return self;
 }
@@ -169,6 +170,7 @@ Class restartAction()
 	[tamara runAction: [RepeatForever actionWithAction:seq2]];
 	[kathia runAction: [RepeatForever actionWithAction:seq3]];
 }
+
 -(NSString *) title
 {
 	return @"EaseIn - EaseOut";
@@ -334,26 +336,33 @@ Class restartAction()
 	id seq3_1 = [Sequence actions:jump2, jump1, nil];
 	id seq3_2 = [Sequence actions: rot1, rot2, nil];
 	id spawn = [Spawn actions:seq3_1, seq3_2, nil];
+	id action = [Speed actionWithAction: [RepeatForever actionWithAction:spawn] speed:1.0f];
+	[action setTag: kTagAction1];
+	
+	id action2 = [[action copy] autorelease];
+	id action3 = [[action copy] autorelease];
 
-	action1 = [[ScaleTime actionWithTimeScaleTarget:1.0f duration:8.0f] retain];
-	action2 = [action1 copy];
-	action3 = [action1 copy];
-
-    [grossini runAction:spawn];
-	[grossini runAction:[EaseExponentialInOut actionWithAction:action1]];
-    [tamara runAction:[[spawn copy] autorelease]];
-	[tamara runAction:[EaseExponentialInOut actionWithAction:action2]];
-    [kathia runAction:[[spawn copy] autorelease]];
-	[kathia runAction:[EaseExponentialInOut actionWithAction:action3]];
+	[action2 setTag:kTagAction1];
+	[action3 setTag:kTagAction1];
+	
+	[grossini runAction: action2 ];
+	[tamara runAction: action3];
+	[kathia runAction:action];
+	
 	
 	[self schedule:@selector(altertime:) interval:1.0f];
 }
 
 -(void) altertime:(ccTime)dt
 {	
-	[action1 setTimeScaleTarget: CCRANDOM_0_1() * 3];
-	[action2 setTimeScaleTarget: CCRANDOM_0_1() * 3];
-	[action3 setTimeScaleTarget: CCRANDOM_0_1() * 3];
+	id action1 = [grossini getActionByTag:kTagAction1];
+	id action2 = [tamara getActionByTag:kTagAction1];
+	id action3 = [kathia getActionByTag:kTagAction1];
+	
+	[action1 setSpeed: CCRANDOM_0_1() * 2];
+	[action2 setSpeed: CCRANDOM_0_1() * 2];
+	[action3 setSpeed: CCRANDOM_0_1() * 2];
+
 }
 
 -(NSString *) title

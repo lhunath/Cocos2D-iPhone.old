@@ -111,7 +111,8 @@ enum {
 
 -(CGRect) rect
 {
-	return CGRectMake( self.position.x - contentSize_.width/2, self.position.y-contentSize_.height/2,
+	return CGRectMake( self.position.x - contentSize_.width*anchorPoint_.x, self.position.y-
+					  contentSize_.height*anchorPoint_.y,
 					  contentSize_.width, contentSize_.height);
 }
 @end
@@ -122,6 +123,8 @@ enum {
 
 @implementation MenuItemLabel
 
+@synthesize disabledColor = disabledColor_;
+
 +(id) itemWithLabel:(CocosNode<CocosNodeLabel,CocosNodeRGBA>*)label target:(id)target selector:(SEL)selector
 {
 	return [[[self alloc] initWithLabel:label target:target selector:selector] autorelease];
@@ -130,7 +133,9 @@ enum {
 -(id) initWithLabel:(CocosNode<CocosNodeLabel,CocosNodeRGBA>*)label target:(id)target selector:(SEL)selector
 {
 	if( (self=[super initWithTarget:target selector:selector]) ) {
-		self.label = label;		
+		self.label = label;
+		colorBackup = ccWHITE;
+		disabledColor_ = ccc3( 126,126,126);
 	}
 	return self;
 }
@@ -192,10 +197,14 @@ enum {
 
 -(void) setIsEnabled: (BOOL)enabled
 {
-	if(enabled == NO)
-		[label_ setRGB:126 :126 :126];
-	else
-		[label_ setRGB:255 :255 :255];
+	if( isEnabled != enabled ) {
+		if(enabled == NO) {
+			colorBackup = [label_ color];
+			[label_ setColor: disabledColor_];
+		}
+		else
+			[label_ setColor:colorBackup];
+	}
     
 	[super setIsEnabled:enabled];
 }
@@ -215,19 +224,15 @@ enum {
 }
 - (void) setRGB:(GLubyte)r:(GLubyte)g:(GLubyte)b
 {
-	[label_ setRGB:r:g:b];
+	[label_ setColor: ccc3(r,g,b)];
 }
--(GLubyte)r
+-(void) setColor:(ccColor3B)color
 {
-	return [label_ r];
+	[label_ setColor:color];
 }
--(GLubyte)g
+-(ccColor3B) color
 {
-	return [label_ g];
-}
--(GLubyte)b
-{
-	return [label_ b];
+	return [label_ color];
 }
 @end
 
@@ -401,27 +406,23 @@ enum {
 	[disabledImage_ setOpacity:opacity];
 }
 
+-(void) setColor:(ccColor3B)color
+{
+	[normalImage_ setColor:color];
+	[selectedImage_ setColor:color];
+	[disabledImage_ setColor:color];	
+}
 - (void) setRGB:(GLubyte)r:(GLubyte)g:(GLubyte)b
 {
-	[normalImage_ setRGB:r:g:b];
-	[selectedImage_ setRGB:r:g:b];
-	[disabledImage_ setRGB:r:g:b];
+	[self setColor:ccc3(r,g,b)];
 }
 -(GLubyte) opacity
 {
 	return [normalImage_ opacity];
 }
--(GLubyte)r
+-(ccColor3B) color
 {
-	return [normalImage_ r];
-}
--(GLubyte)g
-{
-	return [normalImage_ g];
-}
--(GLubyte)b
-{
-	return [normalImage_ b];
+	return [normalImage_ color];
 }
 @end
 
@@ -557,7 +558,7 @@ enum {
 @implementation MenuItemToggle
 
 @synthesize subItems = subItems_;
-@synthesize opacity=opacity_, r=r_, g=g_, b=b_;
+@synthesize opacity=opacity_, color=color_;
 
 +(id) itemWithTarget: (id)t selector: (SEL)sel items: (MenuItem*) item, ...
 {
@@ -631,13 +632,13 @@ enum {
 -(void) activate
 {
 	// update index
-	
 	if( isEnabled ) {
 		NSUInteger newIndex = (selectedIndex_ + 1) % [subItems_ count];
 		[self setSelectedIndex:newIndex];
 
-		[invocation invoke];
 	}
+
+	[super activate];
 }
 
 -(void) setIsEnabled: (BOOL)enabled
@@ -661,12 +662,15 @@ enum {
 		[item setOpacity:opacity];
 }
 
+- (void) setColor:(ccColor3B)color
+{
+	color_ = color;
+	for(MenuItem<CocosNodeRGBA>* item in subItems_)
+		[item setColor:color];
+}
+
 - (void) setRGB:(GLubyte)r:(GLubyte)g:(GLubyte)b
 {
-	r_ = r;
-	g_ = g;
-	b_ = b;
-	for(MenuItem<CocosNodeRGBA>* item in subItems_)
-		[item setRGB:r:g:b];
+	[self setColor:ccc3(r,g,b)];
 }
 @end

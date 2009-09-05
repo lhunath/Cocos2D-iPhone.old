@@ -18,6 +18,8 @@
 #import "Support/FileUtils.h"
 #import "Support/Texture2D.h"
 
+static EAGLContext *auxEAGLcontext = nil;
+
 @interface AsyncObject : NSObject
 {
 	SEL			selector_;
@@ -33,6 +35,14 @@
 @synthesize selector = selector_;
 @synthesize target = target_;
 @synthesize data = data_;
+- (void) dealloc
+{
+	CCLOG(@"deallocing %@", self);
+	[target_ release];
+	[data_ release];
+	[super dealloc];
+}
+
 @end
 
 
@@ -72,6 +82,7 @@ static TextureMgr *sharedTextureMgr;
 	if( (self=[super init]) ) {
 		textures = [[NSMutableDictionary dictionaryWithCapacity: 10] retain];
 		dictLock = [[NSLock alloc] init];
+		contextLock = [[NSLock alloc] init];
 	}
 
 	return self;
@@ -79,7 +90,14 @@ static TextureMgr *sharedTextureMgr;
 
 -(void) dealloc
 {
+	CCLOG( @"deallocing %@", self);
+
 	[textures release];
+	[dictLock release];
+	[contextLock release];
+	[auxEAGLcontext release];
+	auxEAGLcontext = nil;
+	sharedTextureMgr = nil;
 	[super dealloc];
 }
 
@@ -90,17 +108,31 @@ static TextureMgr *sharedTextureMgr;
 	NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
 	
 	// textures will be created on the main OpenGL context
-	EAGLContext *k_context = [[[EAGLContext alloc]
+	// it seems that in SDK 2.2.x there can't be 2 threads creating textures at the same time
+	// the lock is used for this purpose: issue #472
+	[contextLock lock];
+	if( auxEAGLcontext == nil ) {
+		auxEAGLcontext = [[EAGLContext alloc]
 							   initWithAPI:kEAGLRenderingAPIOpenGLES1
-							   sharegroup:[[[[Director sharedDirector] openGLView] context] sharegroup]] autorelease];
+							   sharegroup:[[[[Director sharedDirector] openGLView] context] sharegroup]];
+		
+		if( ! auxEAGLcontext )
+			CCLOG(@"TextureMgr: Could not create EAGL context");
+	}
 	
-	[EAGLContext setCurrentContext:k_context];
+	if( [EAGLContext setCurrentContext:auxEAGLcontext] ) {
 
-	// load / create the texture
-	Texture2D *tex = [self addImage:async.data];
+		// load / create the texture
+		Texture2D *tex = [self addImage:async.data];
 
-	// The callback will be executed on the main thread
-	[async.target performSelectorOnMainThread:async.selector withObject:tex waitUntilDone:NO];
+		// The callback will be executed on the main thread
+		[async.target performSelectorOnMainThread:async.selector withObject:tex waitUntilDone:NO];
+		
+		[EAGLContext setCurrentContext:nil];
+	} else {
+		CCLOG(@"TetureMgr: EAGLContext error");
+	}
+	[contextLock unlock];
 	
 	[autoreleasepool release];
 }
@@ -203,13 +235,20 @@ static TextureMgr *sharedTextureMgr;
 	return [tex autorelease];
 }
 
-
 -(Texture2D*) addCGImage: (CGImageRef) image
 {
 	NSAssert(image != nil, @"TextureMgr: image MUST not be nill");
 	
-	Texture2D * tex;
 	NSString *key = [NSString stringWithFormat:@"%08X",(unsigned long)image];
+	
+	return [self addCGImage: image forKey: key];
+}
+
+-(Texture2D*) addCGImage: (CGImageRef) image forKey: (NSString *)key
+{
+	NSAssert(image != nil, @"TextureMgr: image MUST not be nill");
+	
+	Texture2D * tex;
 	
 	if( (tex=[textures objectForKey: key] ) ) {
 		return tex;

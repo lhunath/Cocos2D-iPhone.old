@@ -32,7 +32,6 @@ enum {
 
 @interface TransitionScene (Private)
 -(void) sceneOrder;
-- (void)setNewScene:(ccTime)dt;
 @end
 
 @implementation TransitionScene
@@ -141,17 +140,9 @@ enum {
 	[inScene onEnterTransitionDidFinish];
 }
 
-// inScene and outScene are not conventional children of this node; so default tick does not propagate to them.
-// custom tick
--(void) tick:(ccTime)dt {
-    
-    if (!isRunning)
-        return;
-    
-    [super tick:dt];
-
-    [inScene tick:dt];
-    [outScene tick:dt];
+-(void) onEnterTransitionDidFinish
+{
+	[super onEnterTransitionDidFinish];
 }
 
 -(void) dealloc
@@ -308,6 +299,12 @@ enum {
 //
 // SlideInL
 //
+
+// The adjust factor is needed to prevent issue #442
+// One solution is to use DONT_RENDER_IN_SUBPIXELS images, but NO
+// The other issue is that in some transitions (and I don't know why)
+// the order should be reversed (In in top of Out or vice-versa).
+#define ADJUST_FACTOR 0.5f
 @implementation SlideInLTransition
 -(void) onEnter
 {
@@ -316,44 +313,52 @@ enum {
 	[self initScenes];
 	
 	IntervalAction *in = [self action];
-	IntervalAction *out = [in copy];
+	IntervalAction *out = [self action];
 
-	[inScene runAction: [EaseOut actionWithAction:in rate:2.0f]];
-	[outScene runAction: [Sequence actions:
-				   [EaseOut actionWithAction:out rate:2.0f],
-				   [CallFunc actionWithTarget:self selector:@selector(finish)],
-				   nil] ];
+	id inAction = [EaseOut actionWithAction:in rate:2.0f];
+	id outAction = [Sequence actions:
+					[EaseOut actionWithAction:out rate:2.0f],
+					[CallFunc actionWithTarget:self selector:@selector(finish)],
+					nil];
 	
-	[out release];
+	[inScene runAction: inAction];
+	[outScene runAction: outAction];
 }
-
--(IntervalAction*) action
+-(void) sceneOrder
 {
-	CGSize s = [[Director sharedDirector] winSize];
-	return [MoveBy actionWithDuration:duration position:ccp(s.width,0)];
+	inSceneOnTop = NO;
 }
-
 -(void) initScenes
 {
 	CGSize s = [[Director sharedDirector] winSize];
-	[inScene setPosition: ccp( -s.width,0) ];
+	[inScene setPosition: ccp( -(s.width-ADJUST_FACTOR),0) ];
 }
+-(IntervalAction*) action
+{
+	CGSize s = [[Director sharedDirector] winSize];
+	return [MoveBy actionWithDuration:duration position:ccp(s.width-ADJUST_FACTOR,0)];
+}
+
 @end
 
 //
 // SlideInR
 //
 @implementation SlideInRTransition
+-(void) sceneOrder
+{
+	inSceneOnTop = YES;
+}
 -(void) initScenes
 {
 	CGSize s = [[Director sharedDirector] winSize];
-	[inScene setPosition: ccp( s.width,0) ];
+	[inScene setPosition: ccp( s.width-ADJUST_FACTOR,0) ];
 }
 
 -(IntervalAction*) action
 {
 	CGSize s = [[Director sharedDirector] winSize];
-	return [MoveBy actionWithDuration:duration position:ccp(-s.width,0)];
+	return [MoveBy actionWithDuration:duration position:ccp(-(s.width-ADJUST_FACTOR),0)];
 }
 
 @end
@@ -362,16 +367,20 @@ enum {
 // SlideInT
 //
 @implementation SlideInTTransition
+-(void) sceneOrder
+{
+	inSceneOnTop = NO;
+}
 -(void) initScenes
 {
 	CGSize s = [[Director sharedDirector] winSize];
-	[inScene setPosition: ccp(0,s.height) ];
+	[inScene setPosition: ccp(0,s.height-ADJUST_FACTOR) ];
 }
 
 -(IntervalAction*) action
 {
 	CGSize s = [[Director sharedDirector] winSize];
-	return [MoveBy actionWithDuration:duration position:ccp(0,-s.height)];
+	return [MoveBy actionWithDuration:duration position:ccp(0,-(s.height-ADJUST_FACTOR))];
 }
 
 @end
@@ -380,16 +389,21 @@ enum {
 // SlideInB
 //
 @implementation SlideInBTransition
+-(void) sceneOrder
+{
+	inSceneOnTop = YES;
+}
+
 -(void) initScenes
 {
 	CGSize s = [[Director sharedDirector] winSize];
-	[inScene setPosition: ccp(0,-s.height) ];
+	[inScene setPosition: ccp(0,-(s.height-ADJUST_FACTOR)) ];
 }
 
 -(IntervalAction*) action
 {
 	CGSize s = [[Director sharedDirector] winSize];
-	return [MoveBy actionWithDuration:duration position:ccp(0,s.height)];
+	return [MoveBy actionWithDuration:duration position:ccp(0,s.height-ADJUST_FACTOR)];
 }
 @end
 
@@ -701,30 +715,32 @@ enum {
 // Fade Transition
 //
 @implementation FadeTransition
-+(id) transitionWithDuration:(ccTime)d scene:(Scene*)s withColorRGB:(unsigned int)rgb
++(id) transitionWithDuration:(ccTime)d scene:(Scene*)s withColor:(ccColor3B)color
 {
-	return [[[self alloc] initWithDuration:d scene:s withColorRGB:rgb] autorelease];
+	return [[[self alloc] initWithDuration:d scene:s withColor:color] autorelease];
 }
 
--(id) initWithDuration:(ccTime)d scene:(Scene*)s withColorRGB:(unsigned int)rgb
+-(id) initWithDuration:(ccTime)d scene:(Scene*)s withColor:(ccColor3B)aColor
 {
-	self = [super initWithDuration:d scene:s];
-	if( self ) 
-		RGBA = rgb << 8;
+	if( (self=[super initWithDuration:d scene:s]) ) {
+		color.r = aColor.r;
+		color.g = aColor.g;
+		color.b = aColor.b;
+	}
 	
 	return self;
 }
 
 -(id) initWithDuration:(ccTime)d scene:(Scene*)s
 {
-	return [self initWithDuration:d scene:s withColorRGB:0x00000000];
+	return [self initWithDuration:d scene:s withColor:ccBLACK];
 }
 
 -(void) onEnter
 {
 	[super onEnter];
 	
-	ColorLayer *l = [ColorLayer layerWithColor:RGBA];
+	ColorLayer *l = [ColorLayer layerWithColor:color];
 	[inScene setVisible: NO];
 	
 	[self addChild: l z:2 tag:kSceneFade];

@@ -38,6 +38,14 @@
 {}
 @end
 
-@interface Test7 : TestDemo
+@interface StressTest1 : TestDemo
+{}
+@end
+
+@interface StressTest2 : TestDemo
+{}
+@end
+
+@interface SchedulerTest1 : TestDemo
 {}
 @end

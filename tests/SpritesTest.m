@@ -68,41 +68,42 @@ Class restartAction()
 @implementation SpriteDemo
 -(id) init
 {
-	[super init];
+	if( (self=[super init])) {
 	
-	// Example:
-	// You can create a sprite using a Texture2D
-	Texture2D *tex = [ [Texture2D alloc] initWithImage: [UIImage imageWithContentsOfFile: [[NSBundle mainBundle] pathForResource:@"grossini.png" ofType:nil] ] ];
-	grossini = [[Sprite spriteWithTexture:tex] retain];
-	[tex release];
+		// Example:
+		// You can create a sprite using a Texture2D
+		Texture2D *tex = [ [Texture2D alloc] initWithImage: [UIImage imageWithContentsOfFile: [[NSBundle mainBundle] pathForResource:@"grossini.png" ofType:nil] ] ];
+		grossini = [[Sprite spriteWithTexture:tex] retain];
+		[tex release];
 
-	
-	// Example:
-	// Or you can create an sprite using a filename. PNG, JPEG and BMP files are supported. Probably TIFF too
-	tamara = [[Sprite spriteWithFile:@"grossinis_sister1.png"] retain];
-	
-	[self addChild: grossini z:1];
-	[self addChild: tamara z:2];
+		
+		// Example:
+		// Or you can create an sprite using a filename. PNG, JPEG and BMP files are supported. Probably TIFF too
+		tamara = [[Sprite spriteWithFile:@"grossinis_sister1.png"] retain];
+		
+		[self addChild: grossini z:1];
+		[self addChild: tamara z:2];
 
-	CGSize s = [[Director sharedDirector] winSize];
-	
-	[grossini setPosition: ccp(60, s.height/3)];
-	[tamara setPosition: ccp(60, 2*s.height/3)];
-	
-	Label* label = [Label labelWithString:[self title] fontName:@"Arial" fontSize:32];
-	[self addChild: label];
-	[label setPosition: ccp(s.width/2, s.height-50)];
+		CGSize s = [[Director sharedDirector] winSize];
+		
+		[grossini setPosition: ccp(60, s.height/3)];
+		[tamara setPosition: ccp(60, 2*s.height/3)];
+		
+		Label* label = [Label labelWithString:[self title] fontName:@"Arial" fontSize:32];
+		[self addChild: label];
+		[label setPosition: ccp(s.width/2, s.height-50)];
 
-	MenuItemImage *item1 = [MenuItemImage itemFromNormalImage:@"b1.png" selectedImage:@"b2.png" target:self selector:@selector(backCallback:)];
-	MenuItemImage *item2 = [MenuItemImage itemFromNormalImage:@"r1.png" selectedImage:@"r2.png" target:self selector:@selector(restartCallback:)];
-	MenuItemImage *item3 = [MenuItemImage itemFromNormalImage:@"f1.png" selectedImage:@"f2.png" target:self selector:@selector(nextCallback:)];
-	
-	Menu *menu = [Menu menuWithItems:item1, item2, item3, nil];
-	menu.position = CGPointZero;
-	item1.position = ccp(480/2-100,30);
-	item2.position = ccp(480/2, 30);
-	item3.position = ccp(480/2+100,30);
-	[self addChild: menu z:1];
+		MenuItemImage *item1 = [MenuItemImage itemFromNormalImage:@"b1.png" selectedImage:@"b2.png" target:self selector:@selector(backCallback:)];
+		MenuItemImage *item2 = [MenuItemImage itemFromNormalImage:@"r1.png" selectedImage:@"r2.png" target:self selector:@selector(restartCallback:)];
+		MenuItemImage *item3 = [MenuItemImage itemFromNormalImage:@"f1.png" selectedImage:@"f2.png" target:self selector:@selector(nextCallback:)];
+		
+		Menu *menu = [Menu menuWithItems:item1, item2, item3, nil];
+		menu.position = CGPointZero;
+		item1.position = ccp(480/2-100,30);
+		item2.position = ccp(480/2, 30);
+		item3.position = ccp(480/2+100,30);
+		[self addChild: menu z:1];
+	}
 
 	return self;
 }
@@ -159,11 +160,13 @@ Class restartAction()
 	
 	tamara.scaleX = 2.5f;
 	tamara.scaleY = -1.0f;
-	tamara.position = ccp(100,100);
+	tamara.position = ccp(100,70);
+	tamara.opacity = 128;
 	
 	grossini.rotation = 120;
 	grossini.opacity = 128;
-	grossini.position = ccp(240,160);	
+	grossini.position = ccp(240,160);
+	grossini.color = ccc3( 255,0,0);
 }
 
 -(NSString *) title
@@ -182,10 +185,12 @@ Class restartAction()
 
 	
 	id actionTo = [MoveTo actionWithDuration: 2 position:ccp(s.width-40, s.height-40)];
+	
 	id actionBy = [MoveBy actionWithDuration:2  position: ccp(80,80)];
+	id actionByBack = [actionBy reverse];
 	
 	[tamara runAction: actionTo];
-	[grossini runAction:actionBy];
+	[grossini runAction: [Sequence actions:actionBy, actionByBack, nil]];
 }
 -(NSString *) title
 {
@@ -201,10 +206,19 @@ Class restartAction()
 	[self centerSprites];
 		
 	id actionTo = [RotateTo actionWithDuration: 2 angle:45];
+	id actionTo2 = [RotateTo actionWithDuration: 2 angle:-45];
+	id actionTo0 = [RotateTo actionWithDuration:2  angle:0];
+	[tamara runAction: [Sequence actions:actionTo, actionTo0, nil]];
+
 	id actionBy = [RotateBy actionWithDuration:2  angle: 360];
+	id actionByBack = [actionBy reverse];
+	[grossini runAction: [Sequence actions:actionBy, actionByBack, nil]];
+
+	Sprite *kathia = [Sprite spriteWithFile:@"grossinis_sister2.png"];
+	[self addChild:kathia];
+	[kathia setPosition:ccp(240,160)];
+	[kathia runAction: [Sequence actions:actionTo2, [[actionTo0 copy] autorelease], nil]];
 	
-	[tamara runAction: actionTo];
-	[grossini runAction:actionBy];
 }
 -(NSString *) title
 {
@@ -222,9 +236,10 @@ Class restartAction()
 	
 	id actionTo = [ScaleTo actionWithDuration: 2 scale:0.5f];
 	id actionBy = [ScaleBy actionWithDuration:2  scale: 2];
+	id actionByBack = [actionBy reverse];
 
 	[tamara runAction: actionTo];
-	[grossini runAction:actionBy];
+	[grossini runAction: [Sequence actions:actionBy, actionByBack, nil]];
 }
 -(NSString *) title
 {
@@ -240,9 +255,10 @@ Class restartAction()
 		
 	id actionTo = [JumpTo actionWithDuration:2 position:ccp(300,300) height:50 jumps:4];
 	id actionBy = [JumpBy actionWithDuration:2 position:ccp(300,0) height:50 jumps:4];
+	id actionByBack = [actionBy reverse];
 	
 	[tamara runAction: actionTo];
-	[grossini runAction:actionBy];
+	[grossini runAction: [Sequence actions:actionBy, actionByBack, nil]];
 }
 -(NSString *) title
 {
@@ -326,10 +342,13 @@ Class restartAction()
 	
 	tamara.opacity = 0;
 	id action1 = [FadeIn actionWithDuration:1.0f];
-	id action2 = [FadeOut actionWithDuration:1.0f];
+	id action1Back = [action1 reverse];
 	
-	[tamara runAction: action1];
-	[grossini runAction:action2];
+	id action2 = [FadeOut actionWithDuration:1.0f];
+	id action2Back = [action2 reverse];
+	
+	[tamara runAction: [Sequence actions: action1, action1Back, nil]];
+	[grossini runAction: [Sequence actions: action2, action2Back, nil]];
 }
 -(NSString *) title
 {
@@ -345,10 +364,11 @@ Class restartAction()
 	[self centerSprites];
 	
 	id action1 = [TintTo actionWithDuration:2 red:255 green:0 blue:255];
-	id action2 = [TintBy actionWithDuration:2 red:0 green:-127 blue:-127];
+	id action2 = [TintBy actionWithDuration:2 red:-127 green:-255 blue:-127];
+	id action2Back = [action2 reverse];
 	
 	[tamara runAction: action1];
-	[grossini runAction:action2];
+	[grossini runAction: [Sequence actions: action2, action2Back, nil]];
 }
 -(NSString *) title
 {
@@ -538,23 +558,67 @@ Class restartAction()
 {
 	[super onEnter];
 	
-	[tamara setVisible:NO];
+	CGSize s = [[Director sharedDirector] winSize];
+	Sprite *sprite = [Sprite spriteWithFile:@"grossinis_sister2.png"];
+	[self addChild:sprite];
+	[sprite setPosition:ccp(s.width-100, s.height/2)];
 	
+		
 	id action = [Sequence actions:
 				 [MoveBy actionWithDuration:2 position:ccp(200,0)],
-				 [CallFunc actionWithTarget:self selector:@selector(callback)],
+				 [CallFunc actionWithTarget:self selector:@selector(callback1)],
 				nil];
+	
+	id action2 = [Sequence actions:
+						[ScaleBy actionWithDuration:2  scale: 2],
+						[FadeOut actionWithDuration:2],
+						[CallFuncN actionWithTarget:self selector:@selector(callback2:)],
+						 nil];
+	
+	id action3 = [Sequence actions:
+				  [RotateBy actionWithDuration:3  angle:360],
+				  [FadeOut actionWithDuration:2],
+				  [CallFuncND actionWithTarget:self selector:@selector(callback3:data:) data:(void*)0xbebabeba],
+				  nil];
+	
 	[grossini runAction:action];
+	[tamara runAction:action2];
+	[sprite runAction:action3];
 }
 
--(void) callback
+-(void) callback1
 {
-	[tamara setVisible:YES];
+	NSLog(@"callback 1 called");
+	CGSize s = [[Director sharedDirector] winSize];
+	Label *label = [Label labelWithString:@"callback 1 called" fontName:@"Marker Felt" fontSize:16];
+	[label setPosition:ccp( s.width/4*1,s.height/2)];
+
+	[self addChild:label];
 }
+-(void) callback2:(id)sender
+{
+	NSLog(@"callback 2 called from:%@", sender);
+	CGSize s = [[Director sharedDirector] winSize];
+	Label *label = [Label labelWithString:@"callback 2 called" fontName:@"Marker Felt" fontSize:16];
+	[label setPosition:ccp( s.width/4*2,s.height/2)];
+
+	[self addChild:label];
+
+}
+-(void) callback3:(id)sender data:(void*)data
+{
+	NSLog(@"callback 3 called from:%@ with data:%x",sender,data);
+	CGSize s = [[Director sharedDirector] winSize];
+	Label *label = [Label labelWithString:@"callback 3 called" fontName:@"Marker Felt" fontSize:16];
+	[label setPosition:ccp( s.width/4*3,s.height/2)];
+	[self addChild:label];
+}
+
+
 
 -(NSString *) title
 {
-	return @"Callback action: CallFunc";
+	return @"Callbacks: CallFunc and friends";
 }
 @end
 
@@ -601,7 +665,7 @@ Class restartAction()
 	[window setMultipleTouchEnabled:YES];
 	
 	// must be called before any othe call to the director
-	[Director useFastDirector];
+//	[Director useFastDirector];
 	
 	// Attach cocos2d to the window
 	[[Director sharedDirector] attachInWindow:window];

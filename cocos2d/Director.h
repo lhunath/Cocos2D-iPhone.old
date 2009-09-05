@@ -21,12 +21,25 @@
 
 // Fast FPS display. FPS are updated 10 times per second without consuming resources
 // uncomment this line to use the old method that updated
-#define FAST_FPS_DISPLAY 1
+// You need to add the "fps_images.png" file to your project
+#define DIRECTOR_DISPLAY_FAST_FPS 1
+
+// If you want a Fast Director that dispatches the events more frequently, 
+// define the following line.
+// Limitations:
+//  - The events are dispatched faster (?)
+//  - But it doesn't refresh the screen as fast as the "slow events"
+#define DIRECTOR_FASTDIRECTOR_FAST_EVENTS 0
 
 /** Possible Pixel Formats for the EAGLView */
 typedef enum {
-	kRGB565,
-	kRGBA8
+	/** RGB565 pixel format. No alpha. 16-bit */
+	kPixelFormatRGB565,
+	/** RGBA format. 32-bit */
+	kPixelFormatRGBA8888,
+
+	kRGB565 = kPixelFormatRGB565,
+	kRGBA8 = kPixelFormatRGBA8888,
 } tPixelFormat;
 
 /** Possible DepthBuffer Formats for the EAGLView */
@@ -77,7 +90,7 @@ and when to execute the Scenes
 	int frames;
 	ccTime accumDt;
 	ccTime frameRate;
-#ifdef FAST_FPS_DISPLAY
+#ifdef DIRECTOR_DISPLAY_FAST_FPS
 	LabelAtlas *FPSLabel;
 #endif
 	
@@ -103,27 +116,30 @@ and when to execute the Scenes
 }
 
 /** The current running Scene. Director can only run one Scene at the time */
-@property (readonly) Scene* runningScene;
+@property (nonatomic,readonly) Scene* runningScene;
 /** The FPS value */
-@property (readwrite, assign) NSTimeInterval animationInterval;
+@property (nonatomic,readwrite, assign) NSTimeInterval animationInterval;
 /** Whether or not to display the FPS on the bottom-left corner */
-@property (readwrite, assign) BOOL displayFPS;
+@property (nonatomic,readwrite, assign) BOOL displayFPS;
 /** The OpenGL view */
-@property (readonly) EAGLView *openGLView;
+@property (nonatomic,readonly) EAGLView *openGLView;
 /** Pixel format used to create the context */
-@property (readonly) tPixelFormat pixelFormat;
+@property (nonatomic,readonly) tPixelFormat pixelFormat;
 /** whether or not the next delta time will be zero */
-@property (readwrite,assign) BOOL nextDeltaTimeZero;
+@property (nonatomic,readwrite,assign) BOOL nextDeltaTimeZero;
 /** The device orientattion */
-@property (readwrite) ccDeviceOrientation deviceOrientation;
+@property (nonatomic,readwrite) ccDeviceOrientation deviceOrientation;
 /** Whether or not the Director is paused */
-@property (readonly) BOOL isPaused;
+@property (nonatomic,readonly) BOOL isPaused;
 
 /** returns a shared instance of the director */
 +(Director *)sharedDirector;
 /** Uses a Director that triggers the main loop as fast as it can.
- * Although it is faster, it will consume more battery
  * To use it, it must be called before calling any director function
+ * Features and Limitations:
+ *  - Faster than "normal" director
+ *  - Consumes more battery than the "normal" director
+ *  - It has some issues while using UIKit objects
  */
 +(void) useFastDirector;
  
@@ -251,7 +267,11 @@ and when to execute the Scenes
 @end
 
 /** FastDirector is a Director that triggers the main loop as fast as possible.
- * In some circumstances it is faster than the normal Director.
+ *
+ * Features and Limitations:
+ *  - Faster than "normal" director
+ *  - Consumes more battery than the "normal" director
+ *  - It has some issues while using UIKit objects
  */
 @interface FastDirector : Director
 {
@@ -259,6 +279,7 @@ and when to execute the Scenes
 	
 	NSAutoreleasePool	*autoreleasePool;
 }
+-(void) preMainLoop;
 @end
 
 
