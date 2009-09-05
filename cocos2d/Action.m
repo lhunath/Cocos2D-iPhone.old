@@ -62,7 +62,7 @@
 	return copy;
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
     self.target = aTarget;
 }
@@ -136,7 +136,7 @@
 	[super dealloc];
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	[other startWithTarget:target];
@@ -198,11 +198,10 @@
 	[super dealloc];
 }
 
--(void) start
+-(void) startWithTarget:(id)aTarget
 {
-	[super start];
-	[other setTarget: target];
-	[other start];
+	[super startWithTarget:aTarget];
+	[other startWithTarget:target];
 }
 
 -(void) stop

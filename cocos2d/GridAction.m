@@ -34,7 +34,7 @@
 	return self;
 }
 
--(void)startWithTarget:(CocosNode *)aTarget
+-(void)startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 
@@ -179,7 +179,7 @@
 	[super dealloc];
 }
 
--(void)startWithTarget:(CocosNode *)aTarget
+-(void)startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	[other startWithTarget:target];
@@ -234,7 +234,7 @@
 	[super dealloc];
 }
 
--(void)startWithTarget:(CocosNode *)aTarget
+-(void)startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	[other startWithTarget:target];
@@ -281,7 +281,7 @@
 	[super dealloc];
 }
 
--(void)startWithTarget:(CocosNode *)aTarget
+-(void)startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	[other startWithTarget:target];
@@ -304,7 +304,7 @@
 
 @implementation StopGrid
 
--(void)startWithTarget:(CocosNode *)aTarget
+-(void)startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 
@@ -333,7 +333,7 @@
 	return self;
 }
 
--(void)startWithTarget:(CocosNode *)aTarget
+-(void)startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 

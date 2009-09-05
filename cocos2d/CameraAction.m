@@ -22,7 +22,7 @@
 // CameraAction
 //
 @implementation CameraAction
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	[[target camera] centerX:&centerXOrig centerY:&centerYOrig centerZ: &centerZOrig];
@@ -66,7 +66,7 @@
 	return self;
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	float r, zenith, azimuth;

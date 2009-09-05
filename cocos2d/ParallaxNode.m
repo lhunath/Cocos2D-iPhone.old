@@ -47,12 +47,6 @@
 }
 @end
 
-@interface ParallaxNode ()
-
-- (void)updateCoords:(ccTime)dt;
-
-@end
-
 @implementation ParallaxNode
 
 @synthesize parallaxArray=parallaxArray_;

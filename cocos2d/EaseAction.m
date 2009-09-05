@@ -47,7 +47,7 @@
 	[super dealloc];
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	[other startWithTarget:target];

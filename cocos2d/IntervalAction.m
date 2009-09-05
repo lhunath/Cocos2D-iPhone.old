@@ -81,7 +81,7 @@
 	[self update: MIN(1, elapsed/duration)];
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
     [super startWithTarget:aTarget];
     
@@ -157,7 +157,7 @@
 	[super dealloc];
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	
@@ -250,7 +250,7 @@
 	[super dealloc];
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	total = 0;
 	[super startWithTarget:aTarget];
@@ -373,7 +373,7 @@
 	[super dealloc];
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	[one startWithTarget:target];
@@ -425,7 +425,7 @@
 	return copy;
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	
@@ -476,7 +476,7 @@
 	return copy;
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	startAngle = [target rotation];
@@ -522,7 +522,7 @@
 	return copy;
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	startPosition = [(CocosNode*)target position];
@@ -562,7 +562,7 @@
 	return copy;
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	CGPoint dTmp = delta;
 	[super startWithTarget:aTarget];
@@ -604,7 +604,7 @@
 	return copy;
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	startPosition = [(CocosNode*)target position];
@@ -631,7 +631,7 @@
 #pragma mark JumpTo
 
 @implementation JumpTo
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	delta = ccp( delta.x - startPosition.x, delta.y - startPosition.y );
@@ -677,7 +677,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
     return copy;
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	startPosition = [(CocosNode*)target position];
@@ -756,7 +756,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	return copy;
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	startScaleX = [target scaleX];
@@ -778,7 +778,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 #pragma mark -
 #pragma mark ScaleBy
 @implementation ScaleBy
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	deltaX = startScaleX * endScaleX - startScaleX;
@@ -886,7 +886,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	return copy;
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	fromOpacity = [(id<CocosNodeRGBA>)target opacity];
@@ -923,7 +923,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	return copy;
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	
@@ -964,7 +964,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	return[(TintBy*)[[self class] allocWithZone: zone] initWithDuration: [self duration] red:deltaR green:deltaG blue:deltaB];
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	
@@ -1036,7 +1036,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	[super dealloc];
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	[other startWithTarget:target];
@@ -1107,7 +1107,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	[super dealloc];
 }
 
--(void) startWithTarget:(CocosNode *)aTarget
+-(void) startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	id<CocosNodeFrames> sprite = (id<CocosNodeFrames>) target;

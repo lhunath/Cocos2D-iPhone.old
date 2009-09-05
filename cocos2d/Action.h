@@ -40,7 +40,7 @@ enum {
 -(id) copyWithZone: (NSZone*) zone;
 
 //! called before the action start
--(void) startWithTarget:(CocosNode *)aTarget;
+-(void) startWithTarget:(id)aTarget;
 //! return YES if the action has finished
 -(BOOL) isDone;
 //! called after the action has finished

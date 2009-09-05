@@ -213,7 +213,7 @@ typedef struct
 	[self setTile:pos coords:coords];
 }
 
--(void)startWithTarget:(CocosNode *)aTarget
+-(void)startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	
@@ -435,7 +435,7 @@ typedef struct
 	[self setTile:pos coords:coords];
 }
 
--(void)startWithTarget:(CocosNode *)aTarget
+-(void)startWithTarget:(id)aTarget
 {
 	int i;
 	
@@ -590,7 +590,7 @@ typedef struct
 	return [super initWithSize:ccg(1,r) duration:d];
 }
 
--(void)startWithTarget:(CocosNode *)aTarget
+-(void)startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	winSize = [[Director sharedDirector] winSize];
@@ -633,7 +633,7 @@ typedef struct
 	return [super initWithSize:ccg(c,1) duration:d];
 }
 
--(void)startWithTarget:(CocosNode *)aTarget
+-(void)startWithTarget:(id)aTarget
 {
 	[super startWithTarget:aTarget];
 	winSize = [[Director sharedDirector] winSize];
