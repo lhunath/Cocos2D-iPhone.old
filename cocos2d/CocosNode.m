@@ -502,7 +502,7 @@
 
 -(void) onEnter
 {
-	for( id child in children )
+	for( id child in [[children copy] autorelease])
 		[child onEnter];
 	
 	[self activateTimers];
@@ -512,7 +512,7 @@
 
 -(void) onEnterTransitionDidFinish
 {
-	for( id child in children )
+	for( id child in [[children copy] autorelease])
 		[child onEnterTransitionDidFinish];
 }
 
