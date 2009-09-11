@@ -1257,6 +1257,46 @@
 		DA5F0EDE0FFE96D400C7C82E /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D500B920D5A79C200DBA0E3 /* OpenGLES.framework */; };
 		DA5F0EDF0FFE96D400C7C82E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D500B990D5A79CF00DBA0E3 /* QuartzCore.framework */; };
 		DA5F0EE00FFE96D400C7C82E /* libcocos2d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5018F24D0DFDEAC400C013A5 /* libcocos2d.a */; };
+		DA90D87D1059A54D0039F26A /* FontTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DA90D87C1059A54D0039F26A /* FontTest.m */; };
+		DA90D8871059A5830039F26A /* libFontLabel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAABAA631059A3A100794EB3 /* libFontLabel.a */; };
+		DA90D8A51059A5F90039F26A /* r1.png in Resources */ = {isa = PBXBuildFile; fileRef = 500165990E72DB0E0085673F /* r1.png */; };
+		DA90D8A61059A5F90039F26A /* r2.png in Resources */ = {isa = PBXBuildFile; fileRef = 5001659A0E72DB0E0085673F /* r2.png */; };
+		DA90D8A71059A5F90039F26A /* b1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5001659D0E72DB470085673F /* b1.png */; };
+		DA90D8A81059A5F90039F26A /* b2.png in Resources */ = {isa = PBXBuildFile; fileRef = 5001659E0E72DB470085673F /* b2.png */; };
+		DA90D8A91059A5F90039F26A /* f1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5001659F0E72DB470085673F /* f1.png */; };
+		DA90D8AA1059A5F90039F26A /* f2.png in Resources */ = {isa = PBXBuildFile; fileRef = 500165A00E72DB470085673F /* f2.png */; };
+		DA90D8CB1059A6EC0039F26A /* Texture2D_ZFont.h in Headers */ = {isa = PBXBuildFile; fileRef = DA90D8C91059A6EC0039F26A /* Texture2D_ZFont.h */; };
+		DA90D8CC1059A6EC0039F26A /* Texture2D_ZFont.m in Sources */ = {isa = PBXBuildFile; fileRef = DA90D8CA1059A6EC0039F26A /* Texture2D_ZFont.m */; };
+		DA90D8E51059A8A60039F26A /* A Damn Mess.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA90D8DF1059A8A60039F26A /* A Damn Mess.ttf */; };
+		DA90D8E61059A8A60039F26A /* Abberancy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA90D8E01059A8A60039F26A /* Abberancy.ttf */; };
+		DA90D8E71059A8A60039F26A /* Abduction.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA90D8E11059A8A60039F26A /* Abduction.ttf */; };
+		DA90D8E81059A8A60039F26A /* Paint Boy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA90D8E21059A8A60039F26A /* Paint Boy.ttf */; };
+		DA90D8E91059A8A60039F26A /* Schwarzwald Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA90D8E31059A8A60039F26A /* Schwarzwald Regular.ttf */; };
+		DA90D8EA1059A8A60039F26A /* Scissor Cuts.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA90D8E41059A8A60039F26A /* Scissor Cuts.ttf */; };
+		DAABAA661059A3B900794EB3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D3623EB0D0F72F000981E51 /* CoreGraphics.framework */; };
+		DAABAA671059A3B900794EB3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		DAABAA681059A3B900794EB3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		DAABAA751059A42300794EB3 /* FontLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = DAABAA6D1059A42300794EB3 /* FontLabel.h */; };
+		DAABAA761059A42300794EB3 /* FontLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = DAABAA6E1059A42300794EB3 /* FontLabel.m */; };
+		DAABAA771059A42300794EB3 /* FontLabelStringDrawing.h in Headers */ = {isa = PBXBuildFile; fileRef = DAABAA6F1059A42300794EB3 /* FontLabelStringDrawing.h */; };
+		DAABAA781059A42300794EB3 /* FontLabelStringDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = DAABAA701059A42300794EB3 /* FontLabelStringDrawing.m */; };
+		DAABAA791059A42300794EB3 /* FontManager.h in Headers */ = {isa = PBXBuildFile; fileRef = DAABAA711059A42300794EB3 /* FontManager.h */; };
+		DAABAA7A1059A42300794EB3 /* FontManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DAABAA721059A42300794EB3 /* FontManager.m */; };
+		DAABAA7B1059A42300794EB3 /* ZFont.h in Headers */ = {isa = PBXBuildFile; fileRef = DAABAA731059A42300794EB3 /* ZFont.h */; };
+		DAABAA7C1059A42300794EB3 /* ZFont.m in Sources */ = {isa = PBXBuildFile; fileRef = DAABAA741059A42300794EB3 /* ZFont.m */; };
+		DAABAA831059A42E00794EB3 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 50B2CB240E10EE4A00AE9530 /* Default.png */; };
+		DAABAA841059A42E00794EB3 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 50B2CB250E10EE4A00AE9530 /* Icon.png */; };
+		DAABAA881059A42E00794EB3 /* fps_images.png in Resources */ = {isa = PBXBuildFile; fileRef = 501CD16A0E99873000B86F68 /* fps_images.png */; };
+		DAABAA891059A42E00794EB3 /* clouds.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 50C723DB0EC062680046C5DB /* clouds.pvrtc */; };
+		DAABAA8A1059A42E00794EB3 /* fire.pvr in Resources */ = {isa = PBXBuildFile; fileRef = 502AACF20F79715D001E3F87 /* fire.pvr */; };
+		DAABAA8D1059A42E00794EB3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 50B2CB170E10EE0800AE9530 /* main.m */; };
+		DAABAA8F1059A42E00794EB3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		DAABAA901059A42E00794EB3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		DAABAA911059A42E00794EB3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D3623EB0D0F72F000981E51 /* CoreGraphics.framework */; };
+		DAABAA921059A42E00794EB3 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D500B920D5A79C200DBA0E3 /* OpenGLES.framework */; };
+		DAABAA931059A42E00794EB3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D500B990D5A79CF00DBA0E3 /* QuartzCore.framework */; };
+		DAABAA941059A42E00794EB3 /* libcocos2d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5018F24D0DFDEAC400C013A5 /* libcocos2d.a */; };
+		DAABAA961059A42E00794EB3 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 503092B210447296005F7AFC /* libz.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1569,6 +1609,20 @@
 			remoteInfo = cocos2d;
 		};
 		DA5F0EC30FFE96D400C7C82E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5018F24C0DFDEAC400C013A5;
+			remoteInfo = cocos2d;
+		};
+		DA90D8881059A58C0039F26A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DAABAA621059A3A100794EB3 /* FontLabel */;
+			remoteInfo = FontLabel;
+		};
+		DAABAA7F1059A42E00794EB3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
@@ -2327,6 +2381,27 @@
 		AAC2C3921005ED8E005B9B2C /* CDAudioManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDAudioManager.m; sourceTree = "<group>"; };
 		AAC2C3931005ED8E005B9B2C /* CocosDenshion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CocosDenshion.m; sourceTree = "<group>"; };
 		AAEA834A0FD5704400F08728 /* blocks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blocks.png; sourceTree = "<group>"; };
+		DA90D87B1059A54D0039F26A /* FontTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontTest.h; path = tests/FontTest.h; sourceTree = "<group>"; };
+		DA90D87C1059A54D0039F26A /* FontTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FontTest.m; path = tests/FontTest.m; sourceTree = "<group>"; };
+		DA90D8C91059A6EC0039F26A /* Texture2D_ZFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Texture2D_ZFont.h; sourceTree = "<group>"; };
+		DA90D8CA1059A6EC0039F26A /* Texture2D_ZFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Texture2D_ZFont.m; sourceTree = "<group>"; };
+		DA90D8DF1059A8A60039F26A /* A Damn Mess.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "A Damn Mess.ttf"; sourceTree = "<group>"; };
+		DA90D8E01059A8A60039F26A /* Abberancy.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Abberancy.ttf; sourceTree = "<group>"; };
+		DA90D8E11059A8A60039F26A /* Abduction.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Abduction.ttf; sourceTree = "<group>"; };
+		DA90D8E21059A8A60039F26A /* Paint Boy.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Paint Boy.ttf"; sourceTree = "<group>"; };
+		DA90D8E31059A8A60039F26A /* Schwarzwald Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Schwarzwald Regular.ttf"; sourceTree = "<group>"; };
+		DA90D8E41059A8A60039F26A /* Scissor Cuts.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Scissor Cuts.ttf"; sourceTree = "<group>"; };
+		DAABAA631059A3A100794EB3 /* libFontLabel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libFontLabel.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAABAA6D1059A42300794EB3 /* FontLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontLabel.h; sourceTree = "<group>"; };
+		DAABAA6E1059A42300794EB3 /* FontLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FontLabel.m; sourceTree = "<group>"; };
+		DAABAA6F1059A42300794EB3 /* FontLabelStringDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontLabelStringDrawing.h; sourceTree = "<group>"; };
+		DAABAA701059A42300794EB3 /* FontLabelStringDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FontLabelStringDrawing.m; sourceTree = "<group>"; };
+		DAABAA711059A42300794EB3 /* FontManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontManager.h; sourceTree = "<group>"; };
+		DAABAA721059A42300794EB3 /* FontManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FontManager.m; sourceTree = "<group>"; };
+		DAABAA731059A42300794EB3 /* ZFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZFont.h; sourceTree = "<group>"; };
+		DAABAA741059A42300794EB3 /* ZFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZFont.m; sourceTree = "<group>"; };
+		DAABAA9A1059A42E00794EB3 /* FontTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FontTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAABAA9C1059A42E00794EB3 /* Info copy 2.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info copy 2.plist"; path = "Resources/Info copy 2.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2929,6 +3004,31 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DAABAA611059A3A100794EB3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAABAA661059A3B900794EB3 /* CoreGraphics.framework in Frameworks */,
+				DAABAA671059A3B900794EB3 /* Foundation.framework in Frameworks */,
+				DAABAA681059A3B900794EB3 /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DAABAA8E1059A42E00794EB3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAABAA8F1059A42E00794EB3 /* Foundation.framework in Frameworks */,
+				DAABAA901059A42E00794EB3 /* UIKit.framework in Frameworks */,
+				DAABAA911059A42E00794EB3 /* CoreGraphics.framework in Frameworks */,
+				DAABAA921059A42E00794EB3 /* OpenGLES.framework in Frameworks */,
+				DAABAA931059A42E00794EB3 /* QuartzCore.framework in Frameworks */,
+				DAABAA941059A42E00794EB3 /* libcocos2d.a in Frameworks */,
+				DAABAA961059A42E00794EB3 /* libz.dylib in Frameworks */,
+				DA90D8871059A5830039F26A /* libFontLabel.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -2981,6 +3081,8 @@
 				504CC32F1035BDE90096894C /* ActionManagerTest.app */,
 				50010ED2103B3DB80059EC2E /* Box2dTest.app */,
 				495E73F7104B74E20012BB52 /* RenderTextureTest.app */,
+				DAABAA631059A3A100794EB3 /* libFontLabel.a */,
+				DAABAA9A1059A42E00794EB3 /* FontTest.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3010,6 +3112,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DA90D8DE1059A8A60039F26A /* Fonts */,
 				50F489BB10458B6300755CFB /* cocos2d-artwork */,
 				50B2CB260E10EE4A00AE9530 /* Images */,
 				8EDF3E8D0F6BD8CD00F54643 /* sfx */,
@@ -3019,6 +3122,7 @@
 				50B2CEA70E12A58900AE9530 /* ChipmunkDemo-Info.plist */,
 				50B2CB240E10EE4A00AE9530 /* Default.png */,
 				50B2CB250E10EE4A00AE9530 /* Icon.png */,
+				DAABAA9C1059A42E00794EB3 /* Info copy 2.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -3156,6 +3260,7 @@
 		501756090F335CE900624901 /* external */ = {
 			isa = PBXGroup;
 			children = (
+				DAABAA6C1059A42300794EB3 /* FontLabel */,
 				506EDF01102FBC0C00A389B3 /* Box2d */,
 				5031650810277785003ACFE7 /* libpng */,
 				8E6CBE5F0F7A5A3E00D47B3A /* Tremor */,
@@ -3840,6 +3945,8 @@
 				50D5700E0F3FAD3C007CD6B9 /* EffectsAdvancedTest.m */,
 				50A24E6F0F377FE8007CAEB0 /* EffectsTest.h */,
 				50A24E700F377FE8007CAEB0 /* EffectsTest.m */,
+				DA90D87B1059A54D0039F26A /* FontTest.h */,
+				DA90D87C1059A54D0039F26A /* FontTest.m */,
 				5078B5320E3E437F0004233A /* IntervalTest.h */,
 				5078B5330E3E437F0004233A /* IntervalTest.m */,
 				504799C1100F6AB100D1C71A /* LayerTest.h */,
@@ -4225,6 +4332,38 @@
 			path = "sound-engine-sample";
 			sourceTree = "<group>";
 		};
+		DA90D8DE1059A8A60039F26A /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				DA90D8DF1059A8A60039F26A /* A Damn Mess.ttf */,
+				DA90D8E01059A8A60039F26A /* Abberancy.ttf */,
+				DA90D8E11059A8A60039F26A /* Abduction.ttf */,
+				DA90D8E21059A8A60039F26A /* Paint Boy.ttf */,
+				DA90D8E31059A8A60039F26A /* Schwarzwald Regular.ttf */,
+				DA90D8E41059A8A60039F26A /* Scissor Cuts.ttf */,
+			);
+			name = Fonts;
+			path = Resources/Fonts;
+			sourceTree = "<group>";
+		};
+		DAABAA6C1059A42300794EB3 /* FontLabel */ = {
+			isa = PBXGroup;
+			children = (
+				DAABAA6D1059A42300794EB3 /* FontLabel.h */,
+				DAABAA6E1059A42300794EB3 /* FontLabel.m */,
+				DAABAA6F1059A42300794EB3 /* FontLabelStringDrawing.h */,
+				DAABAA701059A42300794EB3 /* FontLabelStringDrawing.m */,
+				DAABAA711059A42300794EB3 /* FontManager.h */,
+				DAABAA721059A42300794EB3 /* FontManager.m */,
+				DAABAA731059A42300794EB3 /* ZFont.h */,
+				DAABAA741059A42300794EB3 /* ZFont.m */,
+				DA90D8C91059A6EC0039F26A /* Texture2D_ZFont.h */,
+				DA90D8CA1059A6EC0039F26A /* Texture2D_ZFont.m */,
+			);
+			name = FontLabel;
+			path = external/FontLabel;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -4437,6 +4576,18 @@
 				8E6CBF150F7A763700D47B3A /* window.h in Headers */,
 				8E6CBF160F7A763700D47B3A /* mdct.h in Headers */,
 				8E6CBF170F7A763800D47B3A /* ivorbiscodec.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DAABAA5F1059A3A100794EB3 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAABAA751059A42300794EB3 /* FontLabel.h in Headers */,
+				DAABAA771059A42300794EB3 /* FontLabelStringDrawing.h in Headers */,
+				DAABAA791059A42300794EB3 /* FontManager.h in Headers */,
+				DAABAA7B1059A42300794EB3 /* ZFont.h in Headers */,
+				DA90D8CB1059A6EC0039F26A /* Texture2D_ZFont.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5271,6 +5422,42 @@
 			productReference = 50CB34DD100765EF00B7A750 /* Bug422.app */;
 			productType = "com.apple.product-type.application";
 		};
+		DAABAA621059A3A100794EB3 /* FontLabel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DAABAA691059A3D800794EB3 /* Build configuration list for PBXNativeTarget "FontLabel" */;
+			buildPhases = (
+				DAABAA5F1059A3A100794EB3 /* Headers */,
+				DAABAA601059A3A100794EB3 /* Sources */,
+				DAABAA611059A3A100794EB3 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FontLabel;
+			productName = FontLabel;
+			productReference = DAABAA631059A3A100794EB3 /* libFontLabel.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		DAABAA7D1059A42E00794EB3 /* FontTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DAABAA971059A42E00794EB3 /* Build configuration list for PBXNativeTarget "FontTest" */;
+			buildPhases = (
+				DAABAA821059A42E00794EB3 /* Resources */,
+				DAABAA8B1059A42E00794EB3 /* Sources */,
+				DAABAA8E1059A42E00794EB3 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DAABAA7E1059A42E00794EB3 /* PBXTargetDependency */,
+				DA90D8891059A58C0039F26A /* PBXTargetDependency */,
+			);
+			name = FontTest;
+			productName = AccelViewportTest;
+			productReference = DAABAA9A1059A42E00794EB3 /* FontTest.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -5292,6 +5479,7 @@
 				503164CC10277665003ACFE7 /* libpng */,
 				509B39DE0F31020900F2FB95 /* TouchJSON */,
 				8E6CBEEE0F7A758000D47B3A /* vorbis */,
+				DAABAA621059A3A100794EB3 /* FontLabel */,
 				317070410E2940C900DD3360 /* AccelViewportTest */,
 				504CC30C1035BDE90096894C /* ActionManagerTest */,
 				506881F40E95761200F943E5 /* AtlasTest */,
@@ -5309,6 +5497,7 @@
 				505B63780F2F4210001B4104 /* EaseActionsTest */,
 				50A24E190F377FA1007CAEB0 /* EffectsTest */,
 				50D56FA60F3FABEC007CD6B9 /* EffectsAdvancedTest */,
+				DAABAA7D1059A42E00794EB3 /* FontTest */,
 				5078B5170E3E43540004233A /* IntervalTest */,
 				50479999100F6A4200D1C71A /* LayerTest */,
 				506C79F20E01C73A00B48100 /* MenuTest */,
@@ -6170,6 +6359,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DAABAA821059A42E00794EB3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DA90D8A51059A5F90039F26A /* r1.png in Resources */,
+				DA90D8A61059A5F90039F26A /* r2.png in Resources */,
+				DA90D8A71059A5F90039F26A /* b1.png in Resources */,
+				DA90D8A81059A5F90039F26A /* b2.png in Resources */,
+				DA90D8A91059A5F90039F26A /* f1.png in Resources */,
+				DA90D8AA1059A5F90039F26A /* f2.png in Resources */,
+				DAABAA831059A42E00794EB3 /* Default.png in Resources */,
+				DAABAA841059A42E00794EB3 /* Icon.png in Resources */,
+				DAABAA881059A42E00794EB3 /* fps_images.png in Resources */,
+				DAABAA891059A42E00794EB3 /* clouds.pvrtc in Resources */,
+				DAABAA8A1059A42E00794EB3 /* fire.pvr in Resources */,
+				DA90D8E51059A8A60039F26A /* A Damn Mess.ttf in Resources */,
+				DA90D8E61059A8A60039F26A /* Abberancy.ttf in Resources */,
+				DA90D8E71059A8A60039F26A /* Abduction.ttf in Resources */,
+				DA90D8E81059A8A60039F26A /* Paint Boy.ttf in Resources */,
+				DA90D8E91059A8A60039F26A /* Schwarzwald Regular.ttf in Resources */,
+				DA90D8EA1059A8A60039F26A /* Scissor Cuts.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -6759,6 +6972,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DAABAA601059A3A100794EB3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAABAA761059A42300794EB3 /* FontLabel.m in Sources */,
+				DAABAA781059A42300794EB3 /* FontLabelStringDrawing.m in Sources */,
+				DAABAA7A1059A42300794EB3 /* FontManager.m in Sources */,
+				DAABAA7C1059A42300794EB3 /* ZFont.m in Sources */,
+				DA90D8CC1059A6EC0039F26A /* Texture2D_ZFont.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DAABAA8B1059A42E00794EB3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAABAA8D1059A42E00794EB3 /* main.m in Sources */,
+				DA90D87D1059A54D0039F26A /* FontTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -6986,6 +7220,16 @@
 			isa = PBXTargetDependency;
 			target = 5018F24C0DFDEAC400C013A5 /* cocos2d */;
 			targetProxy = DA5F0EC30FFE96D400C7C82E /* PBXContainerItemProxy */;
+		};
+		DA90D8891059A58C0039F26A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DAABAA621059A3A100794EB3 /* FontLabel */;
+			targetProxy = DA90D8881059A58C0039F26A /* PBXContainerItemProxy */;
+		};
+		DAABAA7E1059A42E00794EB3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5018F24C0DFDEAC400C013A5 /* cocos2d */;
+			targetProxy = DAABAA7F1059A42E00794EB3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -9138,9 +9382,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Jason Booth";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Jason Booth";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_FAST_MATH = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "COCOS2D_DEBUG=1";
@@ -9167,7 +9409,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = iphonesimulator2.2;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphonesimulator3.0;
 			};
 			name = Debug;
 		};
@@ -9175,7 +9418,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_FAST_MATH = YES;
@@ -9202,7 +9444,8 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = iphonesimulator2.2;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphonesimulator3.0;
 			};
 			name = Release;
 		};
@@ -9254,6 +9497,85 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = Bug422;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		DAABAA641059A3A200794EB3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = FontLabel;
+			};
+			name = Debug;
+		};
+		DAABAA651059A3A200794EB3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = FontLabel;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		DAABAA981059A42E00794EB3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/UIKit.framework/Headers/UIKit.h";
+				GCC_PREPROCESSOR_DEFINITIONS = "COCOS2D_DEBUG=1";
+				GCC_THUMB_SUPPORT = NO;
+				INFOPLIST_FILE = "Resources/Info copy 2.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-framework",
+					Foundation,
+					"-framework",
+					UIKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = FontTest;
+			};
+			name = Debug;
+		};
+		DAABAA991059A42E00794EB3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/UIKit.framework/Headers/UIKit.h";
+				GCC_THUMB_SUPPORT = NO;
+				INFOPLIST_FILE = "Resources/Info copy 2.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-framework",
+					Foundation,
+					"-framework",
+					UIKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = FontTest;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -9680,6 +10002,24 @@
 			buildConfigurations = (
 				DA5F0EE20FFE96D400C7C82E /* Debug */,
 				DA5F0EE30FFE96D400C7C82E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DAABAA691059A3D800794EB3 /* Build configuration list for PBXNativeTarget "FontLabel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DAABAA641059A3A200794EB3 /* Debug */,
+				DAABAA651059A3A200794EB3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DAABAA971059A42E00794EB3 /* Build configuration list for PBXNativeTarget "FontTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DAABAA981059A42E00794EB3 /* Debug */,
+				DAABAA991059A42E00794EB3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
