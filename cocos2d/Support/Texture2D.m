@@ -70,6 +70,8 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 #import "ccMacros.h"
 #import "Texture2D.h"
 #import "PVRTexture.h"
+#import "FontManager.h"
+#import "FontLabelStringDrawing.h"
 
 
 //CONSTANTS:
@@ -321,7 +323,13 @@ static Texture2DPixelFormat defaultAlphaPixelFormat = kTexture2DPixelFormat_Defa
 
 - (id) initWithString:(NSString*)string fontName:(NSString*)name fontSize:(CGFloat)size
 {
-	CGSize dim = [string sizeWithFont: [UIFont fontWithName:name size:size]];
+    CGSize dim;
+    ZFont *zFont = [[FontManager sharedManager] zFontWithName:name pointSize:size];
+    if (zFont != nil)
+        dim = [string sizeWithZFont:zFont];
+    else
+        dim = [string sizeWithFont:[UIFont fontWithName:name size:size]];
+    
 	return [self initWithString:string dimensions:dim alignment:UITextAlignmentCenter fontName:name fontSize:size];
 }
 
@@ -333,10 +341,9 @@ static Texture2DPixelFormat defaultAlphaPixelFormat = kTexture2DPixelFormat_Defa
 	CGContextRef			context;
 	void*					data;
 	CGColorSpaceRef			colorSpace;
-	UIFont *				font;
-	
-	font = [UIFont fontWithName:name size:size];
-
+	ZFont *					zFont;
+	UIFont *				uiFont;
+    
 	width = dimensions.width;
 	if((width != 1) && (width & (width - 1))) {
 		i = 1;
@@ -362,7 +369,15 @@ static Texture2DPixelFormat defaultAlphaPixelFormat = kTexture2DPixelFormat_Defa
 	CGContextTranslateCTM(context, 0.0f, height);
 	CGContextScaleCTM(context, 1.0f, -1.0f); //NOTE: NSString draws in UIKit referential i.e. renders upside-down compared to CGBitmapContext referential
 	UIGraphicsPushContext(context);
-	[string drawInRect:CGRectMake(0, 0, dimensions.width, dimensions.height) withFont:font lineBreakMode:UILineBreakModeWordWrap alignment:alignment];
+    
+    
+	zFont = [[FontManager sharedManager] zFontWithName:name pointSize:size];
+    if (zFont != nil)
+        [string drawInRect:CGRectMake(0, 0, dimensions.width, dimensions.height) withZFont:zFont lineBreakMode:UILineBreakModeWordWrap alignment:alignment];
+    else {
+        uiFont = [UIFont fontWithName:name size:size];
+        [string drawInRect:CGRectMake(0, 0, dimensions.width, dimensions.height) withFont:uiFont lineBreakMode:UILineBreakModeWordWrap alignment:alignment];
+    }
 	UIGraphicsPopContext();
 	
 	self = [self initWithData:data pixelFormat:kTexture2DPixelFormat_A8 pixelsWide:width pixelsHigh:height contentSize:dimensions];

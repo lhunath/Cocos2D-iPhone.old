@@ -14,6 +14,8 @@
 static int fontIdx=0;
 static NSString *fontList[] =
 {
+	@"American Typewriter",
+	@"Marker Felt",
 	@"A Damn Mess",
 	@"Abberancy",
 	@"Abduction",
@@ -72,8 +74,9 @@ NSString* restartAction()
         [label release];
     }
     
-    label = [[Label alloc] initWithString:aFont zFontWithName:aFont pointSize:30];
+    label = [[Label alloc] initWithString:aFont fontName:aFont fontSize:30];
     label.color = ccc3(0xff, 0xff, 0xff);
+    label.position = ccp(self.contentSize.width / 2, self.contentSize.height / 2);
     [self addChild:label];
 }
 
