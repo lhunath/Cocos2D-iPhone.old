@@ -76,6 +76,7 @@ Poeple/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 		added endSize to ParticleSystem
 		added WorldSpace coordinates to ParticleSystem
 		author of RenderTexture class
+		author of RenderTexture sample
 	* Jason Cecil: Fixed memory leak in Director#FPSLabel
 		patches for CocosDenshion
 		CocosNode: parent set to nil after onExit patch
@@ -104,6 +105,7 @@ Poeple/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 		Added RGB protocol in CocosNode, Atlas, Texture
 		Particle reset system works as expected
 		CocosNode: fixed "already scheduled exception" bug
+		Director: added converToUI method
 	* Manu Valladolid: added isPaused property to Director
 		patches for the setColor API for the RGBA protocol
 		MenuItemLabel: color is saved when item is disabled
@@ -118,6 +120,7 @@ Poeple/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 		TextureAtlas supports Texture2D objects
 		author of the original AtlasSprite and AtlasSpriteManager
 	* myBuddyCJ: correct channel in SimpleAudioEngine patch
+		Added Ease Elastic actions
 	* Nerezus: Fixed compile error when keyboard registry is enabled
 	* psionic81: ActionManager doesn't purge running actions patch
 	* rac5372: compiler warning in MenuItem
