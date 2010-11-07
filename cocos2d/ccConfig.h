@@ -50,9 +50,12 @@
  
  @since v0.99.5
  */
+#ifndef CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 #define CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL 0
+#endif
  
 
+#ifndef CC_FONT_LABEL_SUPPORT
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 /** @def CC_FONT_LABEL_SUPPORT
  If enabled, FontLabel will be used to render .ttf files.
@@ -68,7 +71,9 @@
 #elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
 #define CC_FONT_LABEL_SUPPORT	0
 #endif
+#endif
 
+#ifndef CC_DIRECTOR_FAST_FPS
 /** @def CC_DIRECTOR_FAST_FPS
  If enabled, then the FPS will be drawn using CCLabelAtlas (fast rendering).
  You will need to add the fps_images.png to your project.
@@ -77,7 +82,9 @@
  To enable set it to a value different than 0. Enabled by default.
  */
 #define CC_DIRECTOR_FAST_FPS	1
+#endif
 
+#ifndef CC_DIRECTOR_FPS_INTERVAL
 /** @def CC_DIRECTOR_FPS_INTERVAL
  Senconds between FPS updates.
  0.5 seconds, means that the FPS number will be updated every 0.5 seconds.
@@ -86,7 +93,9 @@
  Default value: 0.1f
  */
 #define CC_DIRECTOR_FPS_INTERVAL (0.1f)
+#endif
 
+#ifndef CC_DIRECTOR_DISPATCH_FAST_EVENTS
 /** @def CC_DIRECTOR_DISPATCH_FAST_EVENTS
  If enabled, and only when it is used with CCFastDirector, the main loop will wait 0.04 seconds to
  dispatch all the events, even if there are not events to dispatch.
@@ -98,7 +107,9 @@
  @warning This feature is experimental
  */
 #define CC_DIRECTOR_DISPATCH_FAST_EVENTS 0
+#endif
 
+#ifndef CC_DIRECTOR_MAC_USE_DISPLAY_LINK_THREAD
 /** @def CC_DIRECTOR_MAC_USE_DISPLAY_LINK_THREAD
  If enabled, cocos2d-mac will run on the Display Link thread.
  
@@ -110,7 +121,9 @@
 
  */
 #define CC_DIRECTOR_MAC_USE_DISPLAY_LINK_THREAD 0
+#endif
 
+#ifndef CC_COCOSNODE_RENDER_SUBPIXEL
 /** @def CC_COCOSNODE_RENDER_SUBPIXEL
  If enabled, the CCNode objects (CCSprite, CCLabel,etc) will be able to render in subpixels.
  If disabled, integer pixels will be used.
@@ -118,7 +131,9 @@
  To enable set it to a value different than 0. Enabled by default.
  */
 #define CC_COCOSNODE_RENDER_SUBPIXEL 1
+#endif
 
+#ifndef CC_SPRITEBATCHNODE_RENDER_SUBPIXEL
 /** @def CC_SPRITEBATCHNODE_RENDER_SUBPIXEL
  If enabled, the CCSprite objects rendered with CCSpriteBatchNode will be able to render in subpixels.
  If disabled, integer pixels will be used.
@@ -126,8 +141,9 @@
  To enable set it to a value different than 0. Enabled by default.
  */
 #define CC_SPRITEBATCHNODE_RENDER_SUBPIXEL	1
+#endif
 
-
+#ifndef CC_USES_VBO
 #if defined(__ARM_NEON__) || defined(TARGET_IPHONE_SIMULATOR) || defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
 /** @def CC_USES_VBO
  If enabled, batch nodes (texture atlas and particle system) will use VBO instead of vertex list (VBO is recommended by Apple)
@@ -142,7 +158,9 @@
 #else
 #define CC_USES_VBO 0
 #endif
+#endif
 
+#ifndef CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
 /** @def CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
  If enabled, CCNode will transform the nodes using a cached Affine matrix.
  If disabled, the node will be transformed using glTranslate,glRotate,glScale.
@@ -156,7 +174,9 @@
 
  */
 #define CC_NODE_TRANSFORM_USING_AFFINE_MATRIX 1
+#endif
 
+#ifndef CC_OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA
 /** @def CC_OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA
  If most of your imamges have pre-multiplied alpha, set it to 1 (if you are going to use .PNG/.JPG file images).
  Only set to 0 if ALL your images by-pass Apple UIImage loading system (eg: if you use libpng or PVR images)
@@ -166,7 +186,9 @@
  @since v0.99.5
  */
 #define CC_OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA 1
+#endif
 
+#ifndef CC_TEXTURE_ATLAS_USE_TRIANGLE_STRIP
 /** @def CC_TEXTURE_ATLAS_USE_TRIANGLE_STRIP
  Use GL_TRIANGLE_STRIP instead of GL_TRIANGLES when rendering the texture atlas.
  It seems it is the recommend way, but it is much slower, so, enable it at your own risk
@@ -175,8 +197,9 @@
 
  */
 #define CC_TEXTURE_ATLAS_USE_TRIANGLE_STRIP 0
+#endif
 
-
+#ifndef CC_TEXTURE_NPOT_SUPPORT
 /** @def CC_TEXTURE_NPOT_SUPPORT
  If enabled, NPOT textures will be used where available. Only 3rd gen (and newer) devices support NPOT textures.
  NPOT textures have the following limitations:
@@ -188,7 +211,9 @@
  @since v0.99.2
  */
 #define CC_TEXTURE_NPOT_SUPPORT 0
+#endif
 
+#ifndef CC_RETINA_DISPLAY_FILENAME_SUFFIX
 /** @def CC_RETINA_DISPLAY_FILENAME_SUFFIX
  It's the suffix that will be appended to the files in order to load "retina display" images.
 
@@ -201,8 +226,9 @@
  */
  
 #define CC_RETINA_DISPLAY_FILENAME_SUFFIX @"-hd"
+#endif
 
-
+#ifndef CC_SPRITE_DEBUG_DRAW
 /** @def CC_SPRITE_DEBUG_DRAW
  If enabled, all subclasses of CCSprite will draw a bounding box
  Useful for debugging purposes only. It is recommened to leave it disabled.
@@ -210,7 +236,9 @@
  To enable set it to a value different than 0. Disabled by default.
  */
 #define CC_SPRITE_DEBUG_DRAW 0
+#endif
 
+#ifndef CC_SPRITEBATCHNODE_DEBUG_DRAW
 /** @def CC_SPRITEBATCHNODE_DEBUG_DRAW
  If enabled, all subclasses of CCSprite that are rendered using an CCSpriteSheet draw a bounding box.
  Useful for debugging purposes only. It is recommened to leave it disabled.
@@ -218,7 +246,9 @@
  To enable set it to a value different than 0. Disabled by default.
  */
 #define CC_SPRITEBATCHNODE_DEBUG_DRAW 0
+#endif
 
+#ifndef CC_BITMAPFONTATLAS_DEBUG_DRAW
 /** @def CC_BITMAPFONTATLAS_DEBUG_DRAW
  If enabled, all subclasses of BitmapFontAtlas will draw a bounding box
  Useful for debugging purposes only. It is recommened to leave it disabled.
@@ -226,7 +256,9 @@
  To enable set it to a value different than 0. Disabled by default.
  */
 #define CC_BITMAPFONTATLAS_DEBUG_DRAW 0
+#endif
 
+#ifndef CC_LABELATLAS_DEBUG_DRAW
 /** @def CC_LABELATLAS_DEBUG_DRAW
  If enabled, all subclasses of LabeltAtlas will draw a bounding box
  Useful for debugging purposes only. It is recommened to leave it disabled.
@@ -234,7 +266,9 @@
  To enable set it to a value different than 0. Disabled by default.
  */
 #define CC_LABELATLAS_DEBUG_DRAW 0
+#endif
 
+#ifndef CC_ENABLE_PROFILERS
 /** @def CC_ENABLE_PROFILERS
  If enabled, will activate various profilers withing cocos2d. This statistical data will be output to the console
  once per second showing average time (in milliseconds) required to execute the specific routine(s).
@@ -243,7 +277,9 @@
  To enable set it to a value different than 0. Disabled by default.
  */
 #define CC_ENABLE_PROFILERS 0
+#endif
 
+#ifndef CC_COMPATIBILITY_WITH_0_8
 /** @def CC_COMPATIBILITY_WITH_0_8
  Enable it if you want to support v0.8 compatbility.
  Basically, classes without namespaces will work.
@@ -252,3 +288,4 @@
  To enable set it to a value different than 0. Disabled by default.
  */
 #define CC_COMPATIBILITY_WITH_0_8 0
+#endif
