@@ -28,10 +28,11 @@ People/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 		category is cocosLive is UTF8'ized
 		added sanity in scheduler
 		TileMapAtlas supports fullpath
+	* Andreas Löw (thesk) (http://http://www.code-and-web.de/)
+		Added support for the PVZ file format
+		FileUtils doesn't convert full paths
 	* Andy Fitter:
 		patches for Texture2D
-	* Andreas Löw (thesk):
-		FileUtils doesn't convert full paths
 	* Anton Zemlyanov:
 		patches for MenuItemToggle that supports selectedIndex
 	* arya.irani:
@@ -62,6 +63,8 @@ People/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 		RotateTo action rotates to shortest angle patch
 	* Clinth Harris:
 		patches for Doc generator script
+	* cmkilger:
+		TMX maps: supports loading images from a different path than the map. patch.
 	* Codemattic:
 		patches for CocosNode
 		patches for MenuItemFont
@@ -170,6 +173,8 @@ People/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 	* johnnyflash71:
 		TMX suports 1 tileset per layer patch
 		mkatlas.pl supports spaces in the name
+	* Jordan Schidlowsky:
+		Added "relative" mode to particles
 	* jszatmary:
 		QuadParticleSystem works with NPOT textures. patch.
 		QuadParticleSystem works with subrects. patch.
@@ -224,7 +229,7 @@ People/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 		Author of FontTest
 		PointParticleSystem doesn't draw if there are no particles patch
 		Actions: cleaner way to start/stop actions patches
-		author of CCPropertyAction
+		author of CCPropertyAction 
 	* magicyu (crmagicxxx):
 		CocosLive client supports ranking request patch
 	* manucorporat (manu.valladolid) (http://www.abstractionworks.com/):
@@ -249,6 +254,8 @@ People/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 		Fixed possible crash with NPOT PVR images
 		Optimized the loading time of PVR images
 		CCArray: improved performance in insert & delete elements
+	* marcofucci:
+		CCArray.fastRemoveObjectAtIndex patch.
 	* Marco Tillemans:
 		RenderTexture renders images with correct blend function. patch.
 		RenderTexture: performance fixes. Improved logic.
@@ -297,6 +304,7 @@ People/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 	* Neophit:
 		Added support for object and objectgroup in TMXTiledMaps
 		TMXTiledMaps: objects supports offsets. patch.
+		TMXLayer: checks correct GID in tilemaps. patch.
 	* Nerezus:
 		Fixed compile error when keyboard registry is enabled
 	* NovaOblivion:
@@ -346,6 +354,8 @@ People/companies who were/are contributing code to cocos2d for iPhone (alphabeti
 	* sflory:
 		new way to added CGImageRef to TextureMgr
 		added unicode support in BitmapFontAtlas
+	* shaydn:
+		Fixed convertoWorld/Node AR methods
 	* shire8bit:
 		PageTurnTransition: fixed artifacts
 	* Sindesso Pty Ltd & David Durbin (http://www.sindesso.com/):

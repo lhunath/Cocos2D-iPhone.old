@@ -32,6 +32,11 @@ typedef enum  {
 	kCCMenuStateTrackingTouch
 } tCCMenuState;
 
+enum {
+	//* priority used by the menu
+	kCCMenuTouchPriority = -128,
+};
+
 /** A CCMenu
  * 
  * Features and Limitation:
@@ -40,8 +45,8 @@ typedef enum  {
  */
 @interface CCMenu : CCLayer <CCRGBAProtocol>
 {
-	tCCMenuState state;
-	CCMenuItem *selectedItem;
+	tCCMenuState state_;
+	CCMenuItem	*selectedItem_;
 	GLubyte		opacity_;
 	ccColor3B	color_;
 }

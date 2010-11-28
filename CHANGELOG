@@ -1,3 +1,40 @@
+version 0.99.5-rc1 - 15-Nov-2010
+. [NEW] Director: setProjection calls "updateProjection" delegate if "custom" projection is used
+. [NEW] Label: The CCLabelProtocol implements the -(NSString*)string method.
+. [NEW] Particles: Added a new type kCCPositionTypeRelative. Useful for "trail" particles. Added Test.
+. [NEW] Textures: Added support for pvz.ccz and pvr.gz formats
+. [NEW] Textures: TextureCache has a method to test if a texture is already cached (issue #793)
+. [NEW] ZipUtils: Added generic functions to uncompress any .gz or .ccz file (issue #1016)
+. [FIX] Actions: OrbitCamera doesn't crash on Simulator
+. [FIX] CCArray: fastRemoveObjectAtIndex works as expected (issue #1024)
+. [FIX] CocosDenshion: Fixed possible loss of audio on iOS 4.2
+. [FIX] config: CC_FONT_LABEL_SUPPORT is again, enabled by default
+. [FIX] Configuration: removed main bundle from CCConfiguration (issue #839 issue #773)
+. [FIX] Director: projection is doubled in RetinaDisplay mode
+. [FIX] DrawingPrimitives: don't modify the buffer in RetinaDisplay (issue #995)
+. [FIX] EAGLView: Doesn't crash in multithread environment (re-fixed issue #350)
+. [FIX] Label: BMFontLabel simplified loading of atlas. Doesn't use CCFileUtils (issue #1031)
+. [FIX] Label: setString copies the string, and not retain it (issue #1034)
+. [FIX] Mac: Events are dispatched when CC_DIRECTOR_MAC_USE_DISPLAY_LINK_THREAD is used
+. [FIX] Menu: MenuItems can draw its children (issue #458)
+. [FIX] Menu: MenuItems positions can be controlled manually (issue #1013)
+. [FIX] Menu: Menus uses touch priority kCCMenuTouchPriority (-128) (issue #1033)
+. [FIX] Node: convertToAR method fixed (issue #1017)
+. [FIX] Node: vertexZ works OK in RetinaDisplay mode
+. [FIX] Particles: Improved doxygen documentation (issue #1026)
+. [FIX] Particles: centerOfGravity renamed to sourcePosition (issue #1026)
+. [FIX] RenderTexture: removed unneeded and dangerous assert in getUIImageAsDataFromBuffer
+. [FIX] RenderTexture: fixed important memory leak when saving images
+. [FIX] SpriteBatchNode: improved performance when drawing the batch (issue #824)
+. [FIX] SpriteBatchNode: children sprites use the visible property correctly (issue #665)
+. [FIX] TextureCache: Improved loading time of cached PVR images (issue #998)
+. [FIX] Texture2D: addPVRTCImage: -> addPVRImage: since it also loads non-compressed PVR images
+. [FIX] Texture2D: Use 32-bit textures when creating labels on ARM_NEON hardware. Performance improvement.
+		To enable it, edit ccConfig and set CC_USE_RGBA32_LABELS_ON_NEON_ARCH = 1
+. [FIX] Texture2D: Improved creation time of texts. It's not so expensive to create ZFont labels (issue #971)
+. [FIX] Tiled: images can be relative to source map (issue #787)
+. [FIX] Tiled: TMXLayer checks for correct GID (issue #742)
+
 version 0.99.5-rc0 - 25-Oct-2010
 . [NEW] AnimationCache: New class. It deprecates the CCSprite#animation methods (issue #848)
 . [NEW] Animation: simplified API. Name is no longer needed. Deprecated API that uses name.
@@ -9,7 +46,7 @@ version 0.99.5-rc0 - 25-Oct-2010
 . [NEW] EAGLView: Added support sharegroup
 . [NEW] Templates: Install HD, iPad and spotlight icons
 . [FIX] Blocks: Actions and MenuItems copy the blocks instead of retaining it (issue #1007)
-. [FIX] config: FONT_LABEL is disabled by default since it performs really bad on iOS >= 4.0
+. [FIX] config: CC_FONT_LABEL_SUPPORT is disabled by default since it performs really bad on iOS >= 4.0
 . [FIX] Layer: register accelerometer onEnterTransitionDidFinsih (issue #624)
 . [FIX] Node: converToNodeSpace works on RetinaDisplay (issue #1000)
 . [FIX] Node: all transform methods uses Points instead of Pixels (issue #999)

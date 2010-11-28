@@ -28,8 +28,6 @@
 #import "CCNode.h"
 #import "CCProtocols.h"
 
-@class CCLabel;
-@class CCLabelAtlas;
 @class CCSprite;
 
 #define kItemSize 32
@@ -94,9 +92,9 @@
 /** An abstract class for "label" CCMenuItemLabel items 
  Any CCNode that supports the CCLabelProtocol protocol can be added.
  Supported nodes:
-   - CCBitmapFontAtlas
+   - CCLabelBMFont
    - CCLabelAtlas
-   - CCLabel
+   - CCLabelTTF
  */
 @interface CCMenuItemLabel : CCMenuItem  <CCRGBAProtocol>
 {
@@ -110,7 +108,7 @@
 @property (nonatomic,readwrite) ccColor3B disabledColor;
 
 /** Label that is rendered. It can be any CCNode that implements the CCLabelProtocol */
-@property (nonatomic,readwrite,retain) CCNode<CCLabelProtocol, CCRGBAProtocol>* label;
+@property (nonatomic,readwrite,assign) CCNode<CCLabelProtocol, CCRGBAProtocol>* label;
 
 /** creates a CCMenuItemLabel with a Label, target and selector */
 +(id) itemWithLabel:(CCNode<CCLabelProtocol,CCRGBAProtocol>*)label target:(id)target selector:(SEL)selector;
@@ -222,12 +220,14 @@
 	CCNode<CCRGBAProtocol> *normalImage_, *selectedImage_, *disabledImage_;
 }
 
+// weak references
+
 /** the image used when the item is not selected */
-@property (nonatomic,readwrite,retain) CCNode<CCRGBAProtocol> *normalImage;
+@property (nonatomic,readwrite,assign) CCNode<CCRGBAProtocol> *normalImage;
 /** the image used when the item is selected */
-@property (nonatomic,readwrite,retain) CCNode<CCRGBAProtocol> *selectedImage;
+@property (nonatomic,readwrite,assign) CCNode<CCRGBAProtocol> *selectedImage;
 /** the image used when the item is disabled */
-@property (nonatomic,readwrite,retain) CCNode<CCRGBAProtocol> *disabledImage;
+@property (nonatomic,readwrite,assign) CCNode<CCRGBAProtocol> *disabledImage;
 
 /** creates a menu item with a normal and selected image*/
 +(id) itemFromNormalSprite:(CCNode<CCRGBAProtocol>*)normalSprite selectedSprite:(CCNode<CCRGBAProtocol>*)selectedSprite;

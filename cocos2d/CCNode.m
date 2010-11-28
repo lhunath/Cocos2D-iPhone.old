@@ -68,12 +68,15 @@
 @synthesize tag=tag_;
 @synthesize vertexZ = vertexZ_;
 @synthesize isRunning=isRunning_;
+@synthesize userData=userData_;
 
 #pragma mark CCNode - Transform related properties
 
 @synthesize rotation=rotation_, scaleX=scaleX_, scaleY=scaleY_;
-@synthesize anchorPointInPixels=anchorPointInPixels_, isRelativeAnchorPoint=isRelativeAnchorPoint_;
-@synthesize userData;
+@synthesize position=position_, positionInPixels=positionInPixels_;
+@synthesize anchorPoint=anchorPoint_, anchorPointInPixels=anchorPointInPixels_;
+@synthesize contentSize=contentSize_, contentSizeInPixels=contentSizeInPixels_;
+@synthesize isRelativeAnchorPoint=isRelativeAnchorPoint_;
 
 // getters synthesized, setters explicit
 -(void) setRotation: (float)newRotation
@@ -103,10 +106,6 @@
 #endif	
 }
 
--(CGPoint) position
-{
-	return position_;
-}
 -(void) setPosition: (CGPoint)newPosition
 {
 	position_ = newPosition;
@@ -120,10 +119,6 @@
 #endif	
 }
 
--(CGPoint) positionInPixels
-{
-	return positionInPixels_;
-}
 -(void) setPositionInPixels:(CGPoint)newPosition
 {
 	positionInPixels_ = newPosition;
@@ -158,10 +153,6 @@
 #endif		
 	}
 }
--(CGPoint) anchorPoint
-{
-	return anchorPoint_;
-}
 
 -(void) setContentSize:(CGSize)size
 {
@@ -177,10 +168,6 @@
 		isTransformGLDirty_ = YES;
 #endif		
 	}
-}
--(CGSize) contentSize
-{
-	return contentSize_;
 }
 
 -(void) setContentSizeInPixels:(CGSize)size
@@ -199,10 +186,6 @@
 #endif		
 	}
 }
--(CGSize) contentSizeInPixels
-{
-	return contentSizeInPixels_;
-}
 
 - (CGRect) boundingBox
 {
@@ -216,6 +199,10 @@
 	return CGRectApplyAffineTransform(rect, [self nodeToParentTransform]);
 }
 
+-(void) setVertexZ:(float)vertexZ
+{
+	vertexZ_ = vertexZ * CC_CONTENT_SCALE_FACTOR();
+}
 
 -(float) scale
 {
@@ -277,7 +264,7 @@
 		children_ = nil;
 		
 		// userData is always inited as nil
-		userData = nil;
+		userData_ = nil;
 
 		//initialize parent to nil
 		parent_ = nil;
@@ -843,12 +830,23 @@
 - (CGPoint)convertToNodeSpaceAR:(CGPoint)worldPoint
 {
 	CGPoint nodePoint = [self convertToNodeSpace:worldPoint];
-	return ccpSub(nodePoint, anchorPoint_);
+	CGPoint anchorInPoints;
+	if( CC_CONTENT_SCALE_FACTOR() == 1 )
+		anchorInPoints = anchorPointInPixels_;
+	else
+		anchorInPoints = ccpMult( anchorPointInPixels_, 1/CC_CONTENT_SCALE_FACTOR() );
+	   
+	return ccpSub(nodePoint, anchorInPoints);
 }
 
 - (CGPoint)convertToWorldSpaceAR:(CGPoint)nodePoint
 {
-	nodePoint = ccpAdd(nodePoint, anchorPoint_);
+	CGPoint anchorInPoints;
+	if( CC_CONTENT_SCALE_FACTOR() == 1 )
+		anchorInPoints = anchorPointInPixels_;
+	else
+		anchorInPoints = ccpMult( anchorPointInPixels_, 1/CC_CONTENT_SCALE_FACTOR() );
+	nodePoint = ccpAdd(nodePoint, anchorInPoints);
 	return [self convertToWorldSpace:nodePoint];
 }
 

@@ -62,7 +62,7 @@
 
 @implementation CCParticleSystem
 @synthesize active, duration;
-@synthesize centerOfGravity, posVar;
+@synthesize sourcePosition, posVar;
 @synthesize particleCount;
 @synthesize life, lifeVar;
 @synthesize angle, angleVar;
@@ -226,7 +226,7 @@
 			NSAssert( buffer != NULL, @"CCParticleSystem: error decoding textureImageData");
 				
 			unsigned char *deflated = NULL;
-			NSUInteger deflatedLen = inflateMemory(buffer, len, &deflated);
+			NSUInteger deflatedLen = ccInflateMemory(buffer, len, &deflated);
 			free( buffer );
 				
 			NSAssert( deflated != NULL, @"CCParticleSystem: error ungzipping textureImageData");
@@ -335,9 +335,9 @@
 	particle->timeToLive = MAX(0, life + lifeVar * CCRANDOM_MINUS1_1() );
 
 	// position
-	particle->pos.x = centerOfGravity.x + posVar.x * CCRANDOM_MINUS1_1();
+	particle->pos.x = sourcePosition.x + posVar.x * CCRANDOM_MINUS1_1();
 	particle->pos.x *= CC_CONTENT_SCALE_FACTOR();
-	particle->pos.y = centerOfGravity.y + posVar.y * CCRANDOM_MINUS1_1();
+	particle->pos.y = sourcePosition.y + posVar.y * CCRANDOM_MINUS1_1();
 	particle->pos.y *= CC_CONTENT_SCALE_FACTOR();
 	
 	// Color
@@ -382,7 +382,10 @@
 	// position
 	if( positionType_ == kCCPositionTypeFree ) {
 		CGPoint p = [self convertToWorldSpace:CGPointZero];
-		particle->startPos = ccp( p.x * CC_CONTENT_SCALE_FACTOR(), p.y * CC_CONTENT_SCALE_FACTOR() );
+		particle->startPos = ccpMult( p, CC_CONTENT_SCALE_FACTOR() );
+	}
+	else if( positionType_ == kCCPositionTypeRelative ) {
+		particle->startPos = ccpMult( position_, CC_CONTENT_SCALE_FACTOR() );
 	}
 	
 	// direction
@@ -484,6 +487,11 @@
 		currentPosition.x *= CC_CONTENT_SCALE_FACTOR();
 		currentPosition.y *= CC_CONTENT_SCALE_FACTOR();
 	}
+	else if( positionType_ == kCCPositionTypeRelative ) {
+		currentPosition = position_;
+		currentPosition.x *= CC_CONTENT_SCALE_FACTOR();
+		currentPosition.y *= CC_CONTENT_SCALE_FACTOR();
+	}
 	
 	while( particleIdx < particleCount )
 	{
@@ -548,7 +556,7 @@
 			
 			CGPoint	newPos;
 			
-			if( positionType_ == kCCPositionTypeFree ) {
+			if( positionType_ == kCCPositionTypeFree || positionType_ == kCCPositionTypeRelative ) {
 				CGPoint diff = ccpSub( currentPosition, p->startPos );
 				newPos = ccpSub(p->pos, diff);
 				

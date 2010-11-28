@@ -68,6 +68,15 @@
 {}
 @end
 
+@interface SpriteBatchNodeReorderIssue766 : SpriteDemo
+{
+	CCSpriteBatchNode *batchNode;
+	CCSprite *sprite1;
+	CCSprite *sprite2;
+	CCSprite *sprite3;	
+}
+@end
+
 @interface SpriteBatchNodeReorderIssue767 : SpriteDemo
 {}
 @end
@@ -182,6 +191,10 @@
 @end
 
 @interface SpriteChildrenVisibility : SpriteDemo
+{}
+@end
+
+@interface SpriteChildrenVisibilityIssue665 : SpriteDemo
 {}
 @end
 

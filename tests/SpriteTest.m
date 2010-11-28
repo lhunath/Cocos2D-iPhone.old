@@ -12,6 +12,7 @@
 
 static int sceneIdx=-1;
 static NSString *transitions[] = {	
+	
 	@"Sprite1",
 	@"SpriteBatchNode1",
 	@"SpriteFrameTest",
@@ -29,6 +30,7 @@ static NSString *transitions[] = {
 	@"SpriteBatchNodeZOrder",
 	@"SpriteBatchNodeReorder",
 	@"SpriteBatchNodeReorderIssue744",
+	@"SpriteBatchNodeReorderIssue766",
 	@"SpriteBatchNodeReorderIssue767",
 	@"SpriteZVertex",
 	@"SpriteBatchNodeZVertex",
@@ -44,6 +46,7 @@ static NSString *transitions[] = {
 	@"SpriteBatchNodeChildren2",
 	@"SpriteBatchNodeChildrenZ",
 	@"SpriteChildrenVisibility",
+	@"SpriteChildrenVisibilityIssue665",
 	@"SpriteChildrenAnchorPoint",
 	@"SpriteBatchNodeChildrenAnchorPoint",
 	@"SpriteBatchNodeChildrenScale",
@@ -124,7 +127,6 @@ Class restartAction()
 			[self addChild:l z:1];
 			[l setPosition:ccp(s.width/2, s.height-80)];
 		}
-		
 		
 		CCMenuItemImage *item1 = [CCMenuItemImage itemFromNormalImage:@"b1.png" selectedImage:@"b2.png" target:self selector:@selector(backCallback:)];
 		CCMenuItemImage *item2 = [CCMenuItemImage itemFromNormalImage:@"r1.png" selectedImage:@"r2.png" target:self selector:@selector(restartCallback:)];
@@ -731,6 +733,67 @@ Class restartAction()
 	return @"Should not crash";
 }
 @end
+
+@implementation SpriteBatchNodeReorderIssue766
+-(CCSprite *)makeSpriteZ:(int)aZ
+{
+	CCSprite *sprite = [CCSprite spriteWithBatchNode:batchNode rect:CGRectMake(128,0,64,64)];
+	[batchNode addChild:sprite z:aZ+1 tag:0];
+	
+	//children
+	CCSprite *spriteShadow = [CCSprite spriteWithBatchNode:batchNode rect:CGRectMake(0,0,64,64)];
+	spriteShadow.opacity = 128;
+	[sprite addChild:spriteShadow z:aZ tag:3];
+	
+	CCSprite *spriteTop = [CCSprite spriteWithBatchNode:batchNode rect:CGRectMake(64,0,64,64)];
+	[sprite addChild:spriteTop z:aZ+2 tag:3];
+	
+	return sprite;
+}
+
+- (void) reorderSprite:(ccTime)dt
+{
+	[self unschedule:_cmd];
+	
+	[batchNode reorderChild:sprite1 z:4];
+}
+
+// on "init" you need to initialize your instance
+-(id) init
+{
+	// always call "super" init
+	// Apple recommends to re-assign "self" with the "super" return value
+	if( (self=[super init] )) {
+		
+		batchNode = [CCSpriteBatchNode batchNodeWithFile:@"piece.png" capacity:15];
+		[self addChild:batchNode z:1 tag:0];
+		
+		sprite1 = [self makeSpriteZ:2];
+		sprite1.position = CGPointMake(200,160);
+		
+		sprite2= [self makeSpriteZ:3];
+		sprite2.position = CGPointMake(264,160);
+		
+		sprite3 = [self makeSpriteZ:4];
+		sprite3.position = CGPointMake(328,160);
+		
+		[self schedule:@selector(reorderSprite:) interval:2];
+	}
+	return self;
+}
+
+-(NSString *) title
+{
+	return @"SpriteBatchNode: reorder issue #766";
+}
+
+-(NSString *) subtitle
+{
+	return @"In 2 seconds 1 sprite will be reordered";
+}
+
+@end
+
 
 @implementation SpriteBatchNodeReorderIssue767
 
@@ -2515,7 +2578,10 @@ Class restartAction()
 		
 		sprite3 = [CCSprite spriteWithSpriteFrameName:@"grossini_dance_03.png"];
 		[sprite3 setPosition:ccp(-20,30)];
-		
+
+		// test issue #665
+//		sprite1.visible = NO;
+
 		[aParent addChild:sprite1];
 		[sprite1 addChild:sprite2 z:-2];
 		[sprite1 addChild:sprite3 z:2];
@@ -2538,6 +2604,9 @@ Class restartAction()
 		sprite3 = [CCSprite spriteWithSpriteFrameName:@"grossini_dance_03.png"];
 		[sprite3 setPosition:ccp(-20,30)];
 		
+		// test issue #665
+//		sprite1.visible = NO;
+
 		[aParent addChild:sprite1];
 		[sprite1 addChild:sprite2 z:-2];
 		[sprite1 addChild:sprite3 z:2];
@@ -2558,6 +2627,92 @@ Class restartAction()
 {
 	return @"Sprite & SpriteBatchNode Visibility";
 }
+@end
+
+#pragma mark -
+#pragma mark SpriteChildrenVisibilityIssue665
+
+@implementation SpriteChildrenVisibilityIssue665
+
+-(id) init
+{
+	if( (self=[super init]) ) {
+		
+		CGSize s = [[CCDirector sharedDirector] winSize];
+		
+		[[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"animations/grossini.plist"];
+		
+		CCNode *aParent;
+		CCSprite *sprite1, *sprite2, *sprite3;
+		//
+		// SpriteBatchNode
+		//
+		// parents
+		aParent = [CCSpriteBatchNode batchNodeWithFile:@"animations/grossini.png" capacity:50];
+		aParent.position = ccp(s.width/3, s.height/2);
+		[self addChild:aParent z:0];
+		
+		
+		
+		sprite1 = [CCSprite spriteWithSpriteFrameName:@"grossini_dance_01.png"];
+		[sprite1 setPosition:ccp(0,0)];
+		
+		sprite2 = [CCSprite spriteWithSpriteFrameName:@"grossini_dance_02.png"];
+		[sprite2 setPosition:ccp(20,30)];
+		
+		sprite3 = [CCSprite spriteWithSpriteFrameName:@"grossini_dance_03.png"];
+		[sprite3 setPosition:ccp(-20,30)];
+		
+		// test issue #665
+		sprite1.visible = NO;
+		
+		[aParent addChild:sprite1];
+		[sprite1 addChild:sprite2 z:-2];
+		[sprite1 addChild:sprite3 z:2];
+				
+		//
+		// Sprite
+		//
+		aParent = [CCNode node];
+		aParent.position = ccp(2*s.width/3, s.height/2);
+		[self addChild:aParent z:0];
+		
+		sprite1 = [CCSprite spriteWithSpriteFrameName:@"grossini_dance_01.png"];
+		[sprite1 setPosition:ccp(0,0)];
+		
+		sprite2 = [CCSprite spriteWithSpriteFrameName:@"grossini_dance_02.png"];
+		[sprite2 setPosition:ccp(20,30)];
+		
+		sprite3 = [CCSprite spriteWithSpriteFrameName:@"grossini_dance_03.png"];
+		[sprite3 setPosition:ccp(-20,30)];
+		
+		// test issue #665
+		sprite1.visible = NO;
+		
+		[aParent addChild:sprite1];
+		[sprite1 addChild:sprite2 z:-2];
+		[sprite1 addChild:sprite3 z:2];
+		
+	}	
+	return self;
+}
+
+- (void) dealloc
+{
+	[[CCSpriteFrameCache sharedSpriteFrameCache] removeUnusedSpriteFrames];
+	[super dealloc];
+}
+
+-(NSString *) title
+{
+	return @"Sprite & SpriteBatchNode Visibility";
+}
+
+-(NSString *) subtitle
+{
+	return @"No sprites should be visible";
+}
+
 @end
 
 #pragma mark -
