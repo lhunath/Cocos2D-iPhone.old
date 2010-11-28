@@ -67,7 +67,7 @@ enum {
 @interface CCTexturePVR : NSObject
 {
 	struct CCPVRMipmap	mipmaps_[CC_PVRMIPMAP_MAX];	// pointer to mipmap images
-	int		numberOfMipmaps_;					// number of mipmap used
+	NSUInteger		numberOfMipmaps_;					// number of mipmap used
 	
 	unsigned int	tableFormatIndex_;
 	uint32_t width_, height_;

@@ -121,7 +121,7 @@ int ccInflateMemory(unsigned char *in, unsigned int inLength, unsigned char **ou
 
 int ccInflateGZipFile(const char *path, unsigned char **out)
 {
-	int len;
+	unsigned int len;
 	unsigned int offset = 0;
 	
 	assert( out );
