@@ -92,13 +92,13 @@
  */
 @interface CCCallFunc : CCActionInstant <NSCopying>
 {
-	id targetCallback;
+	CCNode *targetCallback;
 	SEL selector;
 }
 /** creates the action with the callback */
-+(id) actionWithTarget: (id) t selector:(SEL) s;
++(id) actionWithTarget: (CCNode *) t selector:(SEL) s;
 /** initializes the action with the callback */
--(id) initWithTarget: (id) t selector:(SEL) s;
+-(id) initWithTarget: (CCNode *) t selector:(SEL) s;
 /** exeuctes the callback */
 -(void) execute;
 @end
@@ -126,9 +126,9 @@ typedef void (*CC_CALLBACK_ND)(id, SEL, id, void *);
 @property (nonatomic,readwrite) CC_CALLBACK_ND callbackMethod;
 
 /** creates the action with the callback and the data to pass as an argument */
-+(id) actionWithTarget: (id) t selector:(SEL) s data:(void*)d;
++(id) actionWithTarget: (CCNode *) t selector:(SEL) s data:(void*)d;
 /** initializes the action with the callback and the data to pass as an argument */
--(id) initWithTarget:(id) t selector:(SEL) s data:(void*) d;
+-(id) initWithTarget:(CCNode *) t selector:(SEL) s data:(void*) d;
 @end
 
 #pragma mark Blocks Support

@@ -254,7 +254,7 @@ typedef struct
 	[self setTile:pos coords:coords];
 }
 
--(void)startWithTarget:(id)aTarget
+-(void)startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	
@@ -497,7 +497,7 @@ typedef struct
 	[self setTile:pos coords:coords];
 }
 
--(void)startWithTarget:(id)aTarget
+-(void)startWithTarget:(CCNode *)aTarget
 {
 	int i;
 	
@@ -682,7 +682,7 @@ typedef struct
 	return copy;
 }
 
--(void)startWithTarget:(id)aTarget
+-(void)startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	winSize = [[CCDirector sharedDirector] winSizeInPixels];
@@ -735,7 +735,7 @@ typedef struct
 	return copy;
 }
 
--(void)startWithTarget:(id)aTarget
+-(void)startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	winSize = [[CCDirector sharedDirector] winSizeInPixels];

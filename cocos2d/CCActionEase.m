@@ -71,7 +71,7 @@
 	[super dealloc];
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	[other startWithTarget:target_];

@@ -47,7 +47,7 @@
 	return copy;
 }
 
--(void) startWithTarget:(id) aTarget;
+-(void) startWithTarget:(CCNode *) aTarget;
 {
 	[super startWithTarget:aTarget];
 	from_ = [(kProgressTimerCast)target_ percentage];
@@ -90,7 +90,7 @@
 	return [[self class] actionWithDuration:duration_ from:to_ to:from_];
 }
 
--(void) startWithTarget:(id) aTarget;
+-(void) startWithTarget:(CCNode *) aTarget;
 {
 	[super startWithTarget:aTarget];
 }

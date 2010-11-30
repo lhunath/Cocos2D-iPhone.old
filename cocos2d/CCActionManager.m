@@ -133,12 +133,12 @@ static CCActionManager *sharedManager_ = nil;
 #pragma mark ActionManager - Pause / Resume
 
 // XXX DEPRECATED. REMOVE IN 1.0
--(void) pauseAllActionsForTarget:(id)target
+-(void) pauseAllActionsForTarget:(CCNode *)target
 {
 	[self pauseTarget:target];
 }
 
--(void) pauseTarget:(id)target
+-(void) pauseTarget:(CCNode *)target
 {
 	tHashElement *element = NULL;
 	HASH_FIND_INT(targets, &target, element);
@@ -149,12 +149,12 @@ static CCActionManager *sharedManager_ = nil;
 }
 
 // XXX DEPRECATED. REMOVE IN 1.0
--(void) resumeAllActionsForTarget:(id)target
+-(void) resumeAllActionsForTarget:(CCNode *)target
 {
 	[self resumeTarget:target];
 }
 
--(void) resumeTarget:(id)target
+-(void) resumeTarget:(CCNode *)target
 {
 	tHashElement *element = NULL;
 	HASH_FIND_INT(targets, &target, element);
@@ -166,7 +166,7 @@ static CCActionManager *sharedManager_ = nil;
 
 #pragma mark ActionManager - run
 
--(void) addAction:(CCAction*)action target:(id)target paused:(BOOL)paused
+-(void) addAction:(CCAction*)action target:(CCNode *)target paused:(BOOL)paused
 {
 	NSAssert( action != nil, @"Argument action must be non-nil");
 	NSAssert( target != nil, @"Argument target must be non-nil");	
@@ -195,12 +195,12 @@ static CCActionManager *sharedManager_ = nil;
 -(void) removeAllActions
 {
 	for(tHashElement *element=targets; element != NULL; ) {	
-		id target = element->target;
+		CCNode *target = element->target;
 		element=element->hh.next;
 		[self removeAllActionsFromTarget:target];
 	}
 }
--(void) removeAllActionsFromTarget:(id)target
+-(void) removeAllActionsFromTarget:(CCNode *)target
 {
 	// explicit nil handling
 	if( target == nil )
@@ -230,7 +230,7 @@ static CCActionManager *sharedManager_ = nil;
 		return;
 	
 	tHashElement *element = NULL;
-	id target = [action originalTarget];
+	CCNode *target = [action originalTarget];
 	HASH_FIND_INT(targets, &target, element );
 	if( element ) {
 		NSUInteger i = ccArrayGetIndexOfObject(element->actions, action);
@@ -243,7 +243,7 @@ static CCActionManager *sharedManager_ = nil;
 	}
 }
 
--(void) removeActionByTag:(int) aTag target:(id)target
+-(void) removeActionByTag:(int) aTag target:(CCNode *)target
 {
 	NSAssert( aTag != kCCActionTagInvalid, @"Invalid tag");
 	NSAssert( target != nil, @"Target should be ! nil");
@@ -267,7 +267,7 @@ static CCActionManager *sharedManager_ = nil;
 
 #pragma mark ActionManager - get
 
--(CCAction*) getActionByTag:(int)aTag target:(id)target
+-(CCAction*) getActionByTag:(int)aTag target:(CCNode *)target
 {
 	NSAssert( aTag != kCCActionTagInvalid, @"Invalid tag");
 
@@ -291,7 +291,7 @@ static CCActionManager *sharedManager_ = nil;
 	return nil;
 }
 
--(int) numberOfRunningActionsInTarget:(id) target
+-(int) numberOfRunningActionsInTarget:(CCNode *) target
 {
 	tHashElement *element = NULL;
 	HASH_FIND_INT(targets, &target, element);

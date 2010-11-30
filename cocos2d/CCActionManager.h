@@ -32,7 +32,7 @@
 typedef struct _hashElement
 {
 	struct ccArray	*actions;
-	id				target;
+	CCNode			*target;
 	unsigned int	actionIndex;
 	CCAction		*currentAction;
 	BOOL			currentActionSalvaged;
@@ -73,7 +73,7 @@ typedef struct _hashElement
  If the target is not present, a new instance of this target will be created either paused or paused, and the action will be added to the newly created target.
  When the target is paused, the queued actions won't be 'ticked'.
  */
--(void) addAction: (CCAction*) action target:(id)target paused:(BOOL)paused;
+-(void) addAction: (CCAction*) action target:(CCNode *)target paused:(BOOL)paused;
 /** Removes all actions from all the targers.
  */
 -(void) removeAllActions;
@@ -81,37 +81,37 @@ typedef struct _hashElement
 /** Removes all actions from a certain target.
  All the actions that belongs to the target will be removed.
  */
--(void) removeAllActionsFromTarget:(id)target;
+-(void) removeAllActionsFromTarget:(CCNode *)target;
 /** Removes an action given an action reference.
  */
 -(void) removeAction: (CCAction*) action;
 /** Removes an action given its tag and the target */
--(void) removeActionByTag:(int)tag target:(id)target;
+-(void) removeActionByTag:(int)tag target:(CCNode *)target;
 /** Gets an action given its tag an a target
  @return the Action the with the given tag
  */
--(CCAction*) getActionByTag:(int) tag target:(id)target;
+-(CCAction*) getActionByTag:(int) tag target:(CCNode *)target;
 /** Returns the numbers of actions that are running in a certain target
  * Composable actions are counted as 1 action. Example:
  *    If you are running 1 Sequence of 7 actions, it will return 1.
  *    If you are running 7 Sequences of 2 actions, it will return 7.
  */
--(int) numberOfRunningActionsInTarget:(id)target;
+-(int) numberOfRunningActionsInTarget:(CCNode *)target;
 
 /** Pauses the target: all running actions and newly added actions will be paused.
  */
--(void) pauseTarget:(id)target;
+-(void) pauseTarget:(CCNode *)target;
 /** Resumes the target. All queued actions will be resumed.
  */
--(void) resumeTarget:(id)target;
+-(void) resumeTarget:(CCNode *)target;
 
 /** Resumes the target. All queued actions will be resumed.
  @deprecated Use resumeTarget: instead. Will be removed in v1.0.
  */
--(void) resumeAllActionsForTarget:(id)target DEPRECATED_ATTRIBUTE;
+-(void) resumeAllActionsForTarget:(CCNode *)target DEPRECATED_ATTRIBUTE;
 /** Pauses the target: all running actions and newly added actions will be paused.
  */
--(void) pauseAllActionsForTarget:(id)target DEPRECATED_ATTRIBUTE;
+-(void) pauseAllActionsForTarget:(CCNode *)target DEPRECATED_ATTRIBUTE;
 
 
 @end

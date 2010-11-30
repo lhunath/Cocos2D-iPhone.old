@@ -74,7 +74,7 @@
 #pragma mark CCShow
 
 @implementation CCShow
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	((CCNode *)target_).visible = YES;
@@ -91,7 +91,7 @@
 #pragma mark CCHide
 
 @implementation CCHide
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	((CCNode *)target_).visible = NO;
@@ -108,7 +108,7 @@
 #pragma mark CCToggleVisibility
 
 @implementation CCToggleVisibility
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	((CCNode *)target_).visible = !((CCNode *)target_).visible;
@@ -135,7 +135,7 @@
 	return self;
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	[(CCSprite*)aTarget setFlipX:flipX];
@@ -173,7 +173,7 @@
 	return self;
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	[(CCSprite*)aTarget setFlipY:flipY];
@@ -216,10 +216,10 @@
 	return copy;
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
-	((CCNode *)target_).position = position;
+	target_.position = position;
 }
 @end
 
@@ -229,12 +229,12 @@
 #pragma mark CCCallFunc
 
 @implementation CCCallFunc
-+(id) actionWithTarget: (id) t selector:(SEL) s
++(id) actionWithTarget: (CCNode *) t selector:(SEL) s
 {
 	return [[[self alloc] initWithTarget: t selector: s] autorelease];
 }
 
--(id) initWithTarget: (id) t selector:(SEL) s
+-(id) initWithTarget: (CCNode *) t selector:(SEL) s
 {
 	if( (self=[super init]) ) {
 		targetCallback = [t retain];
@@ -256,7 +256,7 @@
 }
 
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	[self execute];
@@ -290,12 +290,12 @@
 
 @synthesize callbackMethod = callbackMethod_;
 
-+(id) actionWithTarget:(id)t selector:(SEL)s data:(void*)d
++(id) actionWithTarget:(CCNode *)t selector:(SEL)s data:(void*)d
 {
 	return [[[self alloc] initWithTarget:t selector:s data:d] autorelease];
 }
 
--(id) initWithTarget:(id)t selector:(SEL)s data:(void*)d
+-(id) initWithTarget:(CCNode *)t selector:(SEL)s data:(void*)d
 {
 	if( (self=[super initWithTarget:t selector:s]) ) {
 		data = d;
@@ -353,7 +353,7 @@
 	return copy;
 }
 
--(void) startWithTarget:(id)aTarget {
+-(void) startWithTarget:(CCNode *)aTarget {
 	[super startWithTarget:aTarget];
 	[self execute];
 }
@@ -390,7 +390,7 @@
 	return copy;
 }
 
--(void) startWithTarget:(id)aTarget {
+-(void) startWithTarget:(CCNode *)aTarget {
 	[super startWithTarget:aTarget];
 	[self execute];
 }

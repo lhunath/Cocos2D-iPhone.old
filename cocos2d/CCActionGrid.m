@@ -49,7 +49,7 @@
 	return self;
 }
 
--(void)startWithTarget:(id)aTarget
+-(void)startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 
@@ -210,7 +210,7 @@
 	[super dealloc];
 }
 
--(void)startWithTarget:(id)aTarget
+-(void)startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	[other startWithTarget:target_];
@@ -268,7 +268,7 @@
 	[super dealloc];
 }
 
--(void)startWithTarget:(id)aTarget
+-(void)startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	[other startWithTarget:target_];
@@ -318,7 +318,7 @@
 	[super dealloc];
 }
 
--(void)startWithTarget:(id)aTarget
+-(void)startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	[other startWithTarget:target_];
@@ -344,7 +344,7 @@
 
 @implementation CCStopGrid
 
--(void)startWithTarget:(id)aTarget
+-(void)startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 
@@ -379,7 +379,7 @@
 	return self;
 }
 
--(void)startWithTarget:(id)aTarget
+-(void)startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 

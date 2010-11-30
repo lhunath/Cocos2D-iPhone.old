@@ -92,7 +92,7 @@
 	[self update: MIN(1, elapsed_/duration_)];
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	elapsed_ = 0.0f;
@@ -166,7 +166,7 @@
 	[super dealloc];
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];	
 	split = [actions[0] duration] / duration_;
@@ -258,7 +258,7 @@
 	[super dealloc];
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	total_ = 0;
 	[super startWithTarget:aTarget];
@@ -385,7 +385,7 @@
 	[super dealloc];
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	[one startWithTarget:target_];
@@ -486,7 +486,7 @@
 	return copy;
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	startAngle = [target_ rotation];
@@ -611,7 +611,7 @@
 	return copy;
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	startPosition = [(CCNode*)target_ position];
@@ -693,7 +693,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
     return copy;
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	startPosition = [(CCNode*)target_ position];
@@ -735,7 +735,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 #pragma mark -
 #pragma mark BezierTo
 @implementation CCBezierTo
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	config.controlPoint_1 = ccpSub(config.controlPoint_1, startPosition);
@@ -865,9 +865,13 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 #pragma mark -
 #pragma mark FadeIn
 @implementation CCFadeIn
+-(void) startWithTarget:(CCNode<CCRGBAProtocol> *)aTarget
+{
+	[super startWithTarget:aTarget];
+}
 -(void) update: (ccTime) t
 {
-	[(id<CCRGBAProtocol>) target_ setOpacity: 255 *t];
+	[(CCNode<CCRGBAProtocol> *)target_ setOpacity: 255 *t];
 }
 -(CCActionInterval*) reverse
 {
@@ -881,9 +885,13 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 #pragma mark -
 #pragma mark FadeOut
 @implementation CCFadeOut
+-(void) startWithTarget:(CCNode<CCRGBAProtocol> *)aTarget
+{
+	[super startWithTarget:aTarget];
+}
 -(void) update: (ccTime) t
 {
-	[(id<CCRGBAProtocol>) target_ setOpacity: 255 *(1-t)];
+	[(CCNode<CCRGBAProtocol> *)target_ setOpacity: 255 *(1-t)];
 }
 -(CCActionInterval*) reverse
 {
@@ -915,15 +923,15 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	return copy;
 }
 
--(void) startWithTarget:(CCNode *)aTarget
+-(void) startWithTarget:(CCNode<CCRGBAProtocol> *)aTarget
 {
 	[super startWithTarget:aTarget];
-	fromOpacity = [(id<CCRGBAProtocol>)target_ opacity];
+	fromOpacity = [(CCNode<CCRGBAProtocol> *)target_ opacity];
 }
 
 -(void) update: (ccTime) t
 {
-	[(id<CCRGBAProtocol>)target_ setOpacity: fromOpacity + ( toOpacity - fromOpacity ) * t];
+	[(CCNode<CCRGBAProtocol> *)target_ setOpacity: fromOpacity + ( toOpacity - fromOpacity ) * t];
 }
 @end
 
@@ -952,17 +960,16 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	return copy;
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode<CCRGBAProtocol> *)aTarget
 {
 	[super startWithTarget:aTarget];
 	
-	id<CCRGBAProtocol> tn = (id<CCRGBAProtocol>) target_;
-	from = [tn color];
+	from = [((CCNode<CCRGBAProtocol> *)target_) color];
 }
 
 -(void) update: (ccTime) t
 {
-	id<CCRGBAProtocol> tn = (id<CCRGBAProtocol>) target_;
+	CCNode<CCRGBAProtocol> *tn = (CCNode<CCRGBAProtocol> *)target_;
 	[tn setColor:ccc3(from.r + (to.r - from.r) * t, from.g + (to.g - from.g) * t, from.b + (to.b - from.b) * t)];
 }
 @end
@@ -993,11 +1000,11 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	return[(CCTintBy*)[[self class] allocWithZone: zone] initWithDuration: [self duration] red:deltaR green:deltaG blue:deltaB];
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode<CCRGBAProtocol> *)aTarget
 {
 	[super startWithTarget:aTarget];
 	
-	id<CCRGBAProtocol> tn = (id<CCRGBAProtocol>) target_;
+	CCNode<CCRGBAProtocol> *tn = (CCNode<CCRGBAProtocol> *)target_;
 	ccColor3B color = [tn color];
 	fromR = color.r;
 	fromG = color.g;
@@ -1006,7 +1013,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 
 -(void) update: (ccTime) t
 {
-	id<CCRGBAProtocol> tn = (id<CCRGBAProtocol>) target_;
+	CCNode<CCRGBAProtocol> *tn = (CCNode<CCRGBAProtocol> *)target_;
 	[tn setColor:ccc3( fromR + deltaR * t, fromG + deltaG * t, fromB + deltaB * t)];
 }
 - (CCActionInterval*) reverse
@@ -1065,7 +1072,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	[super dealloc];
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	[other startWithTarget:target_];
@@ -1158,22 +1165,20 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	[super dealloc];
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCSprite *)aTarget
 {
 	[super startWithTarget:aTarget];
-	CCSprite *sprite = target_;
 
 	[origFrame release];
 
 	if( restoreOriginalFrame )
-		origFrame = [[sprite displayedFrame] retain];
+		origFrame = [[aTarget displayedFrame] retain];
 }
 
 -(void) stop
 {
 	if( restoreOriginalFrame ) {
-		CCSprite *sprite = target_;
-		[sprite setDisplayFrame:origFrame];
+		[(CCSprite *)target_ setDisplayFrame:origFrame];
 	}
 	
 	[super stop];
@@ -1189,7 +1194,7 @@ static inline float bezierat( float a, float b, float c, float d, ccTime t )
 	if( idx >= numberOfFrames ) {
 		idx = numberOfFrames -1;
 	}
-	CCSprite *sprite = target_;
+	CCSprite *sprite = (CCSprite *)target_;
 	if (! [sprite isFrameDisplayed: [frames objectAtIndex: idx]] ) {
 		[sprite setDisplayFrame: [frames objectAtIndex:idx]];
 	}

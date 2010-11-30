@@ -29,6 +29,8 @@
 
 #import "ccTypes.h"
 
+@class CCNode;
+
 enum {
 	//! Default tag
 	kCCActionTagInvalid = -1,
@@ -37,8 +39,8 @@ enum {
 /** Base class for CCAction objects.
  */
 @interface CCAction : NSObject <NSCopying> {
-	id			originalTarget_;
-	id			target_;
+	CCNode		*originalTarget_;
+	CCNode		*target_;
 	NSInteger	tag_;
 }
 
@@ -47,13 +49,13 @@ enum {
  When the 'stop' method is called, target will be set to nil.
  The target is 'assigned', it is not 'retained'.
  */
-@property (nonatomic,readonly,assign) id target;
+@property (nonatomic,readonly,assign) CCNode *target;
 
 /** The original target, since target can be nil.
  Is the target that were used to run the action. Unless you are doing something complex, like ActionManager, you should NOT call this method.
  @since v0.8.2
 */
-@property (nonatomic,readonly,assign) id originalTarget;
+@property (nonatomic,readonly,assign) CCNode *originalTarget;
 
 
 /** The action tag. An identifier of the action */
@@ -70,7 +72,7 @@ enum {
 //! return YES if the action has finished
 -(BOOL) isDone;
 //! called before the action start. It will also set the target.
--(void) startWithTarget:(id)target;
+-(void) startWithTarget:(CCNode *)target;
 //! called after the action has finished. It will set the 'target' to nil.
 //! IMPORTANT: You should never call "[action stop]" manually. Instead, use: "[target stopAction:action];"
 -(void) stop;

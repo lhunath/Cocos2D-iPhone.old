@@ -73,7 +73,7 @@
 	return copy;
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	originalTarget_ = target_ = aTarget;
 }
@@ -146,7 +146,7 @@
 	[super dealloc];
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	[other startWithTarget:target_];
@@ -211,7 +211,7 @@
 	[super dealloc];
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	[other startWithTarget:target_];

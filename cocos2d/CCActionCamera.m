@@ -34,7 +34,7 @@
 // CameraAction
 //
 @implementation CCActionCamera
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	CCCamera *camera = [target_ camera];
@@ -79,7 +79,7 @@
 	return self;
 }
 
--(void) startWithTarget:(id)aTarget
+-(void) startWithTarget:(CCNode *)aTarget
 {
 	[super startWithTarget:aTarget];
 	float r, zenith, azimuth;
