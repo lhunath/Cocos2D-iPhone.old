@@ -257,6 +257,8 @@ static 	SEL selUpdate = NULL;
 #pragma mark CCSpriteBatchNode - draw
 -(void) draw
 {
+    [super draw];
+
 	// Optimization: Fast Dispatch
 	typedef BOOL (*UPDATE_IMP)(id, SEL);
 	UPDATE_IMP updateMethod;

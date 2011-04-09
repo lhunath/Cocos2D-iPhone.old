@@ -93,6 +93,8 @@ enum {
 
 -(void) draw
 {
+    [super draw];
+
 	if( inSceneOnTop_ ) {
 		[outScene_ visit];
 		[inScene_ visit];
