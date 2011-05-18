@@ -30,6 +30,7 @@
 
 #import "CCTMXObjectGroup.h"
 #import "CCTMXXMLParser.h"
+#import "ccMacros.h"
 #import "Support/CGPointExtension.h"
 
 
@@ -38,10 +39,10 @@
 
 @implementation CCTMXObjectGroup
 
-@synthesize groupName=groupName_;
-@synthesize objects=objects_;
-@synthesize positionOffset=positionOffset_;
-@synthesize properties=properties_;
+@synthesize groupName = groupName_;
+@synthesize objects = objects_;
+@synthesize positionOffset = positionOffset_;
+@synthesize properties = properties_;
 
 -(id) init
 {

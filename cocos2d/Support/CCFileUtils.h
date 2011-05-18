@@ -49,4 +49,13 @@
  @returns the size of the allocated buffer
  @since v0.99.5
  */
-int ccLoadFileIntoMemory(const char *filename, unsigned char **out);
+NSInteger ccLoadFileIntoMemory(const char *filename, unsigned char **out);
+
+
+/** removes the HD suffix from a path
+ 
+ @returns NSString * without the HD suffix
+ @since v0.99.5
+ */
+NSString *ccRemoveHDSuffixFromFile( NSString *path );
+

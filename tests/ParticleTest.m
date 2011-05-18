@@ -7,6 +7,11 @@
 // local import
 #import "ParticleTest.h"
 
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
+#define PARTICLE_FIRE_NAME @"fire.pvr"
+#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
+#define PARTICLE_FIRE_NAME @"fire.png"
+#endif
 enum {
 	kTagLabelAtlas = 1,
 };
@@ -14,41 +19,42 @@ enum {
 static int sceneIdx=-1;
 static NSString *transitions[] = {
 	
-		@"DemoFlower",
-		@"DemoGalaxy",
-		@"DemoFirework",
-		@"DemoSpiral",
-		@"DemoSun",
-		@"DemoMeteor",
-		@"DemoFire",
-		@"DemoSmoke",
-		@"DemoExplosion",
-		@"DemoSnow",
-		@"DemoRain",
-		@"DemoBigFlower",
-		@"DemoRotFlower",
-		@"DemoModernArt",
-		@"DemoRing",
+	@"DemoFlower",
+	@"DemoGalaxy",
+	@"DemoFirework",
+	@"DemoSpiral",
+	@"DemoSun",
+	@"DemoMeteor",
+	@"DemoFire",
+	@"DemoSmoke",
+	@"DemoExplosion",
+	@"DemoSnow",
+	@"DemoRain",
+	@"DemoBigFlower",
+	@"DemoRotFlower",
+	@"DemoModernArt",
+	@"DemoRing",
 
-		@"ParallaxParticle",
+	@"ParallaxParticle",
 
-		@"ParticleDesigner1",
-		@"ParticleDesigner2",
-		@"ParticleDesigner3",
-		@"ParticleDesigner4",
-		@"ParticleDesigner5",
-		@"ParticleDesigner6",
-		@"ParticleDesigner7",
-		@"ParticleDesigner8",
-		@"ParticleDesigner9",
-		@"ParticleDesigner10",
-		@"ParticleDesigner11",
+	@"ParticleDesigner1",
+	@"ParticleDesigner2",
+	@"ParticleDesigner3",
+	@"ParticleDesigner4",
+	@"ParticleDesigner5",
+	@"ParticleDesigner6",
+	@"ParticleDesigner7",
+	@"ParticleDesigner8",
+	@"ParticleDesigner9",
+	@"ParticleDesigner10",
+	@"ParticleDesigner11",
+	@"ParticleDesigner12",
 
-		@"RadiusMode1",
-		@"RadiusMode2",
-		@"Issue704",
-		@"Issue872",
-		@"Issue870",
+	@"RadiusMode1",
+	@"RadiusMode2",
+	@"Issue704",
+	@"Issue872",
+	@"Issue870",
 };
 
 Class nextAction()
@@ -87,7 +93,12 @@ Class restartAction()
 {
 	if( (self=[super initWithColor:ccc4(127,127,127,255)] )) {
 
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 		self.isTouchEnabled = YES;
+#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
+		self.isMouseEnabled = YES;
+#endif
+		
 		
 		CGSize s = [[CCDirector sharedDirector] winSize];
 		CCLabelTTF *label = [CCLabelTTF labelWithString:[self title] fontName:@"Arial" fontSize:32];
@@ -151,6 +162,7 @@ Class restartAction()
 }
 
 
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 -(void) registerWithTouchDispatcher
 {
 	[[CCTouchDispatcher sharedDispatcher] addTargetedDelegate:self priority:0 swallowsTouches:NO];
@@ -179,6 +191,22 @@ Class restartAction()
 		pos = [background convertToWorldSpace:CGPointZero];
 	emitter.position = ccpSub(convertedLocation, pos);	
 }
+#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
+
+
+-(BOOL) ccMouseDragged:(NSEvent *)event
+{
+	CGPoint convertedLocation = [[CCDirector sharedDirector] convertEventToGL:event];
+	
+	CGPoint pos = CGPointZero;
+	
+	if( background )
+		pos = [background convertToWorldSpace:CGPointZero];
+	emitter.position = ccpSub(convertedLocation, pos);	
+	// swallow the event. Don't propagate it
+	return YES;	
+}
+#endif // __MAC_OS_X_VERSION_MAX_ALLOWED
 
 -(void) update:(ccTime) dt
 {
@@ -270,7 +298,7 @@ Class restartAction()
 	self.emitter = [CCParticleFire node];
 	[background addChild: emitter z:10];
 	
-	emitter.texture = [[CCTextureCache sharedTextureCache] addImage: @"fire.pvr"];
+	emitter.texture = [[CCTextureCache sharedTextureCache] addImage: PARTICLE_FIRE_NAME];
 	CGPoint p = emitter.position;
 	emitter.position = ccp(p.x, 100);
 	
@@ -291,7 +319,7 @@ Class restartAction()
 	self.emitter = [CCParticleSun node];
 	[background addChild: emitter z:10];
 
-	emitter.texture = [[CCTextureCache sharedTextureCache] addImage: @"fire.pvr"];
+	emitter.texture = [[CCTextureCache sharedTextureCache] addImage: PARTICLE_FIRE_NAME];
 	
 	[self setEmitterPosition];
 }
@@ -310,7 +338,7 @@ Class restartAction()
 	self.emitter = [CCParticleGalaxy node];
 	[background addChild: emitter z:10];
 	
-	emitter.texture = [[CCTextureCache sharedTextureCache] addImage: @"fire.pvr"];
+	emitter.texture = [[CCTextureCache sharedTextureCache] addImage: PARTICLE_FIRE_NAME];
 	
 	[self setEmitterPosition];
 }
@@ -511,7 +539,7 @@ Class restartAction()
 	self.emitter = [CCParticleMeteor node];
 	[background addChild: emitter z:10];
 	
-	emitter.texture = [[CCTextureCache sharedTextureCache] addImage: @"fire.pvr"];
+	emitter.texture = [[CCTextureCache sharedTextureCache] addImage: PARTICLE_FIRE_NAME];
 	
 	[self setEmitterPosition];
 }
@@ -530,7 +558,7 @@ Class restartAction()
 	self.emitter = [CCParticleSpiral node];
 	[background addChild: emitter z:10];
 	
-	emitter.texture = [[CCTextureCache sharedTextureCache] addImage: @"fire.pvr"];
+	emitter.texture = [[CCTextureCache sharedTextureCache] addImage: PARTICLE_FIRE_NAME];
 	
 	[self setEmitterPosition];
 }
@@ -639,7 +667,7 @@ Class restartAction()
 	emitter.position = ccp( p.x, p.y-100);
 	emitter.life = 4;
 	
-	emitter.texture = [[CCTextureCache sharedTextureCache] addImage: @"fire.pvr"];
+	emitter.texture = [[CCTextureCache sharedTextureCache] addImage: PARTICLE_FIRE_NAME];
 	
 	[self setEmitterPosition];
 
@@ -808,8 +836,15 @@ Class restartAction()
 	[self removeChild:background cleanup:YES];
 	background = nil;
 
+	
 	self.emitter = [CCParticleSystemQuad particleWithFile:@"Particles/SpookyPeas.plist"];
 	[self addChild: emitter z:10];
+	
+	// custom spinning
+	self.emitter.startSpin = 0;
+	self.emitter.startSpinVar = 360;
+	self.emitter.endSpin = 720;
+	self.emitter.endSpinVar = 360;
 }
 
 -(NSString *) title
@@ -830,13 +865,8 @@ Class restartAction()
 	background = nil;
 
 	self.emitter = [CCParticleSystemQuad particleWithFile:@"Particles/SpinningPeas.plist"];
+
 	[self addChild: emitter z:10];
-	
-	// custom spinning
-	self.emitter.startSpin = 0;
-	self.emitter.startSpin = 360;
-	self.emitter.endSpin = 720;
-	self.emitter.endSpinVar = 360;	
 }
 
 -(NSString *) title
@@ -1056,10 +1086,32 @@ Class restartAction()
 }
 @end
 
-
-
 #pragma mark -
 
+@implementation ParticleDesigner12
+-(void) onEnter
+{
+	[super onEnter];
+	
+	[self setColor:ccBLACK];
+	[self removeChild:background cleanup:YES];
+	background = nil;
+	
+	self.emitter = [CCParticleSystemQuad particleWithFile:@"Particles/Phoenix.plist"];
+	[self addChild: emitter z:10];
+}
+
+-(NSString *) title
+{
+	return @"PD: Phoenix";
+}
+-(NSString*) subtitle
+{
+	return @"Testing radial and duration";
+}
+@end
+
+#pragma mark -
 
 @implementation RadiusMode1
 -(void) onEnter
@@ -1392,6 +1444,7 @@ Class restartAction()
 #pragma mark App Delegate
 
 // CLASS IMPLEMENTATIONS
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 @implementation AppController
 
 - (void) applicationDidFinishLaunching:(UIApplication*)application
@@ -1478,5 +1531,49 @@ Class restartAction()
 {
 	[[CCDirector sharedDirector] setNextDeltaTimeZero:YES];
 }
+@end
+
+
+#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
+
+@implementation cocos2dmacAppDelegate
+
+@synthesize window=window_, glView=glView_;
+
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
+{
+	CCDirectorMac *director = (CCDirectorMac*) [CCDirector sharedDirector];
+	
+	[director setDisplayFPS:YES];
+	
+	[director setOpenGLView:glView_];
+	
+	//	[director setProjection:kCCDirectorProjection2D];
+	
+	// Enable "moving" mouse event. Default no.
+	[window_ setAcceptsMouseMovedEvents:NO];
+	
+	// EXPERIMENTAL stuff.
+	// 'Effects' don't work correctly when autoscale is turned on.
+	[director setResizeMode:kCCDirectorResize_AutoScale];	
+	
+	CCScene *scene = [CCScene node];
+	[scene addChild: [nextAction() node]];
+	
+	[director runWithScene:scene];
+}
+
+- (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) theApplication
+{
+	return YES;
+}
+
+- (IBAction)toggleFullScreen: (id)sender
+{
+	CCDirectorMac *director = (CCDirectorMac*) [CCDirector sharedDirector];
+	[director setFullScreen: ! [director isFullScreen] ];
+}
 
 @end
+#endif
+

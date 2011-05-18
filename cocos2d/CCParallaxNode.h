@@ -31,7 +31,8 @@
  The children will be moved faster / slower than the parent according the the parallax ratio.
  
  */
-@interface CCParallaxNode : CCNode {
+@interface CCParallaxNode : CCNode
+{
 	ccArray				*parallaxArray_;
 	CGPoint				lastPosition;
 }
@@ -43,6 +44,6 @@
  It returns self, so you can chain several addChilds.
  @since v0.8
  */
--(void) addChild: (CCNode*)node z:(int)z parallaxRatio:(CGPoint)c positionOffset:(CGPoint)positionOffset;
+-(void) addChild: (CCNode*)node z:(NSInteger)z parallaxRatio:(CGPoint)c positionOffset:(CGPoint)positionOffset;
 
 @end

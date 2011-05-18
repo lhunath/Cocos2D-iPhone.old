@@ -23,6 +23,9 @@ static NSString *transitions[] = {
 	@"LabelsEmpty",
 	@"LabelBMFontHD",
 	@"LabelAtlasHD",
+	@"LabelGlyphDesigner",
+	@"LabelTTFTest",
+	@"LabelTTFMultiline",
 	
 	// Not a label test. Should be moved to Atlas test
 	@"Atlas1",
@@ -350,7 +353,7 @@ Class restartAction()
 {
 	if( (self=[super init]) ) {
 		
-		CCColorLayer *col = [CCColorLayer layerWithColor:ccc4(128,128,128,255)];
+		CCLayerColor *col = [CCLayerColor layerWithColor:ccc4(128,128,128,255)];
 		[self addChild:col z:-10];
 		
 		CCLabelBMFont *label1 = [CCLabelBMFont labelWithString:@"Test" fntFile:@"bitmapFontTest2.fnt"];
@@ -903,6 +906,120 @@ Class restartAction()
 
 @end
 
+#pragma mark -
+#pragma mark LabelGlyphDesigner
+
+@implementation LabelGlyphDesigner
+-(id) init
+{
+	if( (self=[super init]) ) {
+		
+		CGSize s = [[CCDirector sharedDirector] winSize];
+		
+		CCLayerColor *layer = [CCLayerColor layerWithColor:ccc4(128,128,128,255)];
+		[self addChild:layer z:-10];
+		
+		// CCLabelBMFont
+		CCLabelBMFont *label1 = [CCLabelBMFont labelWithString:@"Testing Glyph Designer" fntFile:@"futura-48.fnt"];
+		[self addChild:label1];
+		[label1 setPosition: ccp(s.width/2, s.height/2)];
+		
+	}
+	
+	return self;
+}
+
+-(NSString*) title
+{
+	return @"Testing Glyph Designer";
+}
+
+-(NSString *) subtitle
+{
+	return @"You should see a font with shadows and outline";
+}
+
+@end
+
+#pragma mark -
+#pragma mark LabelTTFTest
+
+@implementation LabelTTFTest
+-(id) init
+{
+	if( (self=[super init]) ) {
+		
+		CGSize s = [[CCDirector sharedDirector] winSize];
+		
+		// CCLabelBMFont
+		CCLabelTTF *left = [CCLabelTTF labelWithString:@"alignment left" dimensions:CGSizeMake(s.width,50) alignment:CCTextAlignmentLeft fontName:@"Marker Felt" fontSize:32];
+		CCLabelTTF *center = [CCLabelTTF labelWithString:@"alignment center" dimensions:CGSizeMake(s.width,50) alignment:CCTextAlignmentCenter fontName:@"Marker Felt" fontSize:32];
+		CCLabelTTF *right = [CCLabelTTF labelWithString:@"alignment right" dimensions:CGSizeMake(s.width,50) alignment:CCTextAlignmentRight fontName:@"Marker Felt" fontSize:32];
+
+		left.position = ccp(s.width/2,200);
+		center.position = ccp(s.width/2,150);
+		right.position = ccp(s.width/2,100);
+		
+		[self addChild:left];
+		[self addChild:right];
+		[self addChild:center];
+	}
+	
+	return self;
+}
+
+-(NSString*) title
+{
+	return @"Testing CCLabelTTF";
+}
+
+-(NSString *) subtitle
+{
+	return @"You should see 3 labels aligned left, center and right";
+}
+
+@end
+
+#pragma mark -
+#pragma mark LabelTTFMultiline
+
+@implementation LabelTTFMultiline
+-(id) init
+{
+	if( (self=[super init]) ) {
+		
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
+		CGSize s = [[CCDirector sharedDirector] winSize];
+		
+		// CCLabelBMFont
+//		CCLabelTTF *center =  [[CCLabelTTF alloc] initWithString:@"Bla bla bla bla bla bla bla bla bla bla bla (bla)" dimensions:CGSizeMake(150,84) alignment:UITextAlignmentLeft fontName: @"MarkerFelt.ttc" fontSize: 14];
+
+		CCLabelTTF *center = [CCLabelTTF labelWithString:@"word wrap \"testing\" (bla0) bla1 'bla2' [bla3] (bla4) {bla5} {bla6} [bla7] (bla8) [bla9] 'bla0' \"bla1\"" dimensions:CGSizeMake(s.width/2,200) alignment:CCTextAlignmentCenter fontName:@"MarkerFelt.ttc" fontSize:32];
+		center.position = ccp(s.width/2,150);
+		
+		[self addChild:center];
+#endif // __IPHONE_OS_VERSION_MAX_ALLOWED
+	}
+	
+	return self;
+}
+
+-(NSString*) title
+{
+	return @"Testing CCLabelTTF Word Wrap";
+}
+
+-(NSString *) subtitle
+{
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
+	return @"Word wrap using CCLabelTTF";
+#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
+	return @"Custom TTF are not supported in Mac OS X";
+#endif
+}
+
+@end
+
 
 
 #pragma mark -
@@ -1007,10 +1124,9 @@ Class restartAction()
 
 @synthesize window=window_, glView=glView_;
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-	
-	
-	CCDirector *director = [CCDirector sharedDirector];
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
+{
+	CCDirectorMac *director = (CCDirectorMac*) [CCDirector sharedDirector];
 	
 	[director setDisplayFPS:YES];
 	
@@ -1021,11 +1137,25 @@ Class restartAction()
 	// Enable "moving" mouse event. Default no.
 	[window_ setAcceptsMouseMovedEvents:NO];
 	
+	// EXPERIMENTAL stuff.
+	// 'Effects' don't work correctly when autoscale is turned on.
+	[director setResizeMode:kCCDirectorResize_AutoScale];	
 	
 	CCScene *scene = [CCScene node];
 	[scene addChild: [nextAction() node]];
 	
 	[director runWithScene:scene];
+}
+
+- (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) theApplication
+{
+	return YES;
+}
+
+- (IBAction)toggleFullScreen: (id)sender
+{
+	CCDirectorMac *director = (CCDirectorMac*) [CCDirector sharedDirector];
+	[director setFullScreen: ! [director isFullScreen] ];
 }
 
 @end

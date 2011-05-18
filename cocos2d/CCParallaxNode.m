@@ -60,7 +60,7 @@
 
 @implementation CCParallaxNode
 
-@synthesize parallaxArray=parallaxArray_;
+@synthesize parallaxArray = parallaxArray_;
 
 -(id) init
 {
@@ -80,12 +80,12 @@
 	[super dealloc];
 }
 
--(void) addChild:(CCNode*)child z:(int)z tag:(int)tag
+-(void) addChild:(CCNode*)child z:(NSInteger)z tag:(NSInteger)tag
 {
 	NSAssert(NO,@"ParallaxNode: use addChild:z:parallaxRatio:positionOffset instead");
 }
 
--(void) addChild: (CCNode*) child z:(int)z parallaxRatio:(CGPoint)ratio positionOffset:(CGPoint)offset
+-(void) addChild: (CCNode*) child z:(NSInteger)z parallaxRatio:(CGPoint)ratio positionOffset:(CGPoint)offset
 {
 	NSAssert( child != nil, @"Argument must be non-nil");
 	CGPointObject *obj = [CGPointObject pointWithCGPoint:ratio offset:offset];
@@ -93,9 +93,9 @@
 	ccArrayAppendObjectWithResize(parallaxArray_, obj);
 	
 	CGPoint pos = self.position;
-	float x = pos.x * ratio.x + offset.x;
-	float y = pos.y * ratio.y + offset.y;
-	child.position = ccp(x,y);
+	pos.x = pos.x * ratio.x + offset.x;
+	pos.y = pos.y * ratio.y + offset.y;
+	child.position = pos;
 	
 	[super addChild: child z:z tag:child.tag];
 }

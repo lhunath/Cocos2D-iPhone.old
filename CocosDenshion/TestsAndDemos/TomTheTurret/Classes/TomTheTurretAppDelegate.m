@@ -131,7 +131,15 @@
 }
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
-	[[CCTextureCache sharedTextureCache] removeUnusedTextures];
+	[[CCDirector sharedDirector] purgeCachedData];
+}
+
+-(void) applicationDidEnterBackground:(UIApplication*)application {
+	[[CCDirector sharedDirector] stopAnimation];
+}
+
+-(void) applicationWillEnterForeground:(UIApplication*)application {
+	[[CCDirector sharedDirector] startAnimation];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
@@ -147,7 +155,7 @@
     self.mainMenuScene = nil;
     self.storyScene = nil;
     self.actionScene = nil;
-	[[CCDirector sharedDirector] release];
+	[[CCDirector sharedDirector] end];
 	[window release];
 	[super dealloc];
 }

@@ -33,7 +33,7 @@ typedef struct _hashElement
 {
 	struct ccArray	*actions;
 	CCNode			*target;
-	unsigned int	actionIndex;
+	NSUInteger		actionIndex;
 	CCAction		*currentAction;
 	BOOL			currentActionSalvaged;
 	BOOL			paused;	
@@ -51,8 +51,8 @@ typedef struct _hashElement
  
  @since v0.8
  */
-@interface CCActionManager : NSObject {
-
+@interface CCActionManager : NSObject
+{
 	tHashElement	*targets;
 	tHashElement	*currentTarget;
 	BOOL			currentTargetSalvaged;
@@ -86,17 +86,17 @@ typedef struct _hashElement
  */
 -(void) removeAction: (CCAction*) action;
 /** Removes an action given its tag and the target */
--(void) removeActionByTag:(int)tag target:(CCNode *)target;
+-(void) removeActionByTag:(NSInteger)tag target:(CCNode *)target;
 /** Gets an action given its tag an a target
  @return the Action the with the given tag
  */
--(CCAction*) getActionByTag:(int) tag target:(CCNode *)target;
+-(CCAction*) getActionByTag:(NSInteger) tag target:(CCNode *)target;
 /** Returns the numbers of actions that are running in a certain target
  * Composable actions are counted as 1 action. Example:
  *    If you are running 1 Sequence of 7 actions, it will return 1.
  *    If you are running 7 Sequences of 2 actions, it will return 7.
  */
--(int) numberOfRunningActionsInTarget:(CCNode *)target;
+-(NSUInteger) numberOfRunningActionsInTarget:(CCNode *)target;
 
 /** Pauses the target: all running actions and newly added actions will be paused.
  */
@@ -104,15 +104,6 @@ typedef struct _hashElement
 /** Resumes the target. All queued actions will be resumed.
  */
 -(void) resumeTarget:(CCNode *)target;
-
-/** Resumes the target. All queued actions will be resumed.
- @deprecated Use resumeTarget: instead. Will be removed in v1.0.
- */
--(void) resumeAllActionsForTarget:(CCNode *)target DEPRECATED_ATTRIBUTE;
-/** Pauses the target: all running actions and newly added actions will be paused.
- */
--(void) pauseAllActionsForTarget:(CCNode *)target DEPRECATED_ATTRIBUTE;
-
 
 @end
 

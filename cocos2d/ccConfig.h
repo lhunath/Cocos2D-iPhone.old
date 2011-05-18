@@ -105,19 +105,18 @@
 #endif
 
 /** @def CC_DIRECTOR_MAC_USE_DISPLAY_LINK_THREAD
- If enabled, cocos2d-mac will run on the Display Link thread.
+ If enabled, cocos2d-mac will run on the Display Link thread. If disabled cocos2d-mac will run in its own thread.
  
- By default cocos2d-mac will run in its own thread. Enable it if your game is skipping some frames.
+ If enabled, the images will be drawn at the "correct" time, but the events might not be very responsive.
+ If disabled, some frames might be skipped, but the events will be dispatched as they arrived.
  
- To enable set it to a 1. Disabled by default.
-
- This is an experimental feature. Not all the features are supported.
+ To enable set it to a 1, to disable it set to 0. Enabled by default.
 
  Only valid for cocos2d-mac. Not supported on cocos2d-ios.
 
  */
 #ifndef CC_DIRECTOR_MAC_USE_DISPLAY_LINK_THREAD
-#define CC_DIRECTOR_MAC_USE_DISPLAY_LINK_THREAD 0
+#define CC_DIRECTOR_MAC_USE_DISPLAY_LINK_THREAD 1
 #endif
 
 /** @def CC_COCOSNODE_RENDER_SUBPIXEL
@@ -212,6 +211,16 @@
 #define CC_TEXTURE_NPOT_SUPPORT 0
 #endif
 
+/** @def CC_RETINA_DISPLAY_SUPPORT
+ If enabled, cocos2d supports retina display. 
+ For performance reasons, it's recommended disable it in games without retina display support, like iPad only games.
+ 
+ To enable set it to 1. Use 0 to disable it. Enabled by default.
+ 
+ @since v0.99.5
+ */
+#define CC_RETINA_DISPLAY_SUPPORT 1
+
 /** @def CC_RETINA_DISPLAY_FILENAME_SUFFIX
  It's the suffix that will be appended to the files in order to load "retina display" images.
 
@@ -226,19 +235,19 @@
 #define CC_RETINA_DISPLAY_FILENAME_SUFFIX @"-hd"
 #endif
 
-/** @def CC_USE_RGBA32_LABELS_ON_NEON_ARCH
- If enabled, it will use RGBA8888 (32-bit textures) on Neon devices for CCLabelTTF objects.
+/** @def CC_USE_LA88_LABELS_ON_NEON_ARCH
+ If enabled, it will use LA88 (16-bit textures) on Neon devices for CCLabelTTF objects.
  If it is disabled, or if it is used on another architecture it will use A8 (8-bit textures).
- On Neon devices, RGBA8888 textures are 6% faster than A8 textures, but then will consule 4x memory.
+ On Neon devices, LA88 textures are 6% faster than A8 textures, but then will consule 2x memory.
  
  This feature is disabled by default.
  
  Platforms: Only used on ARM Neon architectures like iPhone 3GS or newer and iPad.
- 
+
  @since v0.99.5
  */
-#ifndef CC_USE_RGBA32_LABELS_ON_NEON_ARCH
-#define CC_USE_RGBA32_LABELS_ON_NEON_ARCH 0
+#ifndef CC_USE_LA88_LABELS_ON_NEON_ARCH
+#define CC_USE_LA88_LABELS_ON_NEON_ARCH 0
 #endif
 
 /** @def CC_SPRITE_DEBUG_DRAW
@@ -252,7 +261,7 @@
 #endif
 
 /** @def CC_SPRITEBATCHNODE_DEBUG_DRAW
- If enabled, all subclasses of CCSprite that are rendered using an CCSpriteSheet draw a bounding box.
+ If enabled, all subclasses of CCSprite that are rendered using an CCSpriteBatchNode draw a bounding box.
  Useful for debugging purposes only. It is recommened to leave it disabled.
  
  To enable set it to a value different than 0. Disabled by default.
@@ -261,18 +270,18 @@
 #define CC_SPRITEBATCHNODE_DEBUG_DRAW 0
 #endif
 
-/** @def CC_BITMAPFONTATLAS_DEBUG_DRAW
- If enabled, all subclasses of BitmapFontAtlas will draw a bounding box
+/** @def CC_LABELBMFONT_DEBUG_DRAW
+ If enabled, all subclasses of CCLabelBMFont will draw a bounding box
  Useful for debugging purposes only. It is recommened to leave it disabled.
  
  To enable set it to a value different than 0. Disabled by default.
  */
-#ifndef CC_BITMAPFONTATLAS_DEBUG_DRAW
-#define CC_BITMAPFONTATLAS_DEBUG_DRAW 0
+#ifndef CC_LABELBMFONT_DEBUG_DRAW
+#define CC_LABELBMFONT_DEBUG_DRAW 0
 #endif
 
-/** @def CC_LABELATLAS_DEBUG_DRAW
- If enabled, all subclasses of LabeltAtlas will draw a bounding box
+/** @def CC_LABELBMFONT_DEBUG_DRAW
+ If enabled, all subclasses of CCLabeltAtlas will draw a bounding box
  Useful for debugging purposes only. It is recommened to leave it disabled.
  
  To enable set it to a value different than 0. Disabled by default.
@@ -292,13 +301,21 @@
 #define CC_ENABLE_PROFILERS 0
 #endif
 
-/** @def CC_COMPATIBILITY_WITH_0_8
- Enable it if you want to support v0.8 compatbility.
- Basically, classes without namespaces will work.
- It is recommended to disable compatibility once you have migrated your game to v0.9 to avoid class name polution
- 
- To enable set it to a value different than 0. Disabled by default.
- */
-#ifndef CC_COMPATIBILITY_WITH_0_8
-#define CC_COMPATIBILITY_WITH_0_8 0
+//
+// DON'T edit this macro.
+//
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
+
+#if CC_RETINA_DISPLAY_SUPPORT
+#define CC_IS_RETINA_DISPLAY_SUPPORTED 1
+#else
+#define CC_IS_RETINA_DISPLAY_SUPPORTED 0
 #endif
+
+#elif __MAC_OS_X_VERSION_MAX_ALLOWED
+
+#define CC_IS_RETINA_DISPLAY_SUPPORTED 0
+
+#endif
+
+

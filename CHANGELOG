@@ -1,3 +1,117 @@
+version 1.0-rc2 - 03-May-2011
+. [NEW] CCArray: Added reduceMemoryFootprint and reverseObject (issue #1167)
+. [NEW] Director: Use small dt when the game is being debugged.
+. [NEW] Label: TTF supports new LA88 texture format instead of RGBA8888. A8 is still the default one.
+. [NEW] Particles: Added support for ParticleDesigner 1.3.60 (spinning support)
+. [NEW] Tests: Added test case for bug 1159
+. [FIX] Particles: TTL is always >= 0.
+. [FIX] Particles: texture coordinates are being used correctly when texture is NPOT.
+. [FIX] Scheduler: Fixed possible crash when unscheduling a sibling
+. [FIX] Templates: Use NS_BLOCK_ASSERTIONS and NDEBUG in Release Mode to remove asserts
+. [FIX] Templates: Xcode 3 templates fixed. Removed unused files in cocos2d lib. Added missing files from TouchJSON
+. [FIX] Templates: ARMv6 devices uses "none" autorotation to improve speed
+. [FIX] Templates: Added Xcode 4 "File" templates both for iOS and Mac OS X
+. [FIX] Templates: Uses CFBundleIconFiles in Info.plist instead of "Icon Files" (issue #1151)
+. [FIX] Templates: Xcode 4 templates generates "sub groups"
+. [FIX] Templates: Xcode 4 Mac templates include CocosDenshion
+. [FIX] TextureAtlas: Render "static" VBO batches between 6~10 % faster (issue #1150)
+. [FIX-MAC] Templates: Generates by default an RGBA8 color buffer instead of an RGBA16
+
+version 1.0-rc - 29-Mar-2011
+. [NEW] Actions: Added the possibility to create a CCSpawn and CCSequence with an NSArray
+. [NEW] CCArray: Added exchangeObject & exchangeObjectAtIndex (issue #1085)
+. [NEW] Templates: Added Xcode4 templates for cocos2d, cocos2d+box2d, cocos2d+chipmunk both for iOS and Mac OS X
+. [NEW] Templates: Possibility to run the installer from any directory
+. [NEW] Tests: Added DirectorTest
+. [NEW] Tests: Added Texture2d subtest for an unsupported PVR pixel format
+. [NEW] TextureAtlas: added possibility to draw the quads in parts
+. [FIX] All: Removed many deprecated methods and classes that were scheduled for removal on v1.0
+. [FIX] Actions: Instant, "base" actions, ReverseTime, Spawn and Sequence don't leak memory if actions are reused
+. [FIX] ccpLineIntersect: doesn't produce false positives for collisions (issue #962)
+. [FIX] Director: convertToUI works OK in RetinaDisplay mode
+. [FIX] Documentation: Drawing primitives fixed syntax error (issue #1127)
+. [FIX] Documentation: onExit doxystring improved (issue #1135)
+. [FIX] MenuItemToggle: Don't scale up if it is pressed several times (issue #948)
+. [FIX] ProgressTimer: fixed underflow in setPercentage() (issue #1123)
+. [FIX] RenderTexture: Only enable default GL states, without disabling them (mitigated issue #1145)
+. [FIX] StreakMotion: fixed flicker introduced in v0.99.x (issue #1075)
+. [FIX] Templates: Don't generate analyze warnings in Xcode4 (issue #1142)
+. [FIX] Xcode: TexturePVR compiles when using cocos2d as an external library (issue #1132)
+. [FIX] Xcode: Added SKIP_INSTALL=YES in libraries for Xcode4 (issue #1137)
+. [FIX-MAC] All: Code is 64-bit friendly. No more warnings when casting from 64 to 32 bits
+. [FIX-MAC] Director: Compiles in Mac when "slow" FPS are selected (issue #1126)
+. [FIX-MAC] Director: Fullscreen reuses the OpenGL view.
+. [3RD] FontLabel: Fixes issues with wrapping and apostraphes and hyphens (issue #1124)
+. [3RD] TouchJSON: Updated to "master" from March, 5 2011 (issue #1128)
+. [3RD] uthash / utlist: Updated to version 1.9.3
+
+version 1.0-beta - 01-Mar-2011
+. [NEW] Actions: Repeat and RepeatForEver has getter/setter for the inner action (issue #1110)
+. [NEW] LayerGradient: Added "compressed interpolation" (default mode) in order to display all graident's colors in any vector
+. [NEW-MAC] Added CC_DIRECTOR_INIT(). It is possible to create a Mac Window programatically
+. [NEW-MAC] EventDispatcher: Added support for Touch events
+. [FIX] CocosDenshion: Improved logging
+. [FIX] CocosDenshion: Fixed excessively large or negative gain values cause distorted audio in the simulator.
+. [FIX] CocosDenshion: Added guards to prevent memory corruption caused by invalid parameters
+. [FIX] CocosDenshion: Define some constants for defaults, make const parameter on buffer asynch load method
+. [FIX] CCArray: insertObjectAtIndex checks bounds (issue #1121)
+. [FIX] Director: Fixed possible crash when purging the TextureCache
+. [FIX] Layer: CCMultiplexLayer deprecated. New name is CCLayerMultiplex
+. [FIX] Particles: consumes less memory (12 bytes less per particle) and are a bit faster
+. [FIX] ProgressTimer: Consumes less memory
+. [FIX] RenderTexture: Added possibility to save buffer in any place (issue #1100)
+. [FIX] RenderTexture: re-added getUIImageFromBuffer method. Supports RetinaDisplay
+. [FIX] Sprite: flipx/flipy don't modify the contentSize (issue #1073)
+. [FIX] SpriteFrame: setRect sets pixels too. setRectInPixels sets points too (issue #1088)
+. [FIX] Templates: ItunesArtwork renamed to iTunesArtwork (issue #1092)
+. [FIX] Templates: HelloWorld -> HelloWorldLayer and other improvements (issue #873)
+. [FIX] TextureCache: asyncObject#dealloc uses CCLOGINFO instead of CCLOG (issue #1096)
+. [FIX] TiledMap: TMX maps work with zlib compression (Tiled v0.6)
+. [FIX-MAC] Director: runLoop enables NSTimers events (issue #1107)
+. [FIX-MAC] EventDispatcher: flagsChanged is triggered correctly (issue #1066)
+. [FIX-MAC] EventDispatcher: queue & dispatch events are synced (issue #1083)
+. [FIX-MAC] LabelTTF: alignment works OK (issue #1073)
+. [FIX-MAC] Menu: Menu doesn't hang up with invisible menus (issue #1070)
+. [FIX-MAC] Menu: Tracking "touches" works as expected (issue #1114)
+. [FIX-MAC] Templates includes AudioToolbox and OpenAL frameworks
+
+version 0.99.5 - 16-Dec-2010
+. [NEW] All: small performance improvements in all the code
+. [NEW] Layer: Added gradient layer
+. [NEW] MenuItem: it also supports class methods
+. [NEW] SpriteFrameCache: added method to load a plist file with a texture file name
+. [NEW] Texture: It is possible to use a subclass like MutableTexture without modifying the code
+. [NEW-MAC] Added Mac templates
+. [NEW-MAC] Added "flagsChanged" keyboard event
+. [NEW-MAC] Added support for Fullscreen / window mode
+. [NEW-MAC] Added support for AutoScale if the window is resized / fullscreen (EXPERIMENTAL)
+. [FIX] All: Misc cleanups in the code
+. [FIX] Action: Blink restores doesn't set as invisible the frame when the action is done (issue #1061)
+. [FIX] Camera: uses points intead of pixels. Works OK in RetinaDisplay mode (issue #1023)
+. [FIX] CCArray: fixed possible crash
+. [FIX] Configuration: checks for possible glErrors. Only ask for max samples if iOS >= 4 (issue #1041)
+. [FIX] Director: Fixed possible memory leak when popping a scene.
+. [FIX] FileUtils: loads .gz / .ccz files correctly in RetinaDisplay mode (issue #1037)
+. [FIX] FileUtils: fixed big memory leaks on .ccz inflater
+. [FIX] FileUtils: removes -hd suffix if the filename already has it (issue #1040)
+. [FIX] Node: udpated doxygen strings regarding default anchorPoint (issue #1049)
+. [FIX] Sprite: updateTransform can be overriden (issue #824)
+. [FIX] Sprite: Assert if an sprite initialized with a batchnode and it is not using it (issue #1053)
+. [FIX] Sprite: correctly overrides setIsRelativeAnchorPoint (issue #1055)
+. [FIX] SpriteFrameCache: textureFileName is relative to path (issue #1044)
+. [FIX] Particles: QuadParticle uses Points (issue #1057)
+. [FIX] Templates: removeStartup compiles (issue #1059)
+. [FIX] Texture: PVR with non-square mipmaps generates a warning log in debug mode (issue #1052)
+. [FIX-MAC] Display Link thread: async images works as expected. Enabled by default.
+. [FIX-MAC] MacGLView: VSync is enabled when the view is loaded from the NIB
+. [TEST] Added Glyph Designer test case
+. [TEST] Added LayerGradient test
+. [TEST-MAC] Added cocos2d icon to Mac tests
+. [TEST-MAC] Added EventTest
+. [3RD] Chipmunk: Updated to v5.3.4
+. [3RD] libpng: don't compile pngtest.c (issue #1058)
+
+ 
 version 0.99.5-rc1 - 15-Nov-2010
 . [NEW] Director: setProjection calls "updateProjection" delegate if "custom" projection is used
 . [NEW] Label: The CCLabelProtocol implements the -(NSString*)string method.

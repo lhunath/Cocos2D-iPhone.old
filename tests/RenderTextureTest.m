@@ -138,7 +138,7 @@ Class restartAction()
 		
 		// note that the render texture is a CCNode, and contains a sprite of its texture for convience,
 		// so we can just parent it to the scene like any other CCNode
-		[self addChild:target z:1];
+		[self addChild:target z:-1];
 		
 		// create a brush image to draw into the texture with
 		brush = [[CCSprite spriteWithFile:@"fire.png"] retain];
@@ -152,9 +152,11 @@ Class restartAction()
 		
 		// Save Image menu
 		[CCMenuItemFont setFontSize:16];
-		CCMenuItem *item = [CCMenuItemFont itemFromString:@"Save Image" target:self selector:@selector(saveImage:)];
-		CCMenu *menu = [CCMenu menuWithItems:item, nil];
+		CCMenuItem *item1 = [CCMenuItemFont itemFromString:@"Save Image" target:self selector:@selector(saveImage:)];
+		CCMenuItem *item2 = [CCMenuItemFont itemFromString:@"Clear" target:self selector:@selector(clearImage:)];
+		CCMenu *menu = [CCMenu menuWithItems:item1, item2, nil];
 		[self addChild:menu];
+		[menu alignItemsVertically];
 		[menu setPosition:ccp(s.width-80, s.height-30)];
 	}
 	return self;
@@ -168,6 +170,11 @@ Class restartAction()
 -(NSString*) subtitle
 {
 	return @"Press 'Save Image' to create an snapshot of the render texture";
+}
+
+-(void) clearImage:(id)sender
+{
+	[target clear:CCRANDOM_0_1() g:CCRANDOM_0_1() b:CCRANDOM_0_1() a:CCRANDOM_0_1()];
 }
 
 -(void) saveImage:(id)sender
@@ -222,12 +229,13 @@ Class restartAction()
 			[brush setRotation:rand()%360];
 			float r = ((float)(rand()%50)/50.f) + 0.25f;
 			[brush setScale:r];
+			[brush setColor:ccc3(CCRANDOM_0_1()*127+128, 255, 255) ];
 			// Call visit to draw the brush, don't call draw..
 			[brush visit];
 		}
 	}
 	// finish drawing and return context back to the screen
-	[target end];
+	[target end];	
 }
 
 #elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
@@ -263,6 +271,7 @@ Class restartAction()
 			[brush setRotation:rand()%360];
 			float r = ((float)(rand()%50)/50.f) + 0.25f;
 			[brush setScale:r];
+
 			// Call visit to draw the brush, don't call draw..
 			[brush visit];
 		}
@@ -276,7 +285,6 @@ Class restartAction()
 	return YES;
 	
 }
-
 #endif // __MAC_OS_X_VERSION_MAX_ALLOWED
 @end
 
@@ -301,12 +309,14 @@ Class restartAction()
 	 */
 	if( (self=[super init]) ) {
 		
-		CCColorLayer *background = [CCColorLayer layerWithColor:ccc4(200,200,200,255)];
+		CCLayerColor *background = [CCLayerColor layerWithColor:ccc4(200,200,200,255)];
 		[self addChild:background];
 		
+		// A1
 		CCSprite *spr_premulti = [CCSprite spriteWithFile:@"fire.png"];
 		[spr_premulti setPosition:ccp(16,48)];
 
+		// B1
 		CCSprite *spr_nonpremulti = [CCSprite spriteWithFile:@"fire_rgba8888.pvr"];
 		[spr_nonpremulti setPosition:ccp(16,16)];
 
@@ -318,7 +328,11 @@ Class restartAction()
 //		[[rend sprite] setBlendFunc:(ccBlendFunc) {GL_ONE, GL_ONE_MINUS_SRC_ALPHA}];
 
 		[rend begin];
+		
+		// A2
 		[spr_premulti visit];
+		
+		// B2
 		[spr_nonpremulti visit];
 		[rend end]; 
 		
@@ -347,7 +361,6 @@ Class restartAction()
 {
 	return @"All images should be equal...";
 }
-
 @end
 
 #pragma mark -
@@ -380,7 +393,7 @@ Class restartAction()
 	
 	// Create an EAGLView with a RGB8 color buffer, and a depth buffer of 24-bits
 	EAGLView *glView = [EAGLView viewWithFrame:[window bounds]
-								   pixelFormat:kEAGLColorFormatRGB565
+								   pixelFormat:kEAGLColorFormatRGBA8
 								   depthFormat:GL_DEPTH_COMPONENT24_OES];
 	
 	// attach the openglView to the director
@@ -466,10 +479,9 @@ Class restartAction()
 
 @synthesize window=window_, glView=glView_;
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-	
-	
-	CCDirector *director = [CCDirector sharedDirector];
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
+{
+	CCDirectorMac *director = (CCDirectorMac*) [CCDirector sharedDirector];
 	
 	[director setDisplayFPS:YES];
 	
@@ -480,11 +492,25 @@ Class restartAction()
 	// Enable "moving" mouse event. Default no.
 	[window_ setAcceptsMouseMovedEvents:NO];
 	
+	// EXPERIMENTAL stuff.
+	// 'Effects' don't work correctly when autoscale is turned on.
+	[director setResizeMode:kCCDirectorResize_AutoScale];	
 	
 	CCScene *scene = [CCScene node];
 	[scene addChild: [nextAction() node]];
 	
 	[director runWithScene:scene];
+}
+
+- (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) theApplication
+{
+	return YES;
+}
+
+- (IBAction)toggleFullScreen: (id)sender
+{
+	CCDirectorMac *director = (CCDirectorMac*) [CCDirector sharedDirector];
+	[director setFullScreen: ! [director isFullScreen] ];
 }
 
 @end

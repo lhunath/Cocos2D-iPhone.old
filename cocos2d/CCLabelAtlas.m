@@ -128,15 +128,16 @@
 
 - (void) setString:(NSString*) newString
 {
-	if( newString.length > textureAtlas_.totalQuads )
-		[textureAtlas_ resizeCapacity: newString.length];
+	NSUInteger len = [newString length];
+	if( len > textureAtlas_.capacity )
+		[textureAtlas_ resizeCapacity:len];
 
 	[string_ release];
 	string_ = [newString copy];
 	[self updateAtlasValues];
 
 	CGSize s;
-	s.width = [string_ length] * itemWidth_;
+	s.width = len * itemWidth_;
 	s.height = itemHeight_;
 	[self setContentSizeInPixels:s];
 }
@@ -158,13 +159,11 @@
 
 	glColor4ub( color_.r, color_.g, color_.b, opacity_);
 	
-	BOOL newBlend = NO;
-	if( blendFunc_.src != CC_BLEND_SRC || blendFunc_.dst != CC_BLEND_DST ) {
-		newBlend = YES;
+	BOOL newBlend = blendFunc_.src != CC_BLEND_SRC || blendFunc_.dst != CC_BLEND_DST;
+	if( newBlend )
 		glBlendFunc( blendFunc_.src, blendFunc_.dst );
-	}
 	
-	[textureAtlas_ drawNumberOfQuads: string_.length];
+	[textureAtlas_ drawNumberOfQuads:string_.length fromIndex:0];
 	
 	if( newBlend )
 		glBlendFunc(CC_BLEND_SRC, CC_BLEND_DST);

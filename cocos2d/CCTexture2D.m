@@ -87,7 +87,7 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
 
 // For Labels use 32-bit textures on iPhone 3GS / iPads since A8 textures are very slow
-#if defined(__ARM_NEON__) && CC_USE_RGBA32_LABELS_ON_NEON_ARCH
+#if (defined(__ARM_NEON__) || TARGET_IPHONE_SIMULATOR) && CC_USE_LA88_LABELS_ON_NEON_ARCH
 #define USE_TEXT_WITH_A8_TEXTURES 0
 
 #else
@@ -106,8 +106,9 @@ static CCTexture2DPixelFormat defaultAlphaPixelFormat_ = kCCTexture2DPixelFormat
 
 @implementation CCTexture2D
 
-@synthesize contentSizeInPixels=size_, pixelFormat=format_, pixelsWide=width_, pixelsHigh=height_, name=name_, maxS=maxS_, maxT=maxT_;
-@synthesize hasPremultipliedAlpha=hasPremultipliedAlpha_;
+@synthesize contentSizeInPixels = size_, pixelFormat = format_, pixelsWide = width_, pixelsHigh = height_, name = name_, maxS = maxS_, maxT = maxT_;
+@synthesize hasPremultipliedAlpha = hasPremultipliedAlpha_;
+
 - (id) initWithData:(const void*)data pixelFormat:(CCTexture2DPixelFormat)pixelFormat pixelsWide:(NSUInteger)width pixelsHigh:(NSUInteger)height contentSize:(CGSize)size
 {
 	if((self = [super init])) {
@@ -121,19 +122,22 @@ static CCTexture2DPixelFormat defaultAlphaPixelFormat_ = kCCTexture2DPixelFormat
 		switch(pixelFormat)
 		{
 			case kCCTexture2DPixelFormat_RGBA8888:
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei) width, (GLsizei) height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 				break;
 			case kCCTexture2DPixelFormat_RGBA4444:
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, data);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei) width, (GLsizei) height, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, data);
 				break;
 			case kCCTexture2DPixelFormat_RGB5A1:
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, data);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei) width, (GLsizei) height, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, data);
 				break;
 			case kCCTexture2DPixelFormat_RGB565:
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (GLsizei) width, (GLsizei) height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data);
+				break;
+			case kCCTexture2DPixelFormat_LA88:
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, (GLsizei) width, (GLsizei) height, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, data);
 				break;
 			case kCCTexture2DPixelFormat_A8:
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, data);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, (GLsizei) width, (GLsizei) height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, data);
 				break;
 			default:
 				[NSException raise:NSInternalInconsistencyException format:@""];
@@ -150,6 +154,18 @@ static CCTexture2DPixelFormat defaultAlphaPixelFormat_ = kCCTexture2DPixelFormat
 		hasPremultipliedAlpha_ = NO;
 	}					
 	return self;
+}
+
+- (void) releaseData:(void*)data
+{
+	//Free data
+	free(data);
+}
+
+- (void*) keepData:(void*)data length:(NSUInteger)length
+{
+	//The texture data mustn't be saved becuase it isn't a mutable texture.
+	return data;
 }
 
 - (void) dealloc
@@ -244,7 +260,7 @@ static CCTexture2DPixelFormat defaultAlphaPixelFormat_ = kCCTexture2DPixelFormat
 			CCLOG(@"cocos2d: CCTexture2D: Using RGB565 texture since image has no alpha");
 			pixelFormat = kCCTexture2DPixelFormat_RGB565;
 		}
-	} else  {
+	} else {
 		// NOTE: No colorspace means a mask image
 		CCLOG(@"cocos2d: CCTexture2D: Using A8 texture since image is a mask");
 		pixelFormat = kCCTexture2DPixelFormat_A8;
@@ -339,7 +355,7 @@ static CCTexture2DPixelFormat defaultAlphaPixelFormat_ = kCCTexture2DPixelFormat
 	hasPremultipliedAlpha_ = (info == kCGImageAlphaPremultipliedLast || info == kCGImageAlphaPremultipliedFirst);
 	
 	CGContextRelease(context);
-	free(data);
+	[self releaseData:data];
 	
 	return self;
 }
@@ -362,17 +378,15 @@ static CCTexture2DPixelFormat defaultAlphaPixelFormat_ = kCCTexture2DPixelFormat
 	
 	CGContextRef			context;
 	CGColorSpaceRef			colorSpace;
-	
+
 #if USE_TEXT_WITH_A8_TEXTURES
-	colorSpace = CGColorSpaceCreateDeviceGray();
 	data = calloc(POTHigh, POTWide);
-	context = CGBitmapContextCreate(data, POTWide, POTHigh, 8, POTWide, colorSpace, kCGImageAlphaNone);
 #else
-	colorSpace = CGColorSpaceCreateDeviceRGB();
-	data = calloc(POTHigh, POTWide * 4);
-	context = CGBitmapContextCreate(data, POTWide, POTHigh, 8, 4 * POTWide, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);				
+	data = calloc(POTHigh, POTWide * 2);
 #endif
 
+	colorSpace = CGColorSpaceCreateDeviceGray();
+	context = CGBitmapContextCreate(data, POTWide, POTHigh, 8, POTWide, colorSpace, kCGImageAlphaNone);
 	CGColorSpaceRelease(colorSpace);
 	
 	if( ! context ) {
@@ -400,11 +414,18 @@ static CCTexture2DPixelFormat defaultAlphaPixelFormat_ = kCCTexture2DPixelFormat
 	
 #if USE_TEXT_WITH_A8_TEXTURES
 	self = [self initWithData:data pixelFormat:kCCTexture2DPixelFormat_A8 pixelsWide:POTWide pixelsHigh:POTHigh contentSize:dimensions];
-#else
-	self = [self initWithData:data pixelFormat:kCCTexture2DPixelFormat_RGBA8888 pixelsWide:POTWide pixelsHigh:POTHigh contentSize:dimensions];
-#endif
+
+#else // ! USE_TEXT_WITH_A8_TEXTURES
+	NSUInteger textureSize = POTWide*POTHigh;
+	unsigned short *la88_data = (unsigned short*)data;
+	for(int i = textureSize-1; i>=0; i--) //Convert A8 to LA88
+		la88_data[i] = (data[i] << 8) | 0xff;
+	
+	self = [self initWithData:data pixelFormat:kCCTexture2DPixelFormat_LA88 pixelsWide:POTWide pixelsHigh:POTHigh contentSize:dimensions];
+#endif // ! USE_TEXT_WITH_A8_TEXTURES
+
 	CGContextRelease(context);
-	free(data);
+	[self releaseData:data];
 			
 	return self;
 }
@@ -446,9 +467,11 @@ static CCTexture2DPixelFormat defaultAlphaPixelFormat_ = kCCTexture2DPixelFormat
 		
 		data = (unsigned char*) [bitmap bitmapData];  //Use the same buffer to improve the performance.
 		
-		for(int i = 0; i<(POTWide*POTHigh); i++) //Convert RGBA8888 to A8
+		NSUInteger textureSize = POTWide*POTHigh;
+		for(int i = 0; i<textureSize; i++) //Convert RGBA8888 to A8
 			data[i] = data[i*4+3];
 		
+		data = [self keepData:data length:textureSize];
 		self = [self initWithData:data pixelFormat:kCCTexture2DPixelFormat_A8 pixelsWide:POTWide pixelsHigh:POTHigh contentSize:dimensions];
 		
 		[bitmap release];
@@ -544,7 +567,7 @@ static CCTexture2DPixelFormat defaultAlphaPixelFormat_ = kCCTexture2DPixelFormat
 	  ]
 	 autorelease];
 	
-	return [self initWithString:string dimensions:dimensions alignment:CCTextAlignmentCenter attributedString:stringWithAttributes];
+	return [self initWithString:string dimensions:dimensions alignment:alignment attributedString:stringWithAttributes];
 		
 #endif // Mac
 }
@@ -577,14 +600,14 @@ static BOOL PVRHaveAlphaPremultiplied_ = NO;
 		
 		GLenum format;
 		GLsizei size = length * length * bpp / 8;
-		if(hasAlpha) {
+		if(hasAlpha)
 			format = (bpp == 4) ? GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG : GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
-		} else {
+		else
 			format = (bpp == 4) ? GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG : GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
-		}
-		if(size < 32) {
+		
+		if(size < 32)
 			size = 32;
-		}
+		
 		glCompressedTexImage2D(GL_TEXTURE_2D, level, format, length, length, 0, size, data);
 		
 		size_ = CGSizeMake(length, length);
@@ -618,7 +641,7 @@ static BOOL PVRHaveAlphaPremultiplied_ = NO;
 			[self setAntiAliasTexParameters];
 		} else {
 			
-			CCLOG(@"cocos2d: Couldn't load PVR image");
+			CCLOG(@"cocos2d: Couldn't load PVR image: %@", file);
 			[self release];
 			return nil;
 		}
@@ -698,7 +721,7 @@ static BOOL PVRHaveAlphaPremultiplied_ = NO;
 	NSAssert( (width_ == ccNextPOT(width_) && height_ == ccNextPOT(height_)) ||
 			 (texParams->wrapS == GL_CLAMP_TO_EDGE && texParams->wrapT == GL_CLAMP_TO_EDGE),
 			 @"GL_CLAMP_TO_EDGE should be used in NPOT textures");
-	glBindTexture( GL_TEXTURE_2D, self.name );
+	glBindTexture( GL_TEXTURE_2D, name_ );
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texParams->minFilter );
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texParams->magFilter );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texParams->wrapS );

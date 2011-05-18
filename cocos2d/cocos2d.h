@@ -38,8 +38,8 @@
  */
 
 // 0x00 HI ME LO
-// 00   00 99 05
-#define COCOS2D_VERSION 0x00009905
+// 00   01 00 00
+#define COCOS2D_VERSION 0x00010000
 
 #import <Availability.h>
 
@@ -66,7 +66,6 @@
 #import "CCAnimationCache.h"
 #import "CCSprite.h"
 #import "CCSpriteFrame.h"
-#import "CCSpriteSheet.h"
 #import "CCSpriteBatchNode.h"
 #import "CCSpriteFrameCache.h"
 
@@ -149,10 +148,6 @@
 #if CC_ENABLE_PROFILERS
 #import "Support/CCProfiling.h"
 #endif // CC_ENABLE_PROFILERS
-
-
-// compatibility with v0.8
-#import "CCCompatibility.h"
 
 
 // free functions

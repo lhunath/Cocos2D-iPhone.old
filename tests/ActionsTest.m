@@ -14,7 +14,6 @@ enum {
 
 static int sceneIdx=-1;
 static NSString *transitions[] = {
-	
 	@"ActionManual",
 	@"ActionMove",
 	@"ActionRotate",
@@ -386,13 +385,15 @@ Class restartAction()
 {
 	[super onEnter];
 	
-	[self centerSprites:2];
+	[self centerSprites:3];
 	
-	id action1 = [CCBlink actionWithDuration:2 blinks:10];
-	id action2 = [CCBlink actionWithDuration:2 blinks:5];
+	id action1 = [CCBlink actionWithDuration:3 blinks:10];
+	id action2 = [CCBlink actionWithDuration:3 blinks:5];
+	id action3 = [CCBlink actionWithDuration:0.5f blinks:5];
 	
 	[tamara runAction: action1];
 	[kathia runAction:action2];
+	[grossini runAction:action3];
 }
 -(NSString *) title
 {
@@ -820,7 +821,7 @@ Class restartAction()
 }
 -(void) callback3:(id)sender data:(void*)data
 {
-	NSLog(@"callback 3 called from:%@ with data:%x",sender,(NSUInteger)data);
+	NSLog(@"callback 3 called from:%@ with data:%x",sender,(unsigned int)data);
 	CGSize s = [[CCDirector sharedDirector] winSize];
 	CCLabelTTF *label = [CCLabelTTF labelWithString:@"callback 3 called" fontName:@"Marker Felt" fontSize:16];
 	[label setPosition:ccp( s.width/4*3,s.height/2)];
@@ -1131,10 +1132,9 @@ Class restartAction()
 
 @synthesize window=window_, glView=glView_;
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-	
-	
-	CCDirector *director = [CCDirector sharedDirector];
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
+{
+	CCDirectorMac *director = (CCDirectorMac*) [CCDirector sharedDirector];
 	
 	[director setDisplayFPS:YES];
 	
@@ -1145,11 +1145,25 @@ Class restartAction()
 	// Enable "moving" mouse event. Default no.
 	[window_ setAcceptsMouseMovedEvents:NO];
 	
+	// EXPERIMENTAL stuff.
+	// 'Effects' don't work correctly when autoscale is turned on.
+	[director setResizeMode:kCCDirectorResize_AutoScale];	
 	
 	CCScene *scene = [CCScene node];
 	[scene addChild: [nextAction() node]];
 	
 	[director runWithScene:scene];
+}
+
+- (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) theApplication
+{
+	return YES;
+}
+
+- (IBAction)toggleFullScreen: (id)sender
+{
+	CCDirectorMac *director = (CCDirectorMac*) [CCDirector sharedDirector];
+	[director setFullScreen: ! [director isFullScreen] ];
 }
 
 @end

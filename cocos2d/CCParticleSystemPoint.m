@@ -24,13 +24,14 @@
  */
 
 #import <Availability.h>
+#import "CCParticleSystemPoint.h"
+
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 
 // opengl
 #import "Platforms/CCGL.h"
 
 // cocos2d
-#import "CCParticleSystemPoint.h"
 #import "CCTextureCache.h"
 #import "ccMacros.h"
 
@@ -40,7 +41,7 @@
 
 @implementation CCParticleSystemPoint
 
--(id) initWithTotalParticles:(int) numberOfParticles
+-(id) initWithTotalParticles:(NSUInteger) numberOfParticles
 {
 	if( (self=[super initWithTotalParticles:numberOfParticles]) ) {
 
@@ -76,15 +77,12 @@
 }
 
 -(void) updateQuadWithParticle:(tCCParticle*)p newPosition:(CGPoint)newPos
-{
-	ccVertex2F pos;
-	pos.x = newPos.x;
-	pos.y = newPos.y;
-	
+{	
 	// place vertices and colos in array
-	vertices[particleIdx].pos = pos;
+	vertices[particleIdx].pos = (ccVertex2F) {newPos.x, newPos.y};
 	vertices[particleIdx].size = p->size;
-	vertices[particleIdx].colors = p->color;
+	ccColor4B color =  { p->color.r*255, p->color.g*255, p->color.b*255, p->color.a*255 };
+	vertices[particleIdx].color = color;
 }
 
 -(void) postStep
@@ -118,7 +116,7 @@
 
 	glVertexPointer(2,GL_FLOAT, kPointSize, 0);
 
-	glColorPointer(4, GL_FLOAT, kPointSize, (GLvoid*) offsetof(ccPointSprite, colors) );
+	glColorPointer(4, GL_UNSIGNED_BYTE, kPointSize, (GLvoid*) offsetof(ccPointSprite, color) );
 
 	glEnableClientState(GL_POINT_SIZE_ARRAY_OES);
 	glPointSizePointerOES(GL_FLOAT, kPointSize, (GLvoid*) offsetof(ccPointSprite, size) );
@@ -126,19 +124,17 @@
 	int offset = (int)vertices;
 	glVertexPointer(2,GL_FLOAT, kPointSize, (GLvoid*) offset);
 	
-	int diff = offsetof(ccPointSprite, colors);
-	glColorPointer(4, GL_FLOAT, kPointSize, (GLvoid*) (offset+diff));
+	int diff = offsetof(ccPointSprite, color);
+	glColorPointer(4, GL_UNSIGNED_BYTE, kPointSize, (GLvoid*) (offset+diff));
 	
 	glEnableClientState(GL_POINT_SIZE_ARRAY_OES);
 	diff = offsetof(ccPointSprite, size);
 	glPointSizePointerOES(GL_FLOAT, kPointSize, (GLvoid*) (offset+diff));
 #endif
 
-	BOOL newBlend = NO;
-	if( blendFunc_.src != CC_BLEND_SRC || blendFunc_.dst != CC_BLEND_DST ) {
-		newBlend = YES;
+	BOOL newBlend = blendFunc_.src != CC_BLEND_SRC || blendFunc_.dst != CC_BLEND_DST;
+	if( newBlend )
 		glBlendFunc( blendFunc_.src, blendFunc_.dst );
-	}
 
 
 	glDrawArrays(GL_POINTS, 0, particleIdx);
@@ -203,6 +199,10 @@
 }
 @end
 
-#endif // __IPHONE_OS_VERSION_MAX_ALLOWED
+#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
+@implementation CCParticleSystemPoint
+@end
+
+#endif // __MAC_OS_X_VERSION_MAX_ALLOWED
 
 

@@ -52,31 +52,31 @@
 // lazy allocs
 -(void) childrenAlloc;
 // helper that reorder a child
--(void) insertChild:(CCNode*)child z:(int)z;
+-(void) insertChild:(CCNode*)child z:(NSInteger)z;
 // used internally to alter the zOrder variable. DON'T call this method manually
--(void) _setZOrder:(int) z;
+-(void) _setZOrder:(NSInteger) z;
 -(void) detachChild:(CCNode *)child cleanup:(BOOL)doCleanup;
 @end
 
 @implementation CCNode
 
 @synthesize children = children_;
-@synthesize visible=visible_;
-@synthesize parent=parent_;
-@synthesize grid=grid_;
-@synthesize zOrder=zOrder_;
-@synthesize tag=tag_;
+@synthesize visible = visible_;
+@synthesize parent = parent_;
+@synthesize grid = grid_;
+@synthesize zOrder = zOrder_;
+@synthesize tag = tag_;
 @synthesize vertexZ = vertexZ_;
-@synthesize isRunning=isRunning_;
-@synthesize userData=userData_;
+@synthesize isRunning = isRunning_;
+@synthesize userData = userData_;
 
 #pragma mark CCNode - Transform related properties
 
-@synthesize rotation=rotation_, scaleX=scaleX_, scaleY=scaleY_;
-@synthesize position=position_, positionInPixels=positionInPixels_;
-@synthesize anchorPoint=anchorPoint_, anchorPointInPixels=anchorPointInPixels_;
-@synthesize contentSize=contentSize_, contentSizeInPixels=contentSizeInPixels_;
-@synthesize isRelativeAnchorPoint=isRelativeAnchorPoint_;
+@synthesize rotation = rotation_, scaleX = scaleX_, scaleY = scaleY_;
+@synthesize position = position_, positionInPixels = positionInPixels_;
+@synthesize anchorPoint = anchorPoint_, anchorPointInPixels = anchorPointInPixels_;
+@synthesize contentSize = contentSize_, contentSizeInPixels = contentSizeInPixels_;
+@synthesize isRelativeAnchorPoint = isRelativeAnchorPoint_;
 
 // getters synthesized, setters explicit
 -(void) setRotation: (float)newRotation
@@ -113,6 +113,7 @@
 		positionInPixels_ = position_;
 	else
 		positionInPixels_ = ccpMult( newPosition,  CC_CONTENT_SCALE_FACTOR() );
+	
 	isTransformDirty_ = isInverseDirty_ = YES;
 #if CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
 	isTransformGLDirty_ = YES;
@@ -127,6 +128,7 @@
 		position_ = positionInPixels_;
 	else
 		position_ = ccpMult( newPosition, 1/CC_CONTENT_SCALE_FACTOR() );
+	
 	isTransformDirty_ = isInverseDirty_ = YES;
 #if CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
 	isTransformGLDirty_ = YES;
@@ -158,10 +160,12 @@
 {
 	if( ! CGSizeEqualToSize(size, contentSize_) ) {
 		contentSize_ = size;
+		
 		if( CC_CONTENT_SCALE_FACTOR() == 1 )
 			contentSizeInPixels_ = contentSize_;
 		else
 			contentSizeInPixels_ = CGSizeMake( size.width * CC_CONTENT_SCALE_FACTOR(), size.height * CC_CONTENT_SCALE_FACTOR() );
+		
 		anchorPointInPixels_ = ccp( contentSizeInPixels_.width * anchorPoint_.x, contentSizeInPixels_.height * anchorPoint_.y );
 		isTransformDirty_ = isInverseDirty_ = YES;
 #if CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
@@ -179,6 +183,7 @@
 			contentSize_ = contentSizeInPixels_;
 		else
 			contentSize_ = CGSizeMake( size.width / CC_CONTENT_SCALE_FACTOR(), size.height / CC_CONTENT_SCALE_FACTOR() );
+		
 		anchorPointInPixels_ = ccp( contentSizeInPixels_.width * anchorPoint_.x, contentSizeInPixels_.height * anchorPoint_.y );
 		isTransformDirty_ = isInverseDirty_ = YES;
 #if CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
@@ -277,11 +282,9 @@
 {
 	// actions
 	[self stopAllActions];
-
 	[self unscheduleAllSelectors];
 	
 	// timers
-	
 	[children_ makeObjectsPerformSelector:@selector(cleanup)];
 }
 
@@ -300,7 +303,6 @@
 	[grid_ release];
 	
 	// children
-	
 	CCNode *child;
 	CCARRAY_FOREACH(children_, child)
 		child.parent = nil;
@@ -335,7 +337,7 @@
 	return camera_;
 }
 
--(CCNode*) getChildByTag:(int) aTag
+-(CCNode*) getChildByTag:(NSInteger) aTag
 {
 	NSAssert( aTag != kCCNodeTagInvalid, @"Invalid tag");
 	
@@ -352,7 +354,7 @@
  * If a class want's to extend the 'addChild' behaviour it only needs
  * to override this method
  */
--(void) addChild: (CCNode*) child z:(int)z tag:(int) aTag
+-(void) addChild: (CCNode*) child z:(NSInteger)z tag:(NSInteger) aTag
 {	
 	NSAssert( child != nil, @"Argument must be non-nil");
 	NSAssert( child.parent == nil, @"child already added. It can't be added again");
@@ -372,7 +374,7 @@
 	}
 }
 
--(void) addChild: (CCNode*) child z:(int)z
+-(void) addChild: (CCNode*) child z:(NSInteger)z
 {
 	NSAssert( child != nil, @"Argument must be non-nil");
 	[self addChild:child z:z tag:child.tag];
@@ -403,7 +405,7 @@
 		[self detachChild:child cleanup:cleanup];
 }
 
--(void) removeChildByTag:(int)aTag cleanup:(BOOL)cleanup
+-(void) removeChildByTag:(NSInteger)aTag cleanup:(BOOL)cleanup
 {
 	NSAssert( aTag != kCCNodeTagInvalid, @"Invalid tag");
 	
@@ -457,21 +459,21 @@
 }
 
 // used internally to alter the zOrder variable. DON'T call this method manually
--(void) _setZOrder:(int) z
+-(void) _setZOrder:(NSInteger) z
 {
 	zOrder_ = z;
 }
 
 // helper used by reorderChild & add
--(void) insertChild:(CCNode*)child z:(int)z
+-(void) insertChild:(CCNode*)child z:(NSInteger)z
 {
 	NSUInteger index=0;
 	CCNode *a = [children_ lastObject];
 	
 	// quick comparison to improve performance
-	if (!a || a.zOrder <= z) {
+	if (!a || a.zOrder <= z)
 		[children_ addObject:child];
-	}
+	
 	else
 	{
 		CCARRAY_FOREACH(children_, a) {
@@ -486,7 +488,7 @@
 	[child _setZOrder:z];
 }
 
--(void) reorderChild:(CCNode*) child z:(int)z
+-(void) reorderChild:(CCNode*) child z:(NSInteger)z
 {
 	NSAssert( child != nil, @"Child must be non-nil");
 	
@@ -524,14 +526,14 @@
 	
 	if(children_) {
 		ccArray *arrayData = children_->data;
-		NSUInteger i=0;
+		NSUInteger i = 0;
 		
 		// draw children zOrder < 0
 		for( ; i < arrayData->num; i++ ) {
-			CCNode *child =  arrayData->arr[i];
-			if ( [child zOrder] < 0 ) {
+			CCNode *child = arrayData->arr[i];
+			if ( [child zOrder] < 0 )
 				[child visit];
-			} else
+			else
 				break;
 		}
 		
@@ -673,20 +675,19 @@
 	[[CCActionManager sharedManager] removeAction:action];
 }
 
--(void) stopActionByTag:(int)aTag
+-(void) stopActionByTag:(NSInteger)aTag
 {
 	NSAssert( aTag != kCCActionTagInvalid, @"Invalid tag");
 	[[CCActionManager sharedManager] removeActionByTag:aTag target:self];
 }
 
--(CCAction*) getActionByTag:(int) aTag
+-(CCAction*) getActionByTag:(NSInteger) aTag
 {
 	NSAssert( aTag != kCCActionTagInvalid, @"Invalid tag");
-	
 	return [[CCActionManager sharedManager] getActionByTag:aTag target:self];
 }
 
--(int) numberOfRunningActions
+-(NSUInteger) numberOfRunningActions
 {
 	return [[CCActionManager sharedManager] numberOfRunningActionsInTarget:self];
 }
@@ -698,7 +699,7 @@
 	[self scheduleUpdateWithPriority:0];
 }
 
--(void) scheduleUpdateWithPriority:(int)priority
+-(void) scheduleUpdateWithPriority:(NSInteger)priority
 {
 	[[CCScheduler sharedScheduler] scheduleUpdateForTarget:self priority:priority paused:!isRunning_];
 }
@@ -737,7 +738,6 @@
 - (void) resumeSchedulerAndActions
 {
 	[[CCScheduler sharedScheduler] resumeTarget:self];
-	
 	[[CCActionManager sharedManager] resumeTarget:self];
 }
 
@@ -760,8 +760,10 @@
 		
 		if( ! CGPointEqualToPoint(positionInPixels_, CGPointZero) )
 			transform_ = CGAffineTransformTranslate(transform_, positionInPixels_.x, positionInPixels_.y);
+		
 		if( rotation_ != 0 )
 			transform_ = CGAffineTransformRotate(transform_, -CC_DEGREES_TO_RADIANS(rotation_));
+		
 		if( ! (scaleX_ == 1 && scaleY_ == 1) ) 
 			transform_ = CGAffineTransformScale(transform_, scaleX_, scaleY_);
 		
@@ -846,6 +848,7 @@
 		anchorInPoints = anchorPointInPixels_;
 	else
 		anchorInPoints = ccpMult( anchorPointInPixels_, 1/CC_CONTENT_SCALE_FACTOR() );
+	
 	nodePoint = ccpAdd(nodePoint, anchorInPoints);
 	return [self convertToWorldSpace:nodePoint];
 }
