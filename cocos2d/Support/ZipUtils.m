@@ -121,7 +121,7 @@ int ccInflateMemory(unsigned char *in, unsigned int inLength, unsigned char **ou
 
 int ccInflateGZipFile(const char *path, unsigned char **out)
 {
-	unsigned int len;
+	int len;
 	unsigned int offset = 0;
 	
 	assert( out );
@@ -134,7 +134,7 @@ int ccInflateGZipFile(const char *path, unsigned char **out)
 	}
 	
 	/* 512k initial decompress buffer */
-	unsigned int bufferSize = 512 * 1024;
+	int bufferSize = 512 * 1024;
 	unsigned int totalBufferSize = bufferSize;
 	
 	*out = malloc( bufferSize );
