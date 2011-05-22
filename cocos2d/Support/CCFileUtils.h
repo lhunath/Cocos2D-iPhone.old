@@ -32,6 +32,8 @@
 {
 }
 
++(NSString*) getDoubleResolutionImage:(NSString*)path;
+
 /** Returns the fullpath of an filename.
  
  If this method is when Retina Display is enabled, then the

@@ -34,6 +34,7 @@
 #import "Support/CCFileUtils.h"
 #import "CCDirector.h"
 #import "ccConfig.h"
+#import "UIImage_Scaling.h"
 
 // needed for CCCallFuncO in Mac-display_link version
 #import "CCActionManager.h"
@@ -266,13 +267,24 @@ static CCTextureCache *sharedTextureCache;
 				  ( [lowerCase hasSuffix:@".jpg"] || [lowerCase hasSuffix:@".jpeg"] ) 
 				 ) {
 			// convert jpg to png before loading the texture
-			
+            BOOL scaleToHD = NO;
 			NSString *fullpath = [CCFileUtils fullPathFromRelativePath: path ];
-						
+#if CC_IS_RETINA_DISPLAY_SUPPORTED
+            if( CC_CONTENT_SCALE_FACTOR() == 2 ) {
+                NSString *fullpathHD = [CCFileUtils getDoubleResolutionImage:fullpath];
+                if (fullpathHD)
+                    fullpath = fullpathHD;
+                else
+                    // Only SD version available for this image, scale it up.
+                    scaleToHD = YES;
+            }
+#endif // CC_IS_RETINA_DISPLAY_SUPPORTED
+			
 			UIImage *jpg = [[UIImage alloc] initWithContentsOfFile:fullpath];
-			UIImage *png = [[UIImage alloc] initWithData:UIImagePNGRepresentation(jpg)];
+			UIImage *png = [[[UIImage alloc] initWithData:UIImagePNGRepresentation(jpg)] autorelease];
+            if (scaleToHD)
+                png = [png imageByScalingAndCroppingToSize:CGSizeApplyAffineTransform(png.size, CGAffineTransformMakeScale(2, 2))];
 			tex = [ [CCTexture2D alloc] initWithImage: png ];
-			[png release];
 			[jpg release];
 			
 			if( tex )
@@ -286,11 +298,23 @@ static CCTextureCache *sharedTextureCache;
 		else {
 			
 			// prevents overloading the autorelease pool
+            BOOL scaleToHD = NO;
 			NSString *fullpath = [CCFileUtils fullPathFromRelativePath: path ];
+#if CC_IS_RETINA_DISPLAY_SUPPORTED
+            if( CC_CONTENT_SCALE_FACTOR() == 2 ) {
+                NSString *fullpathHD = [CCFileUtils getDoubleResolutionImage:fullpath];
+                if (fullpathHD)
+                    fullpath = fullpathHD;
+                else
+                    // Only SD version available for this image, scale it up.
+                    scaleToHD = YES;
+            }
+#endif // CC_IS_RETINA_DISPLAY_SUPPORTED
 
-			UIImage *image = [ [UIImage alloc] initWithContentsOfFile: fullpath ];
+			UIImage *image = [[ [UIImage alloc] initWithContentsOfFile: fullpath ] autorelease];
+            if (scaleToHD)
+                image = [image imageByScalingAndCroppingToSize:CGSizeApplyAffineTransform(image.size, CGAffineTransformMakeScale(2, 2))];
 			tex = [ [CCTexture2D alloc] initWithImage: image ];
-			[image release];
 			
 			if( tex )
 				[textures_ setObject: tex forKey:path];
@@ -303,12 +327,24 @@ static CCTextureCache *sharedTextureCache;
 		// Only in Mac
 #elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
 		else {
+            BOOL scaleToHD = NO;
 			NSString *fullpath = [CCFileUtils fullPathFromRelativePath: path ];
+#if CC_IS_RETINA_DISPLAY_SUPPORTED
+            if( CC_CONTENT_SCALE_FACTOR() == 2 ) {
+                NSString *fullpathHD = [CCFileUtils getDoubleResolutionImage:fullpath];
+                if (fullpathHD)
+                    fullpath = fullpathHD;
+                else
+                    // Only SD version available for this image, scale it up.
+                    scaleToHD = YES;
+            }
+#endif // CC_IS_RETINA_DISPLAY_SUPPORTED
 
 			NSData *data = [[NSData alloc] initWithContentsOfFile:fullpath];
 			NSBitmapImageRep *image = [[NSBitmapImageRep alloc] initWithData:data];
 			tex = [ [CCTexture2D alloc] initWithImage:[image CGImage]];
-			
+            if (scaleToHD)
+                tex.scale = 2;
 			[data release];
 			[image release];
 
